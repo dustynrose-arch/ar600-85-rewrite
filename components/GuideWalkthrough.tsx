@@ -3,6 +3,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { GUIDE_ANCHORS, type GuideAnchor } from "@/lib/guide";
 
+const tableClass = "mt-3 w-full border-collapse text-sm font-ui";
+const thClass = "border border-army-black/15 bg-army-olive text-army-cream px-3 py-1.5 text-left font-semibold";
+const tdClass = "border border-army-black/15 bg-army-paper px-3 py-1.5 align-top";
+
 export function GuideWalkthrough() {
   const [activeId, setActiveId] = useState<GuideAnchor["id"]>(GUIDE_ANCHORS[0].id);
 
@@ -67,118 +71,205 @@ export function GuideWalkthrough() {
         </ol>
       </nav>
 
-      <h3 className="text-lg font-bold mt-8">The screen in 10 seconds</h3>
-      <ul className="list-disc pl-6 space-y-1 mt-2">
-        <li>
-          <strong>Left</strong> — Outline (pick a chapter/section)
-        </li>
-        <li>
-          <strong>Center</strong> — Working copy (and Baseline / Diff)
-        </li>
-        <li>
-          <strong>Right</strong> — Assist chips, glossary, Process map
-        </li>
-        <li>
-          <strong>Top</strong> — Save status, role, Guide, Word export
-        </li>
-      </ul>
+      <hr className="mt-8 border-army-black/15" />
 
-      <article id="outline" className="scroll-mt-4 mt-8 border border-army-black/10 bg-army-paper p-4">
+      <h3 className="text-lg font-bold mt-8">The screen in 10 seconds</h3>
+      <table className={tableClass}>
+        <thead>
+          <tr>
+            <th className={thClass}>Where</th>
+            <th className={thClass}>What it is</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td className={tdClass}>
+              <strong>Left</strong>
+            </td>
+            <td className={tdClass}>Outline — pick a chapter or section</td>
+          </tr>
+          <tr>
+            <td className={tdClass}>
+              <strong>Center</strong>
+            </td>
+            <td className={tdClass}>Your working copy (and Baseline / Diff)</td>
+          </tr>
+          <tr>
+            <td className={tdClass}>
+              <strong>Right</strong>
+            </td>
+            <td className={tdClass}>Helpful refs — Assist chips, glossary, Process map</td>
+          </tr>
+          <tr>
+            <td className={tdClass}>
+              <strong>Top</strong>
+            </td>
+            <td className={tdClass}>Save status, your role, Guide, Word export</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr className="mt-8 border-army-black/15" />
+
+      <article id="outline" className="scroll-mt-4 mt-8">
         <h3 className="text-lg font-bold">Step 1 — Open a section</h3>
         <ol className="list-decimal pl-6 space-y-1 mt-2">
-          <li>Left pane: click a chapter, appendix, or Glossary entry.</li>
-          <li>It opens in the center.</li>
           <li>
-            Search: outline box or <strong>Ctrl+K</strong> / <strong>⌘K</strong> (searches baseline, then
-            jumps).
+            On the <strong>left</strong>, click any chapter, appendix, or Glossary entry.
+          </li>
+          <li>
+            It opens in the <strong>center</strong>.
+          </li>
+          <li>
+            Want to hunt by words? Use the outline search, or press <strong>Ctrl+K</strong> (Mac:{" "}
+            <strong>⌘K</strong>). Search looks at the official baseline text, then jumps you there.
           </li>
         </ol>
-        <p className="mt-2">
-          Tips: gold dot = differs from baseline; <strong>WG</strong> = Approver marked ready for WG review.
-        </p>
+        <p className="mt-3 font-semibold">Tips</p>
+        <ul className="list-disc pl-6 space-y-1 mt-1">
+          <li>
+            A <strong>gold dot</strong> means that section already differs from the official baseline.
+          </li>
+          <li>
+            A <strong>WG</strong> mark means an Approver said it’s ready for working-group review.
+          </li>
+        </ul>
       </article>
 
-      <article id="working-copy" className="scroll-mt-4 mt-4 border border-army-black/10 bg-army-paper p-4">
+      <hr className="mt-8 border-army-black/15" />
+
+      <article id="working-copy" className="scroll-mt-4 mt-8">
         <h3 className="text-lg font-bold">Step 2 — Edit your draft (not the baseline)</h3>
         <ol className="list-decimal pl-6 space-y-1 mt-2">
           <li>
-            Stay on <strong>Working copy</strong>.
+            Stay on the <strong>Working copy</strong> tab in the center.
           </li>
           <li>
-            Type; wait for <strong>Saved</strong> in the top bar.
+            Type your changes. Watch the top bar — it should say <strong>Saved</strong> when the server has
+            them.
           </li>
           <li>
-            Don’t edit <strong>Baseline</strong> — frozen official text only.
+            Leave the <strong>Baseline</strong> tab alone. That’s the frozen official text for reference only.
           </li>
         </ol>
-        <p className="mt-2">Gold banner = always a draft.</p>
+        <p className="mt-3">You’re always drafting. The gold banner at the top is there on purpose.</p>
       </article>
 
-      <article id="assist" className="scroll-mt-4 mt-4 border border-army-black/10 bg-army-paper p-4">
-        <h3 className="text-lg font-bold">Step 3 — Assist chips</h3>
-        <p className="mt-2">Underlines are nudges, not auto-fixes.</p>
+      <hr className="mt-8 border-army-black/15" />
+
+      <article id="assist" className="scroll-mt-4 mt-8">
+        <h3 className="text-lg font-bold">Step 3 — When yellow/red underlines show up (Assist)</h3>
+        <p className="mt-2">Those marks are gentle nudges — not auto-corrections.</p>
+        <ol className="list-decimal pl-6 space-y-2 mt-2">
+          <li>
+            Open the <strong>Assist</strong> tab on the <strong>right</strong>.
+          </li>
+          <li>Read the chip. It might be about glossary wording, Limited Use risk, overlap with another pub, or a spelling.</li>
+          <li>
+            If you’re an <strong>Editor</strong>, pick what fits:
+            <ul className="list-disc pl-6 space-y-1 mt-2">
+              <li>
+                <strong>Use locked term</strong> — swap to the preferred ASAP wording
+              </li>
+              <li>
+                <strong>Keep wording</strong> — dismiss this chip
+              </li>
+              <li>
+                <strong>Insert See cite</strong> — drop in a short “See …” pointer when offered
+              </li>
+            </ul>
+          </li>
+          <li>
+            Need cites or the flow map instead? Switch to <strong>Authority</strong>, <strong>Glossary</strong>,
+            or <strong>Process</strong>.
+          </li>
+        </ol>
+        <p className="mt-3">Nothing rewrites your text unless you choose it.</p>
+      </article>
+
+      <hr className="mt-8 border-army-black/15" />
+
+      <article id="process" className="scroll-mt-4 mt-8">
+        <h3 className="text-lg font-bold">Step 4 — Peek at the Process map</h3>
         <ol className="list-decimal pl-6 space-y-1 mt-2">
           <li>
-            Right pane → <strong>Assist</strong>.
-          </li>
-          <li>Read the chip (glossary / Limited Use / sister-pub overlap / spelling).</li>
-          <li>
-            Editor choices: <strong>Use locked term</strong>, <strong>Keep wording</strong>, or{" "}
-            <strong>Insert See cite</strong>.
+            Right side → <strong>Process</strong>.
           </li>
           <li>
-            Need cites or flow? <strong>Authority</strong> / <strong>Glossary</strong> /{" "}
-            <strong>Process</strong>.
+            Click through the path: how a Soldier is identified → referral → SUDCC → treatment → return to duty
+            or separation.
           </li>
+          <li>Open the callouts when your draft touches Limited Use, alcohol incidents, or civilian TDP/EAP.</li>
         </ol>
-        <p className="mt-2">Nothing rewrites unless the Editor chooses.</p>
+        <p className="mt-3">Use it when you’re unsure what “right-shaped” policy language should cover.</p>
       </article>
 
-      <article id="process" className="scroll-mt-4 mt-4 border border-army-black/10 bg-army-paper p-4">
-        <h3 className="text-lg font-bold">Step 4 — Process map</h3>
-        <p className="mt-2">
-          Right → <strong>Process</strong>. Click ID → referral → SUDCC → treatment → return/separation. Use
-          callouts for Limited Use, alcohol, civilian TDP/EAP.
+      <hr className="mt-8 border-army-black/15" />
+
+      <article id="diff-export" className="scroll-mt-4 mt-8">
+        <h3 className="text-lg font-bold">Step 5 — Compare, checkpoint, export</h3>
+        <ol className="list-decimal pl-6 space-y-1 mt-2">
+          <li>
+            <strong>Save snapshot</strong> (under the editor) when you want a frozen checkpoint.
+          </li>
+          <li>
+            Open <strong>Diff</strong> to see your draft next to the official baseline — or next to a snapshot.
+          </li>
+          <li>
+            <strong>Summarize</strong> lists the real line changes (simple local diff — not AI, not a legal
+            review).
+          </li>
+          <li>
+            Click <strong>Word export</strong> up top when you need a <code>.docx</code>. It stays clearly
+            marked <strong>DRAFT</strong> for internal use only.
+          </li>
+        </ol>
+      </article>
+
+      <hr className="mt-8 border-army-black/15" />
+
+      <article id="roles" className="scroll-mt-4 mt-8">
+        <h3 className="text-lg font-bold">Step 6 — Know your role</h3>
+        <p className="mt-2">Change role with the control in the header.</p>
+        <table className={tableClass}>
+          <thead>
+            <tr>
+              <th className={thClass}>Role</th>
+              <th className={thClass}>You can…</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className={tdClass}>
+                <strong>Editor</strong>
+              </td>
+              <td className={tdClass}>Write the draft, tasks, timeline, uploads, Assist actions, snapshots</td>
+            </tr>
+            <tr>
+              <td className={tdClass}>
+                <strong>Reviewer</strong>
+              </td>
+              <td className={tdClass}>Read and browse everything; you can’t change the draft</td>
+            </tr>
+            <tr>
+              <td className={tdClass}>
+                <strong>Approver</strong>
+              </td>
+              <td className={tdClass}>
+                Same read-only draft view; you alone can mark <strong>Ready for WG review</strong>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p className="mt-3">
+          <strong>Idle lock:</strong> after about 14 minutes you’ll get a warning; at 15 the session saves and
+          locks. Only an <strong>Editor</strong> can hit <strong>Resume session</strong>.
         </p>
       </article>
 
-      <article id="diff-export" className="scroll-mt-4 mt-4 border border-army-black/10 bg-army-paper p-4">
-        <h3 className="text-lg font-bold">Step 5 — Diff, snapshot, export</h3>
-        <ol className="list-decimal pl-6 space-y-1 mt-2">
-          <li>
-            <strong>Save snapshot</strong> under the editor for a checkpoint.
-          </li>
-          <li>
-            <strong>Diff</strong> vs baseline or a snapshot.
-          </li>
-          <li>
-            <strong>Summarize</strong> = real line changes (not AI / not legal review).
-          </li>
-          <li>
-            <strong>Word export</strong> = DRAFT-stamped .docx, internal use only.
-          </li>
-        </ol>
-      </article>
+      <hr className="mt-8 border-army-black/15" />
 
-      <article id="roles" className="scroll-mt-4 mt-4 border border-army-black/10 bg-army-paper p-4">
-        <h3 className="text-lg font-bold">Step 6 — Roles</h3>
-        <ul className="list-disc pl-6 space-y-1 mt-2">
-          <li>
-            <strong>Editor</strong> — writes draft, tasks, timeline, uploads, Assist, snapshots
-          </li>
-          <li>
-            <strong>Reviewer</strong> — browse only
-          </li>
-          <li>
-            <strong>Approver</strong> — browse only + <strong>Ready for WG review</strong>
-          </li>
-        </ul>
-        <p className="mt-2">
-          Idle: warn ~14m, lock ~15m; only Editor <strong>Resume session</strong>.
-        </p>
-      </article>
-
-      <h3 className="text-lg font-bold mt-8">Tiny tour</h3>
+      <h3 className="text-lg font-bold mt-8">Tiny tour (one breath)</h3>
       <p className="mt-2">
         Left = find it. Center = write it. Right = check it. Top = export it. Baseline never changes. Exports
         stay DRAFT.
