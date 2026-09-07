@@ -306,7 +306,8 @@ export function GuideWalkthrough() {
         </table>
         <p className="mt-3">
           <strong>Idle lock:</strong> after about 14 minutes you’ll get a warning; at 15 the session saves and
-          locks. Only an <strong>Editor</strong> can hit <strong>Resume session</strong>.
+          locks. An <strong>Editor</strong> or <strong>Approver</strong> can hit <strong>Unlock</strong>.
+          Reviewers cannot.
         </p>
       </article>
 

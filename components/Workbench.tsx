@@ -6,7 +6,7 @@ import { OutlinePane } from "@/components/OutlinePane";
 import { EditorPane } from "@/components/EditorPane";
 import { AssistPane } from "@/components/AssistPane";
 import { IdleGuard } from "@/components/IdleGuard";
-import { ROLE_LABEL } from "@/lib/roles";
+import { canUnlock, ROLE_LABEL } from "@/lib/roles";
 import {
   BASELINE_LABEL,
   type BaselineDocument,
@@ -217,9 +217,11 @@ export function Workbench({
       {state.locked ? (
         <div className="shrink-0 bg-army-rust text-white text-xs px-4 py-1.5 flex items-center justify-between">
           <span>LOCKED{state.lockReason ? ` — ${state.lockReason}` : ""}. Working copy was saved. Baseline is untouched.</span>
-          <button type="button" onClick={() => void unlock()} className="underline">
-            Unlock
-          </button>
+          {canUnlock(state.role) ? (
+            <button type="button" onClick={() => void unlock()} className="underline">
+              Unlock
+            </button>
+          ) : null}
         </div>
       ) : null}
       {state.wgReviewReady ? (

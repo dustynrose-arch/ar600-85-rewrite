@@ -28,14 +28,15 @@ export function UserGuide() {
       <ul className="list-disc pl-6 space-y-1">
         <li>
           <strong>Editor</strong> — edit working-copy text, create and complete tasks, take snapshots,
-          record Sergeant decisions.
+          record Sergeant decisions. May unlock after an idle lock.
         </li>
         <li>
           <strong>Reviewer</strong> — read-only. May inspect diffs, timeline, and authority chips.
+          Cannot unlock after an idle lock.
         </li>
         <li>
           <strong>Approver</strong> — read-only text. May mark sections or the full book ready for
-          working-group review, and may unlock after an idle lock.
+          working-group review. May unlock after an idle lock.
         </li>
       </ul>
 
