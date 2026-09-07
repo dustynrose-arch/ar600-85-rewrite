@@ -39,7 +39,7 @@ npm start
 
 | Area | Behavior |
 | --- | --- |
-| Chrome | Outline \| editor \| Assist/authority. G–1 seal slot at `public/g1-seal.png`. Title *AR 600-85 Rewrite — Working Copy*. Subtitle *Internal G-1 rewrite working group use only*. |
+| Chrome | Outline \| editor \| Assist/authority. Official G–1 seal at `public/g1-seal.png`, always paired with the DRAFT / WORKING COPY banner. Title *AR 600-85 Rewrite — Working Copy*. Subtitle *Internal G-1 rewrite working group use only*. |
 | Editing | Section edit with server autosave. No `localStorage`. Baseline pane is read-only. |
 | Search | Queries the locked baseline only. |
 | Versions | Named snapshots. Side-by-side diff vs baseline or a snapshot. **Summarize** builds bullets from those diffs. |
@@ -61,6 +61,6 @@ Working-copy state lives in `data/runtime/` (created at first run, not committed
 app/            App Router pages and API routes
 components/     Three-pane chrome and Assist tabs
 lib/            Store, diff, export, roles, seed data
-public/         G-1 seal placeholder
+public/         Official G-1 seal (never shown without the DRAFT banner)
 scripts/        Baseline seed generator
 ```

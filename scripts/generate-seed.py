@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate baseline document seed and G-1 seal placeholder."""
+"""Generate baseline document seed. Does not overwrite an existing official G-1 seal."""
 from __future__ import annotations
 
 import json
@@ -526,9 +526,13 @@ def main() -> None:
     dest = ROOT / "lib" / "seed" / "baseline-document.json"
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_text(json.dumps(out, indent=2), encoding="utf-8")
-    write_png(ROOT / "public" / "g1-seal.png")
+    seal = ROOT / "public" / "g1-seal.png"
     n = sum(len(c["sections"]) for c in chapters)
-    print(f"Wrote {dest} ({n} sections) and public/g1-seal.png")
+    if seal.exists():
+        print(f"Wrote {dest} ({n} sections); left existing {seal} in place")
+    else:
+        write_png(seal)
+        print(f"Wrote {dest} ({n} sections) and placeholder {seal}")
 
 
 if __name__ == "__main__":
