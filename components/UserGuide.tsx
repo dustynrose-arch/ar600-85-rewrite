@@ -1,11 +1,20 @@
+import { GuideVideo } from "@/components/GuideVideo";
+import { GuideWalkthrough } from "@/components/GuideWalkthrough";
+
 export function UserGuide() {
   return (
     <article className="prose prose-slate max-w-none font-doc text-army-ink">
       <p className="mt-4 text-xs font-ui font-bold tracking-[0.2em] text-army-goldDark">USER GUIDE</p>
       <h1 className="text-3xl font-bold mt-1">AR 600–85 Rewrite — Working Copy</h1>
-      <p className="text-army-slate">Internal G–1 rewrite working group use only. This application never mutates the locked ACTIVE baseline.</p>
+      <p className="text-army-slate">
+        Internal G–1 rewrite working group use only. This application never mutates the locked ACTIVE
+        baseline.
+      </p>
 
-      <h2 className="text-xl font-bold mt-8">Workspace</h2>
+      <GuideVideo />
+      <GuideWalkthrough />
+
+      <h2 className="text-xl font-bold mt-10">Workspace</h2>
       <ul className="list-disc pl-6 space-y-1">
         <li>Three panes: outline, editor, and Assist / authority.</li>
         <li>The gold-and-black DRAFT / WORKING COPY banner is always on.</li>
@@ -17,9 +26,17 @@ export function UserGuide() {
 
       <h2 className="text-xl font-bold mt-8">Roles and gates</h2>
       <ul className="list-disc pl-6 space-y-1">
-        <li><strong>Editor</strong> — edit working-copy text, create and complete tasks, take snapshots, record Sergeant decisions.</li>
-        <li><strong>Reviewer</strong> — read-only. May inspect diffs, timeline, and authority chips.</li>
-        <li><strong>Approver</strong> — read-only text. May mark sections or the full book ready for working-group review, and may unlock after an idle lock.</li>
+        <li>
+          <strong>Editor</strong> — edit working-copy text, create and complete tasks, take snapshots,
+          record Sergeant decisions.
+        </li>
+        <li>
+          <strong>Reviewer</strong> — read-only. May inspect diffs, timeline, and authority chips.
+        </li>
+        <li>
+          <strong>Approver</strong> — read-only text. May mark sections or the full book ready for
+          working-group review, and may unlock after an idle lock.
+        </li>
       </ul>
 
       <h2 className="text-xl font-bold mt-8">Justice (Limited Use)</h2>
@@ -40,15 +57,16 @@ export function UserGuide() {
 
       <h2 className="text-xl font-bold mt-8">Sergeant (redundancy)</h2>
       <p>
-        Sergeant runs 22 redundancy lanes across the working copy. For each lane, choose <em>Keep wording</em> or
+        Sergeant runs 22 redundancy lanes across the working copy. For each lane, choose <em>Keep wording</em> or{" "}
         <em>Insert See cite</em>. Inserting a See cite appends the lane’s citation to the current paragraph and
         records the decision on the server.
       </p>
 
       <h2 className="text-xl font-bold mt-8">Export and upload</h2>
       <p>
-        Word export is always DRAFT-stamped in the header, footer, and title-page disclaimer (AR 25–30 / DA Pam 25–40).
-        PDF and DOCX source uploads are capped at 25 MB. Each upload is audited with byte size and SHA-256.
+        Word export is always DRAFT-stamped in the header, footer, and title-page disclaimer (AR 25–30 / DA Pam
+        25–40). v1 has no non-draft print path. APD publishes the authenticated AR. PDF and DOCX source uploads
+        are capped at 25 MB. Each upload is audited with byte size and SHA-256.
       </p>
     </article>
   );

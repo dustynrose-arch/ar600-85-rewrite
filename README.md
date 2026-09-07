@@ -2,7 +2,7 @@
 
 Browser-only Next.js application for the internal Army Deputy Chief of Staff, G–1 rewrite working group. Editors maintain a **working copy** of AR 600–85 against a **read-only embedded baseline**. The baseline is never mutated.
 
-This is the WP1–WP5 accepted build: three-pane chrome, server-side autosave, roles and gates, Assist (Cheech / Justice / Sergeant), process map, cite-don’t-copy authority, snapshots, real diffs, Word export, and audited uploads.
+This is the WP1–WP6 accepted build: three-pane chrome, server-side autosave, roles and gates, Assist (Cheech / Justice / Sergeant), process map, cite-don’t-copy authority, snapshots, real diffs, Word export, audited uploads, and an in-app User Guide with a clickable walkthrough plus video placeholder.
 
 **Not an official publication.** The gold-and-black banner, Word header/footer, and title page are always marked **DRAFT / WORKING COPY**.
 
@@ -51,7 +51,7 @@ npm start
 | Assist | Cheech glossary lock chips; Justice Limited Use chips + AR 600-8-2 / 635-200 / 135-175 / 135-178 steers; Sergeant 22-lane redundancy detector (Keep wording \| Insert See cite). |
 | Process | ID → rehab map with branch labels. |
 | Authority | Cite-don’t-copy hot list and sister publications. |
-| Guide | In-app User Guide at `/guide` (Justice and Cheech blurbs). |
+| Guide | In-app User Guide at `/guide`: clickable 8-step walkthrough plus a video slot (`public/guide/tutorial.mp4` when present; otherwise “Tutorial video coming soon”). |
 
 Working-copy state lives in `data/runtime/` (created at first run, not committed). Uploads go to `data/uploads/`.
 
@@ -61,6 +61,6 @@ Working-copy state lives in `data/runtime/` (created at first run, not committed
 app/            App Router pages and API routes
 components/     Three-pane chrome and Assist tabs
 lib/            Store, diff, export, roles, seed data
-public/         Official G-1 seal (never shown without the DRAFT banner)
+public/         Official G-1 seal (never shown without the DRAFT banner); optional guide video at public/guide/
 scripts/        Baseline seed generator
 ```

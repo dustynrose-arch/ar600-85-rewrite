@@ -2,7 +2,7 @@
   "name": "ar600-85-rewrite",
   "version": "1.0.0",
   "private": true,
-  "description": "Internal G-1 working-copy editor for the AR 600-85 rewrite (WP1–WP5).",
+  "description": "Internal G-1 working-copy editor for the AR 600-85 rewrite (WP1–WP6).",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

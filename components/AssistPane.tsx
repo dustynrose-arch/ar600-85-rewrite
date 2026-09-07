@@ -198,7 +198,7 @@ function AssistTab({
         </ul>
       </section>
       <Link href="/guide" className="inline-block text-xs underline text-army-goldDark">
-        Open in-app User Guide (Justice / Cheech blurbs)
+        Open User Guide (walkthrough + video)
       </Link>
     </div>
   );
