@@ -12,7 +12,7 @@ function GuideCallout({
   title,
   children,
 }: {
-  who: "Justice" | "Cheech";
+  who: "Justice" | "Cheech" | "Sergeant";
   title: string;
   children: ReactNode;
 }) {
@@ -173,6 +173,9 @@ export function GuideWalkthrough() {
           </li>
         </ol>
         <p className="mt-3">You’re always drafting. The gold banner at the top is there on purpose.</p>
+        <GuideCallout who="Sergeant" title="Baseline vs working copy">
+          Left/search is the ACTIVE AR 600-85 (read-only). Only edit the working copy.
+        </GuideCallout>
       </article>
 
       <hr className="mt-8 border-army-black/15" />
@@ -213,6 +216,10 @@ export function GuideWalkthrough() {
         <GuideCallout who="Cheech" title="Glossary">
           When Assist underlines a term, prefer locked ASAP wording (IR vs other test bases, SUDCC vs ADAPT,
           illicit use vs prescription misuse). Chips never auto-rewrite.
+        </GuideCallout>
+        <GuideCallout who="Sergeant" title="Sister pubs">
+          When Assist flags sister-pub text, prefer See AR X (flags → AR 600-8-2, separations → AR 635-200, etc.)
+          — keep short language only if ASAP context needs it.
         </GuideCallout>
       </article>
 
