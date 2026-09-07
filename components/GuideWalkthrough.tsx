@@ -17,11 +17,15 @@ export function GuideWalkthrough() {
   }, []);
 
   useEffect(() => {
-    const raw = window.location.hash.replace(/^#guide-/, "");
-    if (GUIDE_STEPS.some((step) => step.id === raw)) {
-      setActiveId(raw);
-      document.getElementById(`guide-${raw}`)?.scrollIntoView({ block: "start" });
-    }
+    const syncFromHash = () => {
+      const raw = window.location.hash.replace(/^#guide-/, "");
+      if (GUIDE_STEPS.some((step) => step.id === raw)) {
+        setActiveId(raw);
+      }
+    };
+    syncFromHash();
+    window.addEventListener("hashchange", syncFromHash);
+    return () => window.removeEventListener("hashchange", syncFromHash);
   }, []);
 
   const index = GUIDE_STEPS.findIndex((step) => step.id === activeId);
