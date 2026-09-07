@@ -65,8 +65,8 @@ export function UserGuide() {
       <h2 className="text-xl font-bold mt-8">Export and upload</h2>
       <p>
         Word export is always DRAFT-stamped in the header, footer, and title-page disclaimer (AR 25–30 / DA Pam
-        25–40). v1 has no non-draft print path. APD publishes the authenticated AR. PDF and DOCX source uploads
-        are capped at 25 MB. Each upload is audited with byte size and SHA-256.
+        25–40). PDF and DOCX source uploads are capped at 25 MB. Each upload is audited with byte size and
+        SHA-256.
       </p>
     </article>
   );
