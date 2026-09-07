@@ -1,11 +1,31 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { GUIDE_ANCHORS, type GuideAnchor } from "@/lib/guide";
 
 const tableClass = "mt-3 w-full border-collapse text-sm font-ui";
 const thClass = "border border-army-black/15 bg-army-olive text-army-cream px-3 py-1.5 text-left font-semibold";
 const tdClass = "border border-army-black/15 bg-army-paper px-3 py-1.5 align-top";
+
+function GuideCallout({
+  who,
+  title,
+  children,
+}: {
+  who: "Justice" | "Cheech";
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <aside className="mt-4 border-l-4 border-army-gold bg-white px-3 py-2 font-ui text-sm text-army-ink">
+      <p className="text-[10px] font-bold tracking-[0.16em] text-army-goldDark">
+        {who.toUpperCase()} · WP6
+      </p>
+      <p className="mt-0.5 font-semibold">{title}</p>
+      <div className="mt-1 text-army-slate leading-relaxed">{children}</div>
+    </aside>
+  );
+}
 
 export function GuideWalkthrough() {
   const [activeId, setActiveId] = useState<GuideAnchor["id"]>(GUIDE_ANCHORS[0].id);
@@ -185,6 +205,15 @@ export function GuideWalkthrough() {
           </li>
         </ol>
         <p className="mt-3">Nothing rewrites your text unless you choose it.</p>
+        <GuideCallout who="Justice" title="Limited Use">
+          When Assist chips fire on testing/referral/discipline (especially self-ID), don’t treat that as open
+          season for punishment. Follow Limited Use / SJA and cite AR 600-8-2 / 635-200 instead of rewriting
+          those pubs into 600-85.
+        </GuideCallout>
+        <GuideCallout who="Cheech" title="Glossary">
+          When Assist underlines a term, prefer locked ASAP wording (IR vs other test bases, SUDCC vs ADAPT,
+          illicit use vs prescription misuse). Chips never auto-rewrite.
+        </GuideCallout>
       </article>
 
       <hr className="mt-8 border-army-black/15" />
@@ -202,6 +231,10 @@ export function GuideWalkthrough() {
           <li>Open the callouts when your draft touches Limited Use, alcohol incidents, or civilian TDP/EAP.</li>
         </ol>
         <p className="mt-3">Use it when you’re unsure what “right-shaped” policy language should cover.</p>
+        <GuideCallout who="Cheech" title="Process">
+          Use the Process tab for ID → Referral → Screen → Treat → Outcome (and the civilian TDP+EAP branch) so
+          those sections stay one system.
+        </GuideCallout>
       </article>
 
       <hr className="mt-8 border-army-black/15" />
@@ -224,6 +257,9 @@ export function GuideWalkthrough() {
             marked <strong>DRAFT</strong> for internal use only.
           </li>
         </ol>
+        <GuideCallout who="Justice" title="DRAFT export">
+          Every Word export keeps DRAFT / WORKING COPY — normal for APD submit.
+        </GuideCallout>
       </article>
 
       <hr className="mt-8 border-army-black/15" />
