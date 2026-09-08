@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArmyMarkSlot, G1Mark, HeaderGlyph, ICON_GUIDE } from "@/components/HeaderMarks";
+import { ArmyMark, G1Mark, HeaderGlyph, ICON_GUIDE } from "@/components/HeaderMarks";
 import { UserGuide } from "@/components/UserGuide";
 
 export default function GuidePage() {
@@ -15,7 +15,7 @@ export default function GuidePage() {
           <HeaderGlyph d={ICON_GUIDE} />
           Return to your draft
         </Link>
-        <ArmyMarkSlot />
+        <ArmyMark />
       </header>
       <div className="max-w-4xl mx-auto px-6 py-8">
         <UserGuide />

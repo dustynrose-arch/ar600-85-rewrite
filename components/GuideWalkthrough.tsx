@@ -165,8 +165,8 @@ export function GuideWalkthrough() {
           </li>
           <li>
             Need more room to write? Click <strong>Hide outline</strong> on the left pane or{" "}
-            <strong>Hide Assist</strong> on the right pane. The center pane has no hide buttons. Bring a side
-            back with <strong>Show outline</strong> / <strong>Show Assist</strong> or the thin strip on that
+            <strong>Hide Assistant</strong> on the right pane. The center pane has no hide buttons. Bring a side
+            back with <strong>Show outline</strong> / <strong>Show Assistant</strong> or the thin strip on that
             side.
           </li>
         </ul>

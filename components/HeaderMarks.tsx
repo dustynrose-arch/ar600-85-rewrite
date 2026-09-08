@@ -8,8 +8,9 @@ function HeaderIcon({ path }: { path: string }) {
 
 export const ICON_ROLE =
   "M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z";
+/** Arrow-up-tray — export, never a download (down) chevron. */
 export const ICON_EXPORT =
-  "M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm4 9a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0v-1H8a1 1 0 110-2h1v-1a1 1 0 011-1z";
+  "M9.25 13.25a.75.75 0 001.5 0V4.636l2.955 3.129a.75.75 0 001.09-1.03l-4.25-4.5a.75.75 0 00-1.09 0l-4.25 4.5a.75.75 0 101.09 1.03L9.25 4.636v8.614z M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z";
 export const ICON_SUMMARY =
   "M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h8a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h8a1 1 0 110 2H4a1 1 0 01-1-1z";
 export const ICON_GUIDE =
@@ -19,7 +20,7 @@ export function HeaderGlyph({ d }: { d: string }) {
   return <HeaderIcon path={d} />;
 }
 
-export function G1Mark({ className = "h-12 w-12 shrink-0 rounded-full object-cover" }: { className?: string }) {
+export function G1Mark({ className = "h-14 w-14 shrink-0 rounded-full object-cover" }: { className?: string }) {
   return (
     <img
       src="/g1-seal.png"
@@ -29,17 +30,14 @@ export function G1Mark({ className = "h-12 w-12 shrink-0 rounded-full object-cov
   );
 }
 
-/** Empty labeled slot — no Army file in public/; do not invent a seal. */
-export function ArmyMarkSlot() {
+/** Official stacked U.S. Army lockup — do not crop to a circle. */
+export function ArmyMark({ className = "h-14 w-auto max-h-14 shrink-0 object-contain" }: { className?: string }) {
   return (
-    <div
-      className="h-12 w-12 shrink-0 rounded-full border border-dashed border-army-cream/40 bg-army-oliveDark/40 flex items-center justify-center"
-      role="img"
-      aria-label="United States Army emblem placeholder. Official asset pending."
-      title="Army emblem slot — official file at public/us-army-logo.png when supplied"
-      data-army-mark-slot="pending"
-    >
-      <span className="text-[8px] font-semibold tracking-[0.12em] uppercase text-army-cream/70">Army</span>
-    </div>
+    <img
+      src="/us-army-logo.png"
+      alt="United States Army"
+      className={className}
+      data-army-mark="us-army-logo"
+    />
   );
 }

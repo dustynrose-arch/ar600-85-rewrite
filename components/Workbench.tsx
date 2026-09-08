@@ -6,7 +6,7 @@ import { EditorPane } from "@/components/EditorPane";
 import { AssistPane } from "@/components/AssistPane";
 import { SummaryOfChangePane } from "@/components/SummaryOfChangePane";
 import { IdleGuard } from "@/components/IdleGuard";
-import { ArmyMarkSlot, G1Mark, HeaderGlyph, ICON_EXPORT, ICON_GUIDE, ICON_ROLE, ICON_SUMMARY } from "@/components/HeaderMarks";
+import { ArmyMark, G1Mark, HeaderGlyph, ICON_EXPORT, ICON_GUIDE, ICON_ROLE, ICON_SUMMARY } from "@/components/HeaderMarks";
 import { CollapsedRail } from "@/components/PaneToggle";
 import { DEFAULT_PANE_STATE, readPaneSession, writePaneSession } from "@/lib/panes";
 import {
@@ -304,7 +304,7 @@ export function Workbench({
             User Guide
           </a>
         </div>
-        <ArmyMarkSlot />
+        <ArmyMark />
       </header>
       {state.locked ? (
         <div className="lock-banner shrink-0 text-xs px-4 py-2 flex items-center justify-between gap-3">
@@ -402,7 +402,7 @@ export function Workbench({
           )}
         </div>
         {rightCollapsed ? (
-          <CollapsedRail side="right" label="Show Assist" onExpand={() => setRightCollapsed(false)} />
+          <CollapsedRail side="right" label="Show Assistant" onExpand={() => setRightCollapsed(false)} />
         ) : (
           <div className="w-[340px] max-w-[46%] shrink-0 min-w-0 min-h-0 flex flex-col">
             <AssistPane

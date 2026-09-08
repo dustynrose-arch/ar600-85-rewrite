@@ -18,8 +18,8 @@ export function UserGuide() {
       <ul className="list-disc pl-6 space-y-1">
         <li>Three panes: outline on the left, your draft in the center, and Assist on the right.</li>
         <li>
-          Use <strong>Hide outline</strong> on the left pane and <strong>Hide Assist</strong> on the right pane
-          to widen the center editor. Use <strong>Show outline</strong> or <strong>Show Assist</strong> — or
+          Use <strong>Hide outline</strong> on the left pane and <strong>Hide Assistant</strong> on the right pane
+          to widen the center editor. Use <strong>Show outline</strong> or <strong>Show Assistant</strong> — or
           the thin side strips — to bring a pane back. The center editor does not have hide buttons. The
           workspace remembers those choices until you close the browser tab.
         </li>

@@ -75,7 +75,7 @@ type Props = {
 };
 
 const TABS: { id: Tab; label: string }[] = [
-  { id: "assist", label: "Assist" },
+  { id: "assist", label: "Assistant" },
   { id: "authority", label: "Authority" },
   { id: "process", label: "Process" },
   { id: "tasks", label: "Tasks" },
@@ -90,8 +90,8 @@ export function AssistPane(props: Props) {
   return (
     <aside className="flex flex-col min-h-0 h-full border-l border-army-black/[0.06] bg-[#f7f2e6]">
       <div className="flex items-center justify-between gap-2 px-2 py-1.5 border-b border-army-black/10">
-        <p className="text-[10px] font-bold tracking-[0.16em] text-army-slate">ASSIST</p>
-        <PaneToggle label="Assist" expanded onClick={props.onCollapse} />
+        <p className="text-[10px] font-bold tracking-[0.16em] text-army-slate">ASSISTANT</p>
+        <PaneToggle label="Assistant" expanded onClick={props.onCollapse} />
       </div>
       <div className="flex flex-wrap gap-1 p-2 border-b border-army-black/10">
         {TABS.map((item) => (
@@ -174,7 +174,7 @@ function AssistTab({
       <section>
         <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">WHAT THIS PANEL DOES</h3>
         <p className="text-xs text-army-slate mt-1">
-          Assist watches the paragraph open in the center. When it finds locked glossary wording, Limited Use
+          Assistant watches the paragraph open in the center. When it finds locked glossary wording, Limited Use
           Policy (self-referral), other legal / adverse-action hints, or overlap with another publication, it
           lists those reminders here. Nothing in your draft changes unless you choose an action below.
         </p>

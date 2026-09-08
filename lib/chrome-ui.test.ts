@@ -1,12 +1,12 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { test } from "node:test";
 
 function readRepoFile(relativePath: string): string {
   return readFileSync(new URL(`../${relativePath}`, import.meta.url), "utf8");
 }
 
-test("header: Revision + DPRR, G-1 left, Army slot right, no DRAFT chip; exports stamped", () => {
+test("header: Revision + DPRR, G-1 left, Army right, no DRAFT chip; exports stamped", () => {
   const css = readRepoFile("app/globals.css");
   const workbench = readRepoFile("components/Workbench.tsx");
   const guide = readRepoFile("app/guide/page.tsx");
@@ -14,10 +14,15 @@ test("header: Revision + DPRR, G-1 left, Army slot right, no DRAFT chip; exports
   const editor = readRepoFile("components/EditorPane.tsx");
   const exportDocx = readRepoFile("lib/export-docx.ts");
 
+  assert.equal(existsSync(new URL("../public/g1-seal.png", import.meta.url)), true);
+  assert.equal(existsSync(new URL("../public/us-army-logo.png", import.meta.url)), true);
   assert.match(marks, /src="\/g1-seal\.png"/);
-  assert.match(marks, /data-army-mark-slot="pending"/);
+  assert.match(marks, /src="\/us-army-logo\.png"/);
+  assert.equal(marks.includes("data-army-mark-slot"), false);
+  assert.equal(marks.includes("ArmyMarkSlot"), false);
   assert.match(workbench, /<G1Mark \/>/);
-  assert.match(workbench, /<ArmyMarkSlot \/>/);
+  assert.match(workbench, /<ArmyMark \/>/);
+  assert.match(guide, /<ArmyMark \/>/);
   assert.match(workbench, /AR 600-85 Revision/);
   assert.match(workbench, /Directorate of Prevention, Resilience and Readiness/);
   assert.equal(workbench.includes("DraftChip"), false);
@@ -80,4 +85,22 @@ test("header Word export matches neighboring header buttons; Role stays labeled"
   assert.equal(exportWord[1], "btn-header");
   assert.match(guidePage, /className="btn-header"/);
   assert.equal(workbench.includes("btn-ghost"), false);
+});
+
+test("Export Word uses an up-arrow tray icon, not a download chevron", () => {
+  const marks = readRepoFile("components/HeaderMarks.tsx");
+  assert.match(marks, /V4\.636l2\.955 3\.129/);
+  assert.match(marks, /l-4\.25-4\.5/);
+  assert.equal(marks.includes("v1h1a1 1 0 110 2h-1v1"), false);
+});
+
+test("right pane chrome is labeled Assistant", () => {
+  const pane = readRepoFile("components/AssistPane.tsx");
+  const workbench = readRepoFile("components/Workbench.tsx");
+  assert.match(pane, />ASSISTANT</);
+  assert.match(pane, /label="Assistant"/);
+  assert.match(pane, /label: "Assistant"/);
+  assert.equal(pane.includes("label: \"Assist\""), false);
+  assert.match(workbench, /label="Show Assistant"/);
+  assert.equal(workbench.includes('label="Show Assist"'), false);
 });

@@ -69,7 +69,7 @@ export function EditorPane({
           Last saved {new Date(working.updatedAt).toLocaleString()} · {status}
         </p>
       </header>
-      <div className="grid grid-rows-[minmax(0,1fr)_minmax(0,2fr)] min-h-0 flex-1 overflow-hidden">
+      <div className="grid grid-rows-[minmax(7.5rem,1fr)_minmax(12rem,2fr)] min-h-0 flex-1 overflow-hidden">
         <div className="min-h-0 border-b border-army-black/10 flex flex-col overflow-hidden">
           <p className="px-4 pt-2 text-[10px] font-bold tracking-[0.16em] text-army-slate">
             ORIGINAL REGULATION — READ ONLY
