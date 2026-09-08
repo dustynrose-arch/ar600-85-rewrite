@@ -4,10 +4,10 @@ import { GuideWalkthrough } from "@/components/GuideWalkthrough";
 export function UserGuide() {
   return (
     <article className="prose prose-slate max-w-none font-doc text-army-ink">
-      <p className="mt-4 text-xs font-ui font-bold tracking-[0.2em] text-army-goldDark">USER GUIDE</p>
+      <p className="panel-heading mt-4">User Guide</p>
       <h1 className="text-3xl font-bold mt-1">AR 600–85 Rewrite — User Guide</h1>
       <p className="text-army-slate">
-        Internal G–1 rewrite working group use only. This application never changes the original
+        Directorate of Prevention, Resilience and Readiness. This application never changes the original
         regulation (read-only).
       </p>
 
@@ -23,7 +23,10 @@ export function UserGuide() {
           the thin side strips — to bring a pane back. The center editor does not have hide buttons. The
           workspace remembers those choices until you close the browser tab.
         </li>
-        <li>The gold-and-black DRAFT banner stays on, next to the G–1 seal.</li>
+        <li>
+          The gold-and-black DRAFT / WORKING COPY banner stays on. The G–1 seal (left) and Army emblem
+          (right) are always paired with that banner — never shown alone.
+        </li>
         <li>
           Original regulation (read-only): AR 600–85 (4 Oct 2024, admin revs 27 Feb 2025 / 19 Feb 2026).
         </li>
@@ -131,7 +134,7 @@ export function UserGuide() {
         tone, civilian EAP–TDP mix-up, and any other non–Limited Use legal assists.
       </p>
 
-      <h2 className="text-xl font-bold mt-8">Glossary tip — locked terms</h2>
+      <h2 className="text-xl font-bold mt-8">Glossary — terms you must keep</h2>
       <p>
         Glossary reminders flag defined terms (ASAP, ADAPT, Limited Use Policy, UDL, MRO, DAMIS, smart testing,
         and others). Do not invent a second definition in a commander’s guide or component chapter. Lock the term

@@ -50,7 +50,7 @@ export function CrossmatchRows({ rows, onSelect }: Props) {
           ) : null}
           <p className="mt-1">{row.reason}</p>
           {row.sectionId ? (
-            <button type="button" className="underline mt-1" onClick={() => onSelect(row.sectionId!)}>
+            <button type="button" className="assist-link mt-1" onClick={() => onSelect(row.sectionId!)}>
               Open in your draft
             </button>
           ) : null}
