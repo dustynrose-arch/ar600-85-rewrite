@@ -45,7 +45,8 @@ export function UserGuide() {
         <li>
           <strong>Training</strong> — use <strong>Enter Training</strong> at the top of the page to practice on a
           separate copy. <strong>Reset to original</strong> restores that training copy from the original regulation.
-          Live drafts, uploads, and activity are not changed.
+          Live drafts, uploads, and activity are not changed. Word export from Training is marked{" "}
+          <strong>TRAINING</strong> and <strong>DRAFT</strong> in the header, title, and footer.
         </li>
       </ul>
 
