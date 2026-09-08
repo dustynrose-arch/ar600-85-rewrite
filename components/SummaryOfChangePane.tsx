@@ -11,7 +11,7 @@ import {
   type SummaryOfChangeRow,
 } from "@/lib/summary-of-change";
 
-const ACTION_ORDER: ChangeAction[] = ["revises", "adds", "rescinds"];
+const ACTION_ORDER: ChangeAction[] = ["revises", "adds", "rescinds", "moves"];
 
 type Props = {
   summary: SummaryOfChangeResult;
@@ -27,7 +27,9 @@ function ActionBadge({ action }: { action: ChangeAction }) {
       ? "bg-army-gold/25 text-army-goldDark"
       : action === "adds"
         ? "bg-army-olive/15 text-army-oliveDark"
-        : "bg-army-rust/15 text-army-rust";
+        : action === "moves"
+          ? "bg-army-slate/15 text-army-slate"
+          : "bg-army-rust/15 text-army-rust";
   return (
     <span className={`inline-block px-1.5 py-0.5 text-[10px] font-bold tracking-wide uppercase ${tone}`}>
       {actionLabel(action)}
@@ -52,7 +54,8 @@ export function SummaryOfChangePane({
           <h2 className="font-doc text-xl font-semibold leading-snug">{SUMMARY_EXPORT_TITLE}</h2>
           <p className="text-[11px] text-army-slate mt-1">
             Deltas only. Location cites use regulation paragraph style. Original is the original regulation
-            (read-only); Revised is your draft.
+            (read-only); Revised is your draft. Structure and title changes appear as Adds, Rescinds, Moves,
+            or Revises — not every body keystroke.
           </p>
         </div>
         <div className="flex flex-wrap items-center justify-end gap-2">
@@ -92,7 +95,7 @@ export function SummaryOfChangePane({
         {visible.length === 0 ? (
           <p className="text-sm text-army-slate">
             {summary.counts.total === 0
-              ? "No wording differences between the original regulation (read-only) and your draft."
+              ? "No wording or structure differences between the original regulation (read-only) and your draft."
               : "No rows in this filter."}
           </p>
         ) : (
@@ -137,8 +140,8 @@ export function SummaryOfChangePane({
           </table>
         )}
         <p className="text-[11px] text-army-slate pt-3">
-          Moved paragraphs (same wording, new location) are not listed separately yet. They appear as Rescinds
-          at the old cite and Adds at the new cite.
+          Cross-chapter and same-chapter reorders appear as Moves. Inserts that only shift later display
+          numbers do not. Title renames are Revises. New or deleted outline nodes are Adds or Rescinds.
         </p>
       </div>
     </section>

@@ -149,6 +149,13 @@ export function GuideWalkthrough() {
             A <strong>gold dot</strong> means that section already differs from the original regulation.
           </li>
           <li>
+            Editors can reshape the working-copy outline from the left pane: <strong>Add before</strong>,{" "}
+            <strong>Add after</strong>, <strong>Add child</strong> under the chapter, <strong>Rename</strong>,{" "}
+            <strong>Delete</strong> (you will be asked to confirm), or drag <strong>::</strong> to reorder —
+            including into another chapter. Right-click a paragraph for the same actions. Display numbers
+            update automatically (1–1, 1–2… or A–1). The original regulation stays frozen.
+          </li>
+          <li>
             A <strong>WG</strong> mark means an Approver said it’s ready for working-group review.
           </li>
           <li>
@@ -326,7 +333,8 @@ export function GuideWalkthrough() {
                 <strong>Editor</strong>
               </td>
               <td className={tdClass}>
-                Write the draft, undo draft typing, tasks, activity notes, uploads and document compare,
+                Write the draft, reshape the working-copy outline, undo draft typing, tasks, activity notes,
+                uploads and document compare,
                 Assist actions, checkpoints
               </td>
             </tr>

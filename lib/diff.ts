@@ -1,5 +1,4 @@
 import type { DiffHunk, Section, WorkingSection } from "./types";
-import { flattenSections } from "./baseline";
 
 function tokenize(text: string): string[] {
   return text.split(/(\s+)/).filter((token) => token.length > 0);
@@ -43,25 +42,37 @@ export function wordDiff(before: string, after: string): { added: string[]; remo
   return { added, removed };
 }
 
+function sortKey(section: { number: string; title: string; id: string }): string {
+  return `${section.number}\t${section.title}\t${section.id}`;
+}
+
 export function buildDiffs(
   current: Record<string, WorkingSection | Section>,
   compare: Record<string, Section>,
 ): DiffHunk[] {
-  return flattenSections().map((baseline) => {
-    const left = compare[baseline.id]?.body ?? baseline.body;
-    const right = current[baseline.id]?.body ?? baseline.body;
-    const { added, removed } = wordDiff(left, right);
-    return {
-      sectionId: baseline.id,
-      number: baseline.number,
-      title: baseline.title,
-      baseline: left,
-      current: right,
-      added,
-      removed,
-      unchanged: left === right,
-    };
-  });
+  const ids = new Set([...Object.keys(current), ...Object.keys(compare)]);
+  return [...ids]
+    .map((id) => {
+      const leftSection = compare[id];
+      const rightSection = current[id];
+      const meta = rightSection ?? leftSection;
+      const left = leftSection?.body ?? "";
+      const right = rightSection?.body ?? "";
+      const { added, removed } = wordDiff(left, right);
+      return {
+        sectionId: id,
+        number: meta?.number ?? id,
+        title: meta?.title ?? "",
+        baseline: left,
+        current: right,
+        added,
+        removed,
+        unchanged: left === right,
+        _sort: sortKey({ id, number: meta?.number ?? id, title: meta?.title ?? "" }),
+      };
+    })
+    .sort((a, b) => a._sort.localeCompare(b._sort, undefined, { numeric: true }))
+    .map(({ _sort: _unused, ...hunk }) => hunk);
 }
 
 export function summarizeDiffs(hunks: DiffHunk[]): string[] {

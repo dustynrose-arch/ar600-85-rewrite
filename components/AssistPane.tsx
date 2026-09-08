@@ -39,6 +39,7 @@ type Props = {
   locked: boolean;
   sectionId: string;
   working: WorkingSection;
+  sections?: Record<string, WorkingSection>;
   tasks: Task[];
   snapshots: Omit<Snapshot, "sections">[];
   timeline: TimelineEvent[];
@@ -101,7 +102,9 @@ export function AssistPane(props: Props) {
         {tab === "tasks" ? <TasksTab {...props} /> : null}
         {tab === "versions" ? <VersionsTab {...props} /> : null}
         {tab === "summary" ? <SummaryTab {...props} /> : null}
-        {tab === "timeline" ? <TimelineTab timeline={props.timeline} onSelect={props.onSelect} /> : null}
+        {tab === "timeline" ? (
+          <TimelineTab timeline={props.timeline} sections={props.sections} onSelect={props.onSelect} />
+        ) : null}
         {tab === "upload" ? <UploadTab {...props} /> : null}
       </div>
     </aside>
@@ -302,7 +305,7 @@ function ProcessTab({ onSelect }: { onSelect: (id: string) => void }) {
   );
 }
 
-function TasksTab({ role, tasks, sectionId, onCreateTask, onCompleteTask }: Props) {
+function TasksTab({ role, tasks, sectionId, onCreateTask, onCompleteTask, sections, working }: Props) {
   const [title, setTitle] = useState("");
   const [notes, setNotes] = useState("");
   return (
@@ -337,7 +340,7 @@ function TasksTab({ role, tasks, sectionId, onCreateTask, onCompleteTask }: Prop
           disabled={role !== "editor"}
           className="bg-army-olive text-army-cream px-3 py-1 text-xs font-semibold disabled:opacity-50"
         >
-          Create task on {sectionId}
+          Create task on {working.number}
         </button>
       </form>
       <ul className="mt-3 space-y-2">
@@ -346,7 +349,10 @@ function TasksTab({ role, tasks, sectionId, onCreateTask, onCompleteTask }: Prop
             <div className="font-semibold text-[12px]">{task.title}</div>
             <p className="text-[11px] text-army-slate">{task.notes}</p>
             <p className="text-[11px] mt-1">
-              {task.sectionId ?? "no section"} · {task.completedAt ? "complete" : "open"}
+              {task.sectionId
+                ? `${sections?.[task.sectionId]?.number ?? task.sectionId} ${sections?.[task.sectionId]?.title ?? ""}`.trim()
+                : "no section"}{" "}
+              · {task.completedAt ? "complete" : "open"}
             </p>
             {!task.completedAt ? (
               <button
@@ -476,8 +482,8 @@ function SummaryTab({
         Deltas only — original regulation (read-only) versus your draft. Table columns: Action | Location |
         Original (ACTIVE) | Revised (your draft).{" "}
         {summary.counts.total === 0
-          ? "No wording differences yet."
-          : `${summary.counts.total} change(s): ${summary.counts.revises} Revises, ${summary.counts.adds} Adds, ${summary.counts.rescinds} Rescinds.`}
+          ? "No wording or structure differences yet."
+          : `${summary.counts.total} change(s): ${summary.counts.revises} Revises, ${summary.counts.adds} Adds, ${summary.counts.rescinds} Rescinds, ${summary.counts.moves} Moves.`}
       </p>
       <div className="flex flex-wrap gap-2">
         <button
@@ -509,7 +515,8 @@ function SummaryTab({
         </button>
       ) : null}
       <p className="text-[11px] text-army-slate">
-        Moved paragraphs are not listed separately yet. They appear as Rescinds plus Adds.
+        Adds, Rescinds, and Moves flag outline structure. Title renames appear as Revises. Body keystrokes do
+        not create extra structure rows.
       </p>
     </div>
   );
@@ -517,9 +524,11 @@ function SummaryTab({
 
 function TimelineTab({
   timeline,
+  sections,
   onSelect,
 }: {
   timeline: TimelineEvent[];
+  sections?: Record<string, WorkingSection>;
   onSelect: (id: string) => void;
 }) {
   return (
@@ -532,7 +541,7 @@ function TimelineTab({
           <p className="text-[12px] mt-0.5">{event.summary}</p>
           {event.sectionId ? (
             <button type="button" className="text-[11px] underline" onClick={() => onSelect(event.sectionId!)}>
-              Open {event.sectionId}
+              Open {sections?.[event.sectionId]?.number ?? event.sectionId}
             </button>
           ) : null}
         </li>

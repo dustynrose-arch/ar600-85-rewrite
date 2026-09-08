@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
-import { flattenSections, sectionMap } from "@/lib/baseline";
+import { baselineDocument, sectionMap } from "@/lib/baseline";
+import { parentIndexFromDocument } from "@/lib/outline";
 import { readState } from "@/lib/store";
-import { buildSummaryOfChange } from "@/lib/summary-of-change";
+import { buildSummaryFromWorkspace } from "@/lib/summary-of-change";
 
 export const runtime = "nodejs";
 
 export function GET() {
-  const state = readState();
-  const summary = buildSummaryOfChange(sectionMap(), state.workingSections, flattenSections());
-  return NextResponse.json(summary);
+  return NextResponse.json(
+    buildSummaryFromWorkspace(readState(), sectionMap(), parentIndexFromDocument(baselineDocument)),
+  );
 }

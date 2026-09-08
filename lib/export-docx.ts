@@ -12,10 +12,11 @@ import {
   TextRun,
   WidthType,
 } from "docx";
-import { baselineDocument, flattenSections, sectionMap } from "./baseline";
+import { baselineDocument, sectionMap } from "./baseline";
+import { chapterDisplayLabel, flattenOutlineSections, parentIndexFromDocument, seedWorkingOutline } from "./outline";
 import {
   actionLabel,
-  buildSummaryOfChange,
+  buildSummaryFromWorkspace,
   originalCell,
   revisedCell,
   SUMMARY_EXPORT_TITLE,
@@ -99,7 +100,7 @@ function summaryCell(text: string, width: number, opts: { header?: boolean; draf
 }
 
 function summaryTable(state: WorkspaceState): DocChild[] {
-  const summary = buildSummaryOfChange(sectionMap(), state.workingSections, flattenSections());
+  const summary = buildSummaryFromWorkspace(state, sectionMap(), parentIndexFromDocument(baselineDocument));
   const widths = [1400, 1600, 3540, 3540];
   const children: DocChild[] = [
     new Paragraph({
@@ -121,7 +122,7 @@ function summaryTable(state: WorkspaceState): DocChild[] {
         bodyRun(
           summary.counts.total === 0
             ? "No wording differences between the original regulation (read-only) and your draft."
-            : `${summary.counts.total} change(s): ${summary.counts.revises} Revises, ${summary.counts.adds} Adds, ${summary.counts.rescinds} Rescinds.`,
+            : `${summary.counts.total} change(s): ${summary.counts.revises} Revises, ${summary.counts.adds} Adds, ${summary.counts.rescinds} Rescinds, ${summary.counts.moves} Moves.`,
         ),
       ],
     }),
@@ -159,7 +160,7 @@ function summaryTable(state: WorkspaceState): DocChild[] {
       spacing: { before: 240, after: 200 },
       children: [
         bodyRun(
-          "Moved paragraphs (same wording, new location) are not listed separately yet. They appear as Rescinds at the old cite and Adds at the new cite.",
+          "Structure and title changes (add, delete, move, rename) are listed as Adds, Rescinds, Moves, or Revises. Body keystrokes still produce wording rows only.",
           { italics: true, size: 20 },
         ),
       ],
@@ -234,15 +235,16 @@ export async function buildDraftDocx(state: WorkspaceState): Promise<Buffer> {
     }),
   ];
 
-  for (const chapter of baselineDocument.chapters) {
+  const outline = state.workingOutline?.length ? state.workingOutline : seedWorkingOutline(baselineDocument);
+  for (const chapter of outline) {
     children.push(
       new Paragraph({
         spacing: { before: 360, after: 160 },
-        children: [bodyRun(`${chapter.label}. ${chapter.title}`, { bold: true, size: 28 })],
+        children: [bodyRun(`${chapterDisplayLabel(chapter, outline)}. ${chapter.title}`, { bold: true, size: 28 })],
       }),
     );
-    for (const section of chapter.sections) {
-      const working = state.workingSections[section.id] ?? section;
+    for (const section of flattenOutlineSections([chapter], state.workingSections)) {
+      const working = section;
       children.push(
         new Paragraph({
           spacing: { before: 200, after: 80 },

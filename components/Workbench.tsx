@@ -26,12 +26,15 @@ import {
   type Section,
   type SergeantLaneState,
   type Snapshot,
+  type StructurePosition,
   type Task,
   type TimelineEvent,
   type UploadAudit,
   type WgReviewMark,
+  type WorkingOutlineChapter,
   type WorkingSection,
 } from "@/lib/types";
+import { firstSectionId, flattenOutlineSections, parentIndexFromDocument, parentIndexFromOutline } from "@/lib/outline";
 
 type PublicState = {
   role: Role;
@@ -48,6 +51,7 @@ type PublicState = {
   wgReviewMarks: WgReviewMark[];
   sergeant: SergeantLaneState[];
   workingSections: Record<string, WorkingSection>;
+  workingOutline: WorkingOutlineChapter[];
   baselineSections: Record<string, Section>;
 };
 
@@ -69,7 +73,9 @@ export function Workbench({
   initialState: PublicState;
 }) {
   const [state, setState] = useState(initialState);
-  const [selectedId, setSelectedId] = useState(baseline.chapters[0]?.sections[0]?.id ?? "1-1");
+  const [selectedId, setSelectedId] = useState(
+    initialState.workingOutline?.[0]?.sectionIds[0] ?? baseline.chapters[0]?.sections[0]?.id ?? "1-1",
+  );
   const [draft, setDraft] = useState(initialState.workingSections[selectedId]?.body ?? "");
   const [saveState, setSaveState] = useState<"saved" | "saving" | "dirty" | "blocked">("saved");
   const [query, setQuery] = useState("");
@@ -82,7 +88,9 @@ export function Workbench({
   const [rightCollapsed, setRightCollapsed] = useState(DEFAULT_PANE_STATE.rightCollapsed);
   const [panesReady, setPanesReady] = useState(false);
   const [summaryFilter, setSummaryFilter] = useState<ChangeAction | "all">("all");
-  const [lastSectionId, setLastSectionId] = useState(baseline.chapters[0]?.sections[0]?.id ?? "1-1");
+  const [lastSectionId, setLastSectionId] = useState(
+    initialState.workingOutline?.[0]?.sectionIds[0] ?? baseline.chapters[0]?.sections[0]?.id ?? "1-1",
+  );
   const saveTimer = useRef<number | null>(null);
   const viewingSummary = selectedId === SUMMARY_VIEW_ID;
   const editorSectionId = viewingSummary ? lastSectionId : selectedId;
@@ -99,15 +107,23 @@ export function Workbench({
     writePaneSession({ leftCollapsed, rightCollapsed });
   }, [panesReady, leftCollapsed, rightCollapsed]);
 
-  const working = state.workingSections[editorSectionId];
-  const baselineSection = state.baselineSections[editorSectionId] ?? working;
+  const outline = state.workingOutline ?? [];
+  const fallbackId = firstSectionId(outline) ?? editorSectionId;
+  const resolvedEditorId = state.workingSections[editorSectionId] ? editorSectionId : fallbackId;
+  const working = state.workingSections[resolvedEditorId];
+  const baselineSection = state.baselineSections[resolvedEditorId] ?? working;
 
   useEffect(() => {
     if (selectedId === SUMMARY_VIEW_ID) return;
+    if (!state.workingSections[selectedId]) {
+      const next = firstSectionId(state.workingOutline ?? []);
+      if (next && next !== selectedId) setSelectedId(next);
+      return;
+    }
     setLastSectionId(selectedId);
     setDraft(state.workingSections[selectedId]?.body ?? "");
     setSaveState(state.role === "editor" && !state.locked ? "saved" : "blocked");
-  }, [selectedId, state.workingSections, state.role, state.locked]);
+  }, [selectedId, state.workingSections, state.workingOutline, state.role, state.locked]);
 
   useEffect(() => {
     void fetch("/api/sergeant")
@@ -163,7 +179,7 @@ export function Workbench({
     setSaveState("dirty");
     if (saveTimer.current) window.clearTimeout(saveTimer.current);
     saveTimer.current = window.setTimeout(() => {
-      void persistDraft(editorSectionId, value, state.role, "autosave");
+      void persistDraft(resolvedEditorId, value, state.role, "autosave");
     }, 800);
   };
 
@@ -174,7 +190,7 @@ export function Workbench({
       return;
     }
     if (saveTimer.current) window.clearTimeout(saveTimer.current);
-    void persistDraft(editorSectionId, value, state.role, "manual");
+    void persistDraft(resolvedEditorId, value, state.role, "manual");
   };
 
   const changeRole = async (role: Role) => {
@@ -199,7 +215,8 @@ export function Workbench({
   const changedIds = useMemo(() => {
     const ids = new Set<string>();
     for (const [id, section] of Object.entries(state.workingSections)) {
-      if (section.body !== state.baselineSections[id]?.body) ids.add(id);
+      const original = state.baselineSections[id];
+      if (!original || section.body !== original.body || section.title !== original.title) ids.add(id);
     }
     return ids;
   }, [state.workingSections, state.baselineSections]);
@@ -207,14 +224,32 @@ export function Workbench({
   const markedIds = useMemo(() => new Set(state.wgReviewMarks.map((mark) => mark.sectionId)), [state.wgReviewMarks]);
 
   const outlineOrder = useMemo(
-    () => baseline.chapters.flatMap((chapter) => chapter.sections),
-    [baseline],
+    () => flattenOutlineSections(outline, state.workingSections),
+    [outline, state.workingSections],
   );
 
   const summary = useMemo(() => {
-    const overlayed = overlayDraftSection(state.workingSections, editorSectionId, draft);
-    return buildSummaryOfChange(state.baselineSections, overlayed, outlineOrder);
-  }, [state.workingSections, state.baselineSections, editorSectionId, draft, outlineOrder]);
+    const overlayed = overlayDraftSection(state.workingSections, resolvedEditorId, draft);
+    return buildSummaryOfChange(state.baselineSections, overlayed, outlineOrder, {
+      original: parentIndexFromDocument(baseline),
+      draft: parentIndexFromOutline(outline),
+    });
+  }, [state.workingSections, state.baselineSections, resolvedEditorId, draft, outlineOrder, baseline, outline]);
+
+  const structureRequest = useCallback(
+    async (payload: Record<string, unknown>) => {
+      const res = await fetch("/api/structure", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...payload, role: state.role }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Structure edit failed");
+      applyState(data);
+      return data as PublicState;
+    },
+    [state.role],
+  );
 
   if (!working) return null;
 
@@ -223,7 +258,7 @@ export function Workbench({
       <IdleGuard
         role={state.role}
         locked={state.locked}
-        sectionId={editorSectionId}
+        sectionId={resolvedEditorId}
         draftBody={draft}
         onLocked={async () => {
           const res = await fetch("/api/state");
@@ -287,9 +322,10 @@ export function Workbench({
         {leftCollapsed ? (
           <CollapsedRail side="left" label="Show outline" onExpand={() => setLeftCollapsed(false)} />
         ) : (
-          <div className="w-[280px] max-w-[42%] shrink-0 min-w-0 min-h-0 flex flex-col">
+          <div className="w-[320px] max-w-[42%] shrink-0 min-w-0 min-h-0 flex flex-col">
             <OutlinePane
-              baseline={baseline}
+              outline={outline}
+              sections={state.workingSections}
               selectedId={selectedId}
               onSelect={setSelectedId}
               query={query}
@@ -300,6 +336,22 @@ export function Workbench({
               markedIds={markedIds}
               changeCount={summary.counts.total}
               onCollapse={() => setLeftCollapsed(true)}
+              role={state.role}
+              locked={state.locked}
+              onAdd={async (targetId, position: StructurePosition, title) => {
+                const before = new Set(Object.keys(state.workingSections));
+                const next = await structureRequest({ action: "add", targetId, position, title });
+                return Object.keys(next.workingSections).find((id) => !before.has(id));
+              }}
+              onDelete={async (nodeId) => {
+                await structureRequest({ action: "delete", nodeId });
+              }}
+              onRename={async (nodeId, title) => {
+                await structureRequest({ action: "rename", nodeId, title });
+              }}
+              onMove={async (nodeId, parentId, index) => {
+                await structureRequest({ action: "move", nodeId, parentId, index });
+              }}
             />
           </div>
         )}
@@ -334,8 +386,9 @@ export function Workbench({
             <AssistPane
               role={state.role}
               locked={state.locked}
-              sectionId={editorSectionId}
+              sectionId={resolvedEditorId}
               working={working}
+              sections={state.workingSections}
               summary={summary}
               onOpenSummary={() => setSelectedId(SUMMARY_VIEW_ID)}
               tasks={state.tasks}
@@ -350,7 +403,7 @@ export function Workbench({
             const res = await fetch("/api/tasks", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ action: "create", title, notes, sectionId: editorSectionId, role: state.role }),
+                  body: JSON.stringify({ action: "create", title, notes, sectionId: resolvedEditorId, role: state.role }),
             });
             applyState(await res.json());
           }}
