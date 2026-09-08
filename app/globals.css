@@ -37,12 +37,6 @@ textarea:focus-visible {
   outline-offset: 2px;
 }
 
-.draft-banner {
-  background: var(--g1-draft-bg);
-  color: var(--g1-draft-text);
-  box-shadow: inset 4px 0 0 var(--g1-brass);
-}
-
 .lock-banner {
   background: var(--g1-lock-bg);
   color: var(--g1-lock-text);

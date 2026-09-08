@@ -24,8 +24,7 @@ export function UserGuide() {
           workspace remembers those choices until you close the browser tab.
         </li>
         <li>
-          G–1 seal in the header, with a thin gold <strong>DRAFT / WORKING COPY</strong> line. Word exports
-          stay stamped DRAFT.
+          G–1 seal in the header. Word exports stay stamped DRAFT; the workspace has no DRAFT banner or chip.
         </li>
         <li>
           Original regulation (read-only): AR 600–85 (4 Oct 2024, admin revs 27 Feb 2025 / 19 Feb 2026).

@@ -6,23 +6,20 @@ function readRepoFile(relativePath: string): string {
   return readFileSync(new URL(`../${relativePath}`, import.meta.url), "utf8");
 }
 
-test("thin gold DRAFT / WORKING COPY line stays in the header; exports stay stamped", () => {
+test("G-1 seal stays; no on-screen DRAFT chrome; exports stay stamped", () => {
   const css = readRepoFile("app/globals.css");
-  const banner = readRepoFile("components/DraftBanner.tsx");
   const workbench = readRepoFile("components/Workbench.tsx");
   const guide = readRepoFile("app/guide/page.tsx");
   const exportDocx = readRepoFile("lib/export-docx.ts");
 
+  assert.match(workbench, /src="\/g1-seal\.png"/);
+  assert.match(guide, /src="\/g1-seal\.png"/);
   assert.equal(css.includes("repeating-linear-gradient"), false);
-  assert.match(css, /--g1-draft-bg:\s*#f3e6c4/);
-  assert.match(css, /--g1-draft-text:\s*#5c4a18/);
-  assert.match(css, /\.draft-banner \{[\s\S]*var\(--g1-brass\)/);
-  assert.match(banner, /DRAFT \/ WORKING COPY/);
-  assert.match(banner, /draft-banner/);
-  assert.match(banner, /py-1/);
-  assert.match(workbench, /DraftBanner/);
-  assert.match(guide, /DraftBanner/);
-  assert.match(workbench, /<header className="shrink-0">[\s\S]*<DraftBanner \/>\s*<\/header>/);
+  assert.equal(css.includes(".draft-banner"), false);
+  assert.equal(workbench.includes("DraftBanner"), false);
+  assert.equal(guide.includes("DraftBanner"), false);
+  assert.equal(workbench.includes("DRAFT / WORKING COPY"), false);
+  assert.equal(guide.includes("DRAFT / WORKING COPY"), false);
 
   assert.match(exportDocx, /DRAFT \/ WORKING COPY/);
   assert.match(exportDocx, /draftRun\("DRAFT"/);
