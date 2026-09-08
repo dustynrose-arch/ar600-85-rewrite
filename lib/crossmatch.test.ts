@@ -76,6 +76,13 @@ test("Match when upload correctly says See AR for a sister publication", () => {
   assert.equal(row!.verdict, "match");
 });
 
+test("Match when upload uses official refer-to sister cite wording", () => {
+  const rows = run("At para 10–6, for flagging refer to AR 600–8–2. Do not paste flag codes into this regulation.");
+  const row = rows.find((item) => item.locationCite === "para 10–6");
+  assert.ok(row);
+  assert.equal(row!.verdict, "match");
+});
+
 test("Miss when upload requires a rule not in the draft at that para", () => {
   const rows = run(
     "Per para 4–5a(1), commanders will confiscate privately owned vehicles after any positive result.",
@@ -127,12 +134,14 @@ test("Miss when training/PAR uses unlocked ASAP terms from the locked list", () 
     ["Use a fitness test when the commander wants a test.", "competence for duty"],
     ["Probable cause is the same as competence for duty and IR.", "probable cause"],
     ["Illicit use means prescription misuse.", "illicit use"],
+    ["The Soldier used illegal drugs last month.", "illicit use"],
+    ["Drug abuse will result in separation.", "illicit use"],
     ["Send the Soldier to ASAP counseling or a treatment center.", "SUDCC"],
     ["ADAPT is the SUDCC rehab course.", "ADAPT"],
     ["Put the Soldier in EAP instead of the TDP roster.", "EAP"],
     ["Self-referral grants immunity and cannot be used for any disciplinary action.", "Limited Use"],
     ["Command referral is the same as self-referral.", "command referral"],
-    ["The UPL collects specimens and advises the commander.", "UPL"],
+    ["The UPL is the ADCO and will counsel Soldiers.", "UPL / ADCO / DTC"],
     ["Rehab failure processing is done entirely inside this regulation.", "635-200"],
   ];
   for (const [text, expect] of samples) {
@@ -142,6 +151,38 @@ test("Miss when training/PAR uses unlocked ASAP terms from the locked list", () 
     const rows = run(text);
     assert.equal(rows[0]?.verdict, "miss", text);
   }
+});
+
+test("does not Miss a correct UPL mention; Misses only UPL/ADCO/DTC role swaps", () => {
+  const correct = findTermFlags("The UPL collects specimens and advises the commander.");
+  assert.equal(correct.length, 0);
+
+  const swap = findTermFlags("The UPL is the ADCO and will counsel Soldiers.");
+  assert.ok(swap.some((hit) => hit.id === "upl-role"));
+  const reason = swap.find((hit) => hit.id === "upl-role")!.reason;
+  assert.match(reason, /UPL \/ ADCO \/ DTC/);
+  assert.doesNotMatch(reason, /UDL/);
+
+  const rows = run("The UPL collects specimens and advises the commander.");
+  assert.notEqual(rows[0]?.verdict, "miss");
+});
+
+test("prefers illicit use over aliases unless illicit use already frames the sentence", () => {
+  const rx = findTermFlags("Illicit use means prescription misuse.");
+  assert.ok(rx.some((hit) => hit.id === "illicit-vs-rx"));
+  assert.equal(rx.some((hit) => hit.id === "illicit-alias"), false);
+
+  const framed = findTermFlags("Commanders will deter illicit use of controlled substances.");
+  assert.equal(
+    framed.some((hit) => hit.id === "illicit-alias"),
+    false,
+  );
+
+  const aliasFramed = findTermFlags("Deter illicit use; illegal drugs and drug abuse remain prohibited.");
+  assert.equal(
+    aliasFramed.some((hit) => hit.id === "illicit-alias"),
+    false,
+  );
 });
 
 test("Unclear when a cite exists but the wording does not confirm match or miss", () => {

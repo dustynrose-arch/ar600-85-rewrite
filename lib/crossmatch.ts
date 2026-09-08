@@ -132,7 +132,10 @@ function looksLikeSisterCopy(text: string): boolean {
 }
 
 function hasCorrectSisterCite(text: string): boolean {
-  return /\bsee\s+AR\s*600[\-–]8[\-–]2\b/i.test(text) || /\bsee\s+AR\s*635[\-–]200\b/i.test(text);
+  return (
+    /\b(?:see|refer to)\s+AR\s*600[\-–]8[\-–]2\b/i.test(text) ||
+    /\b(?:see|refer to)\s+AR\s*635[\-–]200\b/i.test(text)
+  );
 }
 
 function sisterTopic(text: string): boolean {
@@ -176,6 +179,12 @@ export function findTermFlags(text: string): TermHit[] {
   if (/\billicit use\b/i.test(text) && /\bprescription\b/i.test(text) && /\b(same|includes?|means|is)\b/i.test(text)) {
     add("illicit-vs-rx", "Keep illicit use distinct from prescription misuse.");
   }
+  if (/\b(illegal drugs|drug abuse)\b/i.test(text) && !/\billicit use\b/i.test(text)) {
+    add(
+      "illicit-alias",
+      "Prefer illicit use over aliases “illegal drugs” or “drug abuse” when meaning controlled-substance use.",
+    );
+  }
   if (
     (/\basap counseling\b/i.test(text) ||
       /\btreatment center\b/i.test(text) ||
@@ -213,8 +222,13 @@ export function findTermFlags(text: string): TermHit[] {
   ) {
     add("referral-blend", "Keep command referral and self-referral distinct.");
   }
-  if (/\bUPL\b/.test(text)) {
-    add("upl-role", "UPL is the former title. Do not swap UPL / ADCO / DTC roles — use UDL, ADCO, and DTC as locked.");
+  if (
+    /\bUPL\b/.test(text) &&
+    ((/\b(?:ADCO|DTC)\b/.test(text) &&
+      /\b(same as|also called|treated as|is an?|is the|swap|instead of)\b/i.test(text)) ||
+      /\b(prevention education|counsel Soldiers|alcohol and drug control)\b/i.test(text))
+  ) {
+    add("upl-role", "Do not swap UPL / ADCO / DTC roles — keep UPL, ADCO, and DTC as locked.");
   }
   if (/\bADCO\b/.test(text) && /\b(collect|specimen|bottle|observer|dd form 2624)\b/i.test(text)) {
     add("adco-dtc", "Do not give ADCO the DTC collection role.");
