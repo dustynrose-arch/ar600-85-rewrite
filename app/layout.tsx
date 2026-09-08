@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AR 600-85 Rewrite — Working Copy",
-  description: "Internal G-1 rewrite working group use only",
+  title: "AR 600-85 Revision",
+  description: "Directorate of Prevention, Resilience and Readiness",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

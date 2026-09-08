@@ -4,6 +4,19 @@
 
 :root {
   color-scheme: light;
+  --g1-header: #1f2f24;
+  --g1-header-deep: #243628;
+  --g1-page: #f7f4ec;
+  --g1-ink: #1a1f1c;
+  --g1-cream: #f6f1e3;
+  --g1-brass: #c9a227;
+  --g1-brass-deep: #b8943a;
+  --g1-draft-bg: #f3e6c4;
+  --g1-draft-text: #5c4a18;
+  --g1-lock-bg: #f0e2dc;
+  --g1-lock-text: #5a3228;
+  --g1-success: #3d4a2e;
+  --g1-pane-border: rgba(26, 31, 28, 0.08);
 }
 
 html,
@@ -15,19 +28,24 @@ body {
   @apply bg-army-cream text-army-ink font-ui antialiased;
 }
 
-.draft-banner {
-  background: repeating-linear-gradient(
-    -45deg,
-    #c5a14a,
-    #c5a14a 14px,
-    #161410 14px,
-    #161410 28px
-  );
+button:focus-visible,
+a:focus-visible,
+select:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--g1-brass);
+  outline-offset: 2px;
+}
+
+.lock-banner {
+  background: var(--g1-lock-bg);
+  color: var(--g1-lock-text);
+  box-shadow: inset 4px 0 0 var(--g1-lock-text);
 }
 
 .pane-scroll {
   scrollbar-width: thin;
-  scrollbar-color: #c5a14a transparent;
+  scrollbar-color: var(--g1-brass-deep) transparent;
 }
 
 .pane-scroll::-webkit-scrollbar {
@@ -35,8 +53,77 @@ body {
 }
 
 .pane-scroll::-webkit-scrollbar-thumb {
-  background: #c5a14a;
-  border-radius: 999px;
+  background: var(--g1-brass-deep);
+  border-radius: 8px;
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-1 rounded-lg min-h-9 px-3 py-2 text-[13px] font-semibold leading-none transition-colors disabled:opacity-40;
+  }
+
+  .btn-primary {
+    @apply btn rounded-xl bg-army-gold text-army-ink;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  }
+
+  .btn-primary:hover {
+    background: var(--g1-brass-deep);
+    color: var(--g1-cream);
+  }
+
+  .btn-secondary {
+    @apply btn border border-army-black/20 bg-white text-army-ink hover:bg-army-gold/15;
+  }
+
+  .btn-ghost {
+    @apply btn border border-army-cream/25 bg-transparent text-army-cream/90 hover:bg-white/10 hover:text-army-cream;
+  }
+
+  .btn-danger {
+    @apply btn border border-army-rust/35 bg-white text-army-rust hover:bg-army-rust/10;
+  }
+
+  .btn-sm {
+    @apply min-h-8 px-2.5 py-1 text-[11px];
+  }
+
+  .btn-header {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg min-h-8 px-2.5 py-1 text-[11px] font-semibold leading-none bg-army-gold text-army-ink border border-transparent;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  }
+
+  .btn-header:hover {
+    background: var(--g1-brass-deep);
+    color: var(--g1-cream);
+  }
+
+  .btn-header select {
+    appearance: none;
+    background: transparent;
+    color: inherit;
+    border: 0;
+    font: inherit;
+    padding: 0;
+    min-height: 0;
+    max-width: 9.5rem;
+    box-shadow: none;
+  }
+
+  .field {
+    @apply rounded-lg border border-army-black/20 bg-army-paper px-2.5 py-1.5 text-sm text-army-ink min-h-8;
+  }
+
+  .pane-title {
+    @apply text-[10px] font-bold tracking-[0.16em] uppercase text-army-goldDark;
+  }
+
+  .assist-chip {
+    @apply inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px];
+    background: color-mix(in srgb, var(--g1-cream) 70%, var(--g1-header) 6%);
+    color: var(--g1-ink);
+    border: 1px solid var(--g1-pane-border);
+  }
 }
 
 #draft-editor::spelling-error {
@@ -45,4 +132,44 @@ body {
 
 #draft-editor::grammar-error {
   text-decoration: wavy underline #8d7328;
+}
+
+mark.search-hit {
+  background: #f3e6c4;
+  color: inherit;
+  padding: 0 0.12em;
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px #b8943a;
+}
+
+.search-highlight-wrap {
+  display: grid;
+  grid-template: 1fr / 1fr;
+}
+
+.search-highlight-wrap > .search-highlight-backdrop,
+.search-highlight-wrap > textarea {
+  grid-area: 1 / 1;
+}
+
+.search-highlight-backdrop {
+  overflow: auto;
+  pointer-events: none;
+  scrollbar-width: none;
+}
+
+.search-highlight-backdrop::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+#draft-editor.search-highlighting {
+  color: transparent;
+  caret-color: #1c1a14;
+  background-color: transparent;
+}
+
+#draft-editor.search-highlighting::selection {
+  color: #1c1a14;
+  background: rgba(197, 161, 74, 0.45);
 }

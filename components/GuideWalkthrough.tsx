@@ -18,7 +18,7 @@ function GuideCallout({
 }) {
   return (
     <aside className="mt-4 border-l-4 border-army-gold bg-white px-3 py-2 font-ui text-sm text-army-ink">
-      <p className="text-[10px] font-bold tracking-[0.16em] text-army-goldDark">{kind.toUpperCase()}</p>
+      <p className="pane-title">{kind.toUpperCase()}</p>
       <p className="mt-0.5 font-semibold">{title}</p>
       <div className="mt-1 text-army-slate leading-relaxed">{children}</div>
     </aside>
@@ -60,7 +60,7 @@ export function GuideWalkthrough() {
       </p>
       <p className="mt-3">
         Everything you write here is a <strong>draft</strong>. It is not Army policy until officially
-        published. The gold banner at the top marks it that way.
+        published. Word exports stay marked DRAFT. The header has no DRAFT chip.
       </p>
 
       <nav className="mt-4" aria-label="First session walkthrough anchors">
@@ -75,9 +75,9 @@ export function GuideWalkthrough() {
                     event.preventDefault();
                     openAnchor(anchor.id);
                   }}
-                  className={`inline-flex border px-2.5 py-1.5 text-left text-[12px] font-semibold no-underline ${
+                  className={`inline-flex rounded-lg border px-2.5 py-1.5 text-left text-[12px] font-semibold no-underline ${
                     selected
-                      ? "border-army-gold bg-army-gold text-army-black"
+                      ? "border-army-gold bg-army-gold text-army-ink"
                       : "border-army-black/15 bg-white text-army-ink hover:border-army-gold/60"
                   }`}
                 >
@@ -116,13 +116,13 @@ export function GuideWalkthrough() {
             <td className={tdClass}>
               <strong>Right</strong>
             </td>
-            <td className={tdClass}>Assist — helpful reminders, glossary, Process map, and authority cites</td>
+            <td className={tdClass}>Assistant — helpful reminders, glossary, Process map, and authority cites</td>
           </tr>
           <tr>
             <td className={tdClass}>
               <strong>Top</strong>
             </td>
-            <td className={tdClass}>Save status, your role, Guide, Word export, G–1 seal, DRAFT banner</td>
+            <td className={tdClass}>Save status, your role, Guide, Word export, G–1 seal</td>
           </tr>
         </tbody>
       </table>
@@ -140,7 +140,8 @@ export function GuideWalkthrough() {
           </li>
           <li>
             Want to hunt by words? Use the outline search. Search looks at the original regulation
-            (read-only), then jumps you there.
+            (read-only), then jumps you there and highlights the word in the open section. Use × to
+            clear the search.
           </li>
         </ol>
         <p className="mt-3 font-semibold">Tips</p>
@@ -150,11 +151,12 @@ export function GuideWalkthrough() {
           </li>
           <li>
             Editors can reshape the working-copy outline from the left pane: <strong>Add before</strong>,{" "}
-            <strong>Add after</strong>, <strong>Add child</strong> under the chapter, <strong>Split</strong>{" "}
+            <strong>Add after</strong>, <strong>Split</strong>{" "}
             (empty paragraph after this one), <strong>Rename</strong>, <strong>Delete</strong> (you will be
             asked to confirm), or drag <strong>::</strong> to reorder — including into another chapter.
-            Right-click a paragraph for the same actions. Display numbers update automatically (1–1, 1–2… or
-            A–1). Assist chips and the Process-step highlight stay on that paragraph’s stable id, not the
+            Right-click a paragraph for the same actions. Nested subparagraphs (4–2a, 4–2a(1)) stay in the
+            paragraph text box. Display numbers update automatically (1–1, 1–2… or A–1). Assist chips and the
+            Process-step highlight stay on that paragraph’s stable id, not the
             display number. Split leaves those reminders on the source until you move text; delete drops them
             with the paragraph. The original regulation stays frozen.
           </li>
@@ -163,8 +165,8 @@ export function GuideWalkthrough() {
           </li>
           <li>
             Need more room to write? Click <strong>Hide outline</strong> on the left pane or{" "}
-            <strong>Hide Assist</strong> on the right pane. The center pane has no hide buttons. Bring a side
-            back with <strong>Show outline</strong> / <strong>Show Assist</strong> or the thin strip on that
+            <strong>Hide Assistant</strong> on the right pane. The center pane has no hide buttons. Bring a side
+            back with <strong>Show outline</strong> / <strong>Show Assistant</strong> or the thin strip on that
             side.
           </li>
         </ul>
@@ -190,7 +192,7 @@ export function GuideWalkthrough() {
             text for reference only.
           </li>
         </ol>
-        <p className="mt-3">You’re always drafting. The gold banner at the top is there on purpose.</p>
+        <p className="mt-3">You’re always drafting. Word exports stay marked DRAFT on purpose.</p>
         <GuideCallout kind="Doctrine tip" title="Original regulation vs your draft">
           The left outline and search show the original regulation (read-only). Only edit your draft in the
           center.
@@ -200,7 +202,7 @@ export function GuideWalkthrough() {
       <hr className="mt-8 border-army-black/15" />
 
       <article id="assist" className="scroll-mt-4 mt-8">
-        <h3 className="text-lg font-bold">Step 3 — Use Assist reminders on the right</h3>
+        <h3 className="text-lg font-bold">Step 3 — Use Assistant reminders on the right</h3>
         <p className="mt-2">
           The right-hand panel is a writing helper for this regulation. It watches the paragraph you have open
           and lists reminders when the wording needs a glossary check, Limited Use Policy (self-referral) or a
@@ -211,7 +213,7 @@ export function GuideWalkthrough() {
         <ol className="list-decimal pl-6 space-y-2 mt-2">
           <li>Open a paragraph in the center.</li>
           <li>
-            Open the <strong>Assist</strong> tab on the <strong>right</strong>.
+            Open the <strong>Assistant</strong> tab on the <strong>right</strong>.
           </li>
           <li>
             If Assist finds matching wording, those terms show up as <strong>underlined reminders</strong>:
@@ -310,7 +312,7 @@ export function GuideWalkthrough() {
             a Word file. Both stay clearly marked <strong>DRAFT</strong> for internal use only.
           </li>
           <li>
-            Use Assist <strong>Upload</strong> to drop a <strong>.docx</strong>, <strong>.pdf</strong>, or{" "}
+            Use Assistant <strong>Upload</strong> to drop a <strong>.docx</strong>, <strong>.pdf</strong>, or{" "}
             <strong>.pptx</strong> (25 MB). You get Match / Miss / Unclear suggestion rows against your draft.
             The rows never rewrite your draft or the original regulation.
           </li>

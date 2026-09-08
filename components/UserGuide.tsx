@@ -4,7 +4,7 @@ import { GuideWalkthrough } from "@/components/GuideWalkthrough";
 export function UserGuide() {
   return (
     <article className="prose prose-slate max-w-none font-doc text-army-ink">
-      <p className="mt-4 text-xs font-ui font-bold tracking-[0.2em] text-army-goldDark">USER GUIDE</p>
+      <p className="pane-title mt-4">USER GUIDE</p>
       <h1 className="text-3xl font-bold mt-1">AR 600–85 Rewrite — User Guide</h1>
       <p className="text-army-slate">
         Internal G–1 rewrite working group use only. This application never changes the original
@@ -16,14 +16,18 @@ export function UserGuide() {
 
       <h2 className="text-xl font-bold mt-10">Workspace</h2>
       <ul className="list-disc pl-6 space-y-1">
-        <li>Three panes: outline on the left, your draft in the center, and Assist on the right.</li>
+        <li>Three panes: outline on the left, your draft in the center, and Assistant on the right.</li>
         <li>
-          Use <strong>Hide outline</strong> on the left pane and <strong>Hide Assist</strong> on the right pane
-          to widen the center editor. Use <strong>Show outline</strong> or <strong>Show Assist</strong> — or
+          Use <strong>Hide outline</strong> on the left pane and <strong>Hide Assistant</strong> on the right pane
+          to widen the center editor. Use <strong>Show outline</strong> or <strong>Show Assistant</strong> — or
           the thin side strips — to bring a pane back. The center editor does not have hide buttons. The
           workspace remembers those choices until you close the browser tab.
         </li>
-        <li>The gold-and-black DRAFT banner stays on, next to the G–1 seal.</li>
+        <li>
+          G–1 seal on the left of the header; Army emblem slot on the right (official Army file not in the
+          repo yet). Title is <strong>AR 600-85 Revision</strong>. Word exports stay stamped DRAFT; the
+          header has no DRAFT chip.
+        </li>
         <li>
           Original regulation (read-only): AR 600–85 (4 Oct 2024, admin revs 27 Feb 2025 / 19 Feb 2026).
         </li>
@@ -32,11 +36,15 @@ export function UserGuide() {
           (that writes a “Manual save” line in the activity list). Editors can Undo in your draft (button or
           Ctrl+Z / ⌘Z). The original regulation pane does not undo and is not spellchecked.
         </li>
-        <li>Search looks only at the original regulation (read-only).</li>
         <li>
-          Editors reshape the <strong>working-copy</strong> outline from the left pane: Add before / after /
-          child, Split, Delete (confirm), Rename, and drag to reorder. Display numbers renumber inside the parent
-          (chapter→para). Assist chips and the Process-step highlight stay on each paragraph’s stable id — never
+          Search looks only at the original regulation (read-only). Click a result to highlight matches in
+          the open section; × clears the query, results, and highlights.
+        </li>
+        <li>
+          Editors reshape the <strong>working-copy</strong> outline from the left pane: Add before / after,
+          Split, Delete (confirm), Rename, and drag to reorder. Display numbers renumber inside the parent
+          (chapter→para). Nested subparagraphs (4–2a, 4–2a(1)) stay in the paragraph text box. Assist chips
+          and the Process-step highlight stay on each paragraph’s stable id — never
           the display number, and never the original regulation. Reviewers and Approvers cannot change
           structure.
         </li>
@@ -60,16 +68,16 @@ export function UserGuide() {
         </li>
       </ul>
 
-      <h2 className="text-xl font-bold mt-8">Assist — the right-hand writing helper</h2>
+      <h2 className="text-xl font-bold mt-8">Assistant — the right-hand writing helper</h2>
       <p>
-        Assist watches the paragraph you have open in the center. It is a reminder list for G–1 editors, not an
+        Assistant watches the paragraph you have open in the center. It is a reminder list for G–1 editors, not an
         automatic rewrite tool. When the current wording touches a locked glossary term, Limited Use Policy
-        (self-referral), another legal / adverse-action hint, or a topic another publication already covers, Assist
+        (self-referral), another legal / adverse-action hint, or a topic another publication already covers, Assistant
         lists those reminders on the right.
       </p>
       <h3 className="text-lg font-semibold mt-4">How underlined wording appears</h3>
       <p>
-        Open a paragraph. If Assist finds matching wording, those terms and topics show up on the Assist tab as
+        Open a paragraph. If Assistant finds matching wording, those terms and topics show up on the Assistant tab as
         underlined reminders (locked glossary terms, Limited Use Policy or legal / adverse-action hints, or overlap
         with another publication). They are suggestions only. Your draft does not change until you choose an action.
       </p>
@@ -91,7 +99,7 @@ export function UserGuide() {
       <h3 className="text-lg font-semibold mt-4">When to use Glossary, Process, and authority references</h3>
       <ul className="list-disc pl-6 space-y-1">
         <li>
-          <strong>Glossary reminders (Assist tab)</strong> — when you use a defined term such as ASAP, ADAPT,
+          <strong>Glossary reminders (Assistant tab)</strong> — when you use a defined term such as ASAP, ADAPT,
           Limited Use Policy, SUDCC, UDL, MRO, or DAMIS. Keep one official meaning and point readers to the
           glossary or the controlling paragraph. Do not invent a second definition in a commander’s guide.
         </li>
@@ -133,7 +141,7 @@ export function UserGuide() {
 
       <h2 className="text-xl font-bold mt-8">Doctrine tip — overlap checks</h2>
       <p>
-        Assist runs 22 overlap checks across your draft. For each topic, choose <em>Keep wording</em> or{" "}
+        Assistant runs 22 overlap checks across your draft. For each topic, choose <em>Keep wording</em> or{" "}
         <em>Insert See cite</em>. Inserting a See cite appends the topic’s citation to the current paragraph and
         records the decision.
       </p>
@@ -141,16 +149,15 @@ export function UserGuide() {
       <h2 className="text-xl font-bold mt-8">Working-copy outline (Editors)</h2>
       <p>
         Use the left outline to reshape <em>your draft</em> only. Every add, split, delete, move, or rename is
-        written to the activity list with who, when, the stable paragraph id, and the action. Assist reminders,
+        written to the activity list with who, when, the stable paragraph id, and the action. Assistant reminders,
         tasks, and checkpoints stay attached to that id even after the display number changes. They never
         rebind against the original regulation.
       </p>
       <ul className="list-disc pl-6 space-y-1">
         <li>
-          <strong>Add before / after</strong> — insert a titled paragraph next to the selection.
-        </li>
-        <li>
-          <strong>Add child</strong> — insert under the chapter (last child), or from a chapter heading.
+          <strong>Add before / after</strong> — insert a titled paragraph next to the selection. The outline
+          stays chapter → numbered paragraph; nested markers such as 4–2a or 4–2a(1) belong in the paragraph
+          text box.
         </li>
         <li>
           <strong>Rename</strong> — change the working-copy title. Summary of Change flags it as Revises.
@@ -178,7 +185,7 @@ export function UserGuide() {
       <h2 className="text-xl font-bold mt-8">Export and upload</h2>
       <p>
         Word export is always DRAFT-stamped in the header, footer, and title-page disclaimer (AR 25–30 / DA Pam
-        25–40). Open <strong>Summary of Change</strong> in the outline (or the Assist <strong>Summary</strong>{" "}
+        25–40). Open <strong>Summary of Change</strong> in the outline (or the Assistant <strong>Summary</strong>{" "}
         tab) for an APD-style list of only the paragraphs that differ between the original regulation
         (read-only) and your draft. Export Summary stays marked{" "}
         <em>Summary of Change (DRAFT — working copy; not authenticated under AR 25-30 / DA Pam 25-40)</em>. There is no

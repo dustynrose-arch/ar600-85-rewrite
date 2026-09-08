@@ -25,3 +25,11 @@ export function searchBaseline(query: string, limit = 40): SearchHit[] {
   }
   return hits;
 }
+
+export {
+  findQueryMatches,
+  firstMatchIndex,
+  normalizedSearchQuery,
+  splitQueryHighlights,
+} from "./search-highlight";
+export type { HighlightSegment, TextMatch } from "./search-highlight";

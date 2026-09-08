@@ -28,7 +28,7 @@ export function CrossmatchRows({ rows, onSelect }: Props) {
       {rows.map((row) => (
         <li key={row.id} className="border border-army-black/10 bg-white p-2 text-[11px]">
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className={`px-1.5 py-0.5 font-bold ${VERDICT_STYLE[row.verdict]}`}>
+            <span className={`rounded-lg px-1.5 py-0.5 font-bold ${VERDICT_STYLE[row.verdict]}`}>
               {VERDICT_LABEL[row.verdict]}
             </span>
             <span className="font-semibold">{row.locationCite}</span>
@@ -50,7 +50,7 @@ export function CrossmatchRows({ rows, onSelect }: Props) {
           ) : null}
           <p className="mt-1">{row.reason}</p>
           {row.sectionId ? (
-            <button type="button" className="underline mt-1" onClick={() => onSelect(row.sectionId!)}>
+            <button type="button" className="btn-secondary btn-sm mt-1" onClick={() => onSelect(row.sectionId!)}>
               Open in your draft
             </button>
           ) : null}

@@ -1,12 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { DraftBanner } from "@/components/DraftBanner";
 import { OutlinePane } from "@/components/OutlinePane";
 import { EditorPane } from "@/components/EditorPane";
 import { AssistPane } from "@/components/AssistPane";
 import { SummaryOfChangePane } from "@/components/SummaryOfChangePane";
 import { IdleGuard } from "@/components/IdleGuard";
+import { ArmyMark, G1Mark, HeaderGlyph, ICON_EXPORT, ICON_GUIDE, ICON_ROLE, ICON_SUMMARY } from "@/components/HeaderMarks";
 import { CollapsedRail } from "@/components/PaneToggle";
 import { DEFAULT_PANE_STATE, readPaneSession, writePaneSession } from "@/lib/panes";
 import {
@@ -17,7 +17,6 @@ import {
 } from "@/lib/summary-of-change";
 import { canUnlock, ROLE_LABEL } from "@/lib/roles";
 import {
-  BASELINE_LABEL,
   type BaselineDocument,
   type DiffHunk,
   type Role,
@@ -271,24 +270,19 @@ export function Workbench({
           applyState(await res.json());
         }}
       />
-      <header className="shrink-0 bg-army-black text-army-cream px-4 py-2 flex items-center gap-4">
-        <img
-          src="/g1-seal.png"
-          alt="Office of the Deputy Chief of Staff, G-1, United States Army seal"
-          className="h-12 w-12 shrink-0 rounded-full object-cover"
-        />
+      <header className="shrink-0 bg-army-header text-army-wash px-4 py-2.5 flex items-center gap-4">
+        <G1Mark />
         <div className="min-w-0 flex-1">
-          <h1 className="text-lg font-semibold leading-tight">AR 600-85 Rewrite — Working Copy</h1>
-          <p className="text-xs text-army-gold">Internal G-1 rewrite working group use only</p>
-          <p className="text-[11px] text-army-cream/80">Original regulation (read-only): {BASELINE_LABEL}</p>
+          <h1 className="text-lg font-semibold leading-tight">AR 600-85 Revision</h1>
+          <p className="text-xs text-army-gold">Directorate of Prevention, Resilience and Readiness</p>
         </div>
         <div className="flex items-center gap-2 text-xs">
-          <label className="flex items-center gap-1">
-            Role
+          <label className="btn-header">
+            <HeaderGlyph d={ICON_ROLE} />
+            <span>Role</span>
             <select
               value={state.role}
               onChange={(event) => void changeRole(event.target.value as Role)}
-              className="bg-army-ink text-army-cream border border-army-gold/40 px-1 py-0.5"
             >
               {(Object.keys(ROLE_LABEL) as Role[]).map((role) => (
                 <option key={role} value={role}>
@@ -297,30 +291,46 @@ export function Workbench({
               ))}
             </select>
           </label>
-          <a href="/api/export" className="bg-army-gold text-army-black px-2 py-1 font-semibold">
+          <a href="/api/export" className="btn-header">
+            <HeaderGlyph d={ICON_EXPORT} />
             Export Word (DRAFT)
           </a>
-          <a href="/api/export?kind=summary" className="border border-army-gold px-2 py-1">
+          <a href="/api/export?kind=summary" className="btn-header">
+            <HeaderGlyph d={ICON_SUMMARY} />
             Export Summary (DRAFT)
           </a>
-          <a href="/guide" className="border border-army-gold/50 px-2 py-1">
+          <a href="/guide" className="btn-header">
+            <HeaderGlyph d={ICON_GUIDE} />
             User Guide
           </a>
         </div>
+        <ArmyMark />
       </header>
-      <DraftBanner />
       {state.locked ? (
-        <div className="shrink-0 bg-army-rust text-white text-xs px-4 py-1.5 flex items-center justify-between">
-          <span>LOCKED{state.lockReason ? ` — ${state.lockReason}` : ""}. Your draft was saved. The original regulation is unchanged.</span>
+        <div className="lock-banner shrink-0 text-xs px-4 py-2 flex items-center justify-between gap-3">
+          <p className="flex items-center gap-2 min-w-0">
+            <svg className="h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path
+                fillRule="evenodd"
+                d="M10 2a4 4 0 00-4 4v2H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2V10a2 2 0 00-2-2h-1V6a4 4 0 00-4-4zm2 6V6a2 2 0 10-4 0v2h4z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <span>
+              <span className="font-semibold tracking-[0.16em]">LOCKED</span>
+              {" — "}
+              Session locked after idle. Working copy saved. Baseline untouched.
+            </span>
+          </p>
           {canUnlock(state.role) ? (
-            <button type="button" onClick={() => void unlock()} className="underline">
+            <button type="button" onClick={() => void unlock()} className="btn-primary shrink-0">
               Unlock
             </button>
           ) : null}
         </div>
       ) : null}
       {state.wgReviewReady ? (
-        <div className="shrink-0 bg-army-olive text-army-cream text-xs px-4 py-1">
+        <div className="shrink-0 bg-army-sage/15 text-army-sage text-xs px-4 py-1.5">
           Approver marked this working copy ready for working-group review.
         </div>
       ) : null}
@@ -366,7 +376,7 @@ export function Workbench({
             />
           </div>
         )}
-        <div className="flex-1 min-w-0 min-h-0 flex flex-col">
+        <div className="flex-1 min-w-0 min-h-0 flex flex-col shadow-[0_1px_10px_rgba(31,47,36,0.08)] relative z-[1]">
           {viewingSummary ? (
             <SummaryOfChangePane
               summary={summary}
@@ -387,11 +397,12 @@ export function Workbench({
               onSave={onSave}
               compareBody={compareBody}
               compareLabel={compareLabel}
+              searchQuery={query}
             />
           )}
         </div>
         {rightCollapsed ? (
-          <CollapsedRail side="right" label="Show Assist" onExpand={() => setRightCollapsed(false)} />
+          <CollapsedRail side="right" label="Show Assistant" onExpand={() => setRightCollapsed(false)} />
         ) : (
           <div className="w-[340px] max-w-[46%] shrink-0 min-w-0 min-h-0 flex flex-col">
             <AssistPane

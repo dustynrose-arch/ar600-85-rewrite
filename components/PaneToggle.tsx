@@ -9,7 +9,7 @@ type RailProps = {
 export function CollapsedRail({ side, label, onExpand }: RailProps) {
   const border = side === "left" ? "border-r" : "border-l";
   return (
-    <div className={`shrink-0 w-11 min-h-0 flex flex-col bg-[#efe8d8] ${border} border-army-black/15`}>
+    <div className={`shrink-0 w-11 min-h-0 flex flex-col bg-[#efe8d8] ${border} border-army-black/[0.06]`}>
       <button
         type="button"
         onClick={onExpand}
@@ -47,7 +47,7 @@ export function PaneToggle({ label, expanded, onClick }: ToggleProps) {
       aria-expanded={expanded}
       aria-label={text}
       title={text}
-      className="shrink-0 border border-army-black/20 bg-white px-2 py-1 text-[11px] font-semibold text-army-ink hover:bg-army-gold/25"
+      className="shrink-0 btn-secondary btn-sm"
     >
       {text}
     </button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { PaneToggle } from "@/components/PaneToggle";
 import { chapterDisplayLabel } from "@/lib/outline";
 import { canEditStructure } from "@/lib/roles";
@@ -71,10 +71,6 @@ export function OutlinePane({
   const [dropHint, setDropHint] = useState<string | null>(null);
 
   const selected = sections[selectedId];
-  const selectedChapter = useMemo(
-    () => outline.find((chapter) => chapter.id === selectedId || chapter.sectionIds.includes(selectedId)),
-    [outline, selectedId],
-  );
 
   useEffect(() => {
     if (!menu) return;
@@ -157,21 +153,35 @@ export function OutlinePane({
   };
 
   return (
-    <aside className="flex flex-col min-h-0 h-full border-r border-army-black/15 bg-[#efe8d8]">
+    <aside className="flex flex-col min-h-0 h-full border-r border-army-black/[0.06] bg-[#efe8d8]">
       <div className="p-3 border-b border-army-black/10">
         <div className="flex items-center justify-between gap-2 mb-2">
-          <p className="text-[10px] font-bold tracking-[0.16em] text-army-slate">OUTLINE</p>
+          <p className="pane-title">OUTLINE</p>
           <PaneToggle label="outline" expanded onClick={onCollapse} />
         </div>
-        <label className="text-[10px] font-bold tracking-[0.16em] text-army-slate block mb-1">
+        <label className="pane-title block mb-1">
           SEARCH ORIGINAL REGULATION
         </label>
-        <input
-          value={query}
-          onChange={(event) => onQuery(event.target.value)}
-          placeholder="Search AR 600-85"
-          className="w-full border border-army-black/20 bg-army-paper px-2 py-1.5 text-sm"
-        />
+        <div className="relative">
+          <input
+            value={query}
+            onChange={(event) => onQuery(event.target.value)}
+            placeholder="Search AR 600-85"
+            aria-label="Search original regulation"
+            className="w-full field pr-8"
+          />
+          {query.trim() ? (
+            <button
+              type="button"
+              aria-label="Clear search"
+              title="Clear search"
+              onClick={() => onQuery("")}
+              className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 rounded-lg text-base leading-none text-army-slate hover:bg-army-gold/20 hover:text-army-ink"
+            >
+              ×
+            </button>
+          ) : null}
+        </div>
         {searching ? <p className="text-[11px] text-army-slate mt-1">Searching…</p> : null}
         {editable && !query.trim() ? (
           <div className="mt-2 space-y-1">
@@ -184,7 +194,7 @@ export function OutlinePane({
                 type="button"
                 disabled={!selected}
                 onClick={() => selected && openAdd(selected.id, "before")}
-                className="text-[10px] px-1.5 py-0.5 bg-white border border-army-black/15 disabled:opacity-40"
+                className="btn-secondary btn-sm disabled:opacity-40"
               >
                 Add before
               </button>
@@ -192,23 +202,15 @@ export function OutlinePane({
                 type="button"
                 disabled={!selected}
                 onClick={() => selected && openAdd(selected.id, "after")}
-                className="text-[10px] px-1.5 py-0.5 bg-white border border-army-black/15 disabled:opacity-40"
+                className="btn-secondary btn-sm disabled:opacity-40"
               >
                 Add after
               </button>
               <button
                 type="button"
-                disabled={!selectedChapter}
-                onClick={() => selectedChapter && openAdd(selectedChapter.id, "child")}
-                className="text-[10px] px-1.5 py-0.5 bg-white border border-army-black/15 disabled:opacity-40"
-              >
-                Add child
-              </button>
-              <button
-                type="button"
                 disabled={!selected || busy}
                 onClick={() => selected && void onSplit(selected.id)}
-                className="text-[10px] px-1.5 py-0.5 bg-white border border-army-black/15 disabled:opacity-40"
+                className="btn-secondary btn-sm disabled:opacity-40"
               >
                 Split
               </button>
@@ -216,7 +218,7 @@ export function OutlinePane({
                 type="button"
                 disabled={!selected}
                 onClick={() => selected && openRename(selected.id)}
-                className="text-[10px] px-1.5 py-0.5 bg-white border border-army-black/15 disabled:opacity-40"
+                className="btn-secondary btn-sm disabled:opacity-40"
               >
                 Rename
               </button>
@@ -224,7 +226,7 @@ export function OutlinePane({
                 type="button"
                 disabled={!selected}
                 onClick={() => selected && openDelete(selected.id)}
-                className="text-[10px] px-1.5 py-0.5 bg-white border border-army-rust/40 text-army-rust disabled:opacity-40"
+                className="btn-danger btn-sm disabled:opacity-40"
               >
                 Delete
               </button>
@@ -249,7 +251,7 @@ export function OutlinePane({
                   type="button"
                   onClick={() => onSelect(hit.sectionId)}
                   className={`w-full text-left px-2 py-1.5 text-xs border ${
-                    selectedId === hit.sectionId ? "bg-army-gold/30 border-army-gold" : "bg-army-paper/80 border-transparent"
+                    selectedId === hit.sectionId ? "bg-army-gold/30 border-army-gold rounded-lg" : "bg-army-paper/80 border-transparent rounded-lg"
                   }`}
                 >
                   <div className="font-semibold">
@@ -269,15 +271,14 @@ export function OutlinePane({
                 onClick={() => onSelect(SUMMARY_VIEW_ID)}
                 className={`w-full text-left px-2 py-2 text-[12px] leading-snug border ${
                   selectedId === SUMMARY_VIEW_ID
-                    ? "bg-army-gold/35 font-semibold border-army-gold"
-                    : "bg-army-paper/90 border-army-black/10 hover:bg-army-gold/15"
+                    ? "bg-army-gold/35 font-semibold border-army-gold rounded-lg"
+                    : "bg-army-paper/90 border-army-black/10 hover:bg-army-gold/15 rounded-lg"
                 }`}
               >
-                <span className="block text-[10px] font-bold tracking-[0.16em] text-army-goldDark">
+                <span className="block pane-title">
                   FRONT MATTER
                 </span>
                 Summary of Change
-                <span className="ml-1 text-[10px] text-army-rust font-bold">DRAFT</span>
                 <span className="block text-[10px] text-army-slate font-normal mt-0.5">
                   {changeCount === 0
                     ? "No deltas yet — original vs your draft"
@@ -304,7 +305,7 @@ export function OutlinePane({
                   }}
                 >
                   <summary
-                    className="cursor-pointer text-[11px] font-bold tracking-wide text-army-oliveDark py-1 flex items-center justify-between gap-2"
+                    className="cursor-pointer text-[11px] font-bold tracking-wide text-army-oliveDark py-1"
                     onContextMenu={(event) => {
                       if (!editable) return;
                       event.preventDefault();
@@ -314,18 +315,6 @@ export function OutlinePane({
                     <span>
                       {label}. {chapter.title}
                     </span>
-                    {editable ? (
-                      <button
-                        type="button"
-                        className="text-[10px] font-semibold px-1 border border-army-black/15 bg-white"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          openAdd(chapter.id, "child");
-                        }}
-                      >
-                        Add child
-                      </button>
-                    ) : null}
                   </summary>
                   <ul className="mb-2">
                     {chapter.sectionIds.map((sectionId) => {
@@ -387,7 +376,7 @@ export function OutlinePane({
                                 });
                               }}
                               className={`flex-1 text-left px-2 py-1 text-[12px] leading-snug ${
-                                selectedId === section.id ? "bg-army-gold/35 font-semibold" : "hover:bg-army-gold/15"
+                                selectedId === section.id ? "bg-army-gold/35 font-semibold rounded-md" : "hover:bg-army-gold/15 rounded-md"
                               }`}
                             >
                               <span className="text-army-goldDark mr-1">{section.number}</span>
@@ -408,7 +397,7 @@ export function OutlinePane({
       </div>
       {menu && editable ? (
         <div
-          className="fixed z-40 min-w-[10rem] bg-white border border-army-black/20 shadow-lg text-[12px]"
+          className="fixed z-40 min-w-[10rem] rounded-lg bg-white border border-army-black/15 shadow-lg text-[12px] overflow-hidden"
           style={{ left: menu.x, top: menu.y }}
           onClick={(event) => event.stopPropagation()}
         >
@@ -419,9 +408,6 @@ export function OutlinePane({
               </button>
               <button type="button" className="block w-full text-left px-3 py-1.5 hover:bg-army-gold/20" onClick={() => openAdd(menu.targetId, "after")}>
                 Add after
-              </button>
-              <button type="button" className="block w-full text-left px-3 py-1.5 hover:bg-army-gold/20" onClick={() => openAdd(menu.targetId, "child")}>
-                Add child under chapter
               </button>
               <button
                 type="button"
@@ -441,15 +427,20 @@ export function OutlinePane({
               </button>
             </>
           ) : (
-            <button type="button" className="block w-full text-left px-3 py-1.5 hover:bg-army-gold/20" onClick={() => openAdd(menu.targetId, "child")}>
-              Add child paragraph
-            </button>
+            <>
+              <button type="button" className="block w-full text-left px-3 py-1.5 hover:bg-army-gold/20" onClick={() => openAdd(menu.targetId, "before")}>
+                Add before
+              </button>
+              <button type="button" className="block w-full text-left px-3 py-1.5 hover:bg-army-gold/20" onClick={() => openAdd(menu.targetId, "after")}>
+                Add after
+              </button>
+            </>
           )}
         </div>
       ) : null}
       {dialog ? (
         <div className="fixed inset-0 z-50 bg-army-black/40 flex items-center justify-center p-4">
-          <div className="bg-army-paper border border-army-black/20 w-full max-w-sm p-4 space-y-3">
+          <div className="bg-army-paper border border-army-black/15 rounded-xl w-full max-w-sm p-4 space-y-3 shadow-lg">
             <h2 className="font-semibold text-sm">
               {dialog === "add" ? "Add working-copy paragraph" : dialog === "rename" ? "Rename paragraph title" : "Delete paragraph"}
             </h2>
@@ -465,20 +456,20 @@ export function OutlinePane({
                 <input
                   value={dialogTitle}
                   onChange={(event) => setDialogTitle(event.target.value)}
-                  className="mt-1 w-full border border-army-black/20 px-2 py-1.5 text-sm"
+                  className="field mt-1 w-full"
                   autoFocus
                 />
               </label>
             )}
             {dialogError ? <p className="text-xs text-army-rust">{dialogError}</p> : null}
             <div className="flex justify-end gap-2">
-              <button type="button" className="px-2 py-1 text-xs border" onClick={() => setDialog(null)}>
+              <button type="button" className="btn-secondary btn-sm" onClick={() => setDialog(null)}>
                 Cancel
               </button>
               <button
                 type="button"
                 disabled={busy || (dialog !== "delete" && !dialogTitle.trim())}
-                className={`px-2 py-1 text-xs font-semibold ${dialog === "delete" ? "bg-army-rust text-white" : "bg-army-olive text-army-cream"}`}
+                className={`${dialog === "delete" ? "btn-danger" : "btn-primary"} btn-sm`}
                 onClick={() => void submitDialog()}
               >
                 {dialog === "delete" ? "Delete" : dialog === "rename" ? "Rename" : "Add"}
