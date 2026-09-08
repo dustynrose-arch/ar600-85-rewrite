@@ -142,6 +142,27 @@ test("builds Revises / Adds / Rescinds from real paragraph diffs", () => {
   assert.equal(actionLabel("revises"), "Revises");
 });
 
+test("does not treat wrapped mid-sentence (1)/(2) as new units", () => {
+  const body = [
+    "a. Qualifications.",
+    "  (1) Be an officer.",
+    "  (6) Commanders should request a review. Requirements in paragraphs 9–6a(1)",
+    "  (1) through 9–6a(5), above, are not waiverable.",
+    "b. Next letter.",
+    "  (1) If military personnel are available.",
+    "    (a) FY Units with two",
+    "  (2) or more certified UDLs Rate.",
+  ].join("\n");
+  const units = parseApdUnits(body);
+  assert.equal(units.map((unit) => unit.marker).join(","), "a,b");
+  assert.equal(units[0].children.map((child) => child.marker).join(","), "(1),(6)");
+  assert.match(units[0].children[1].text, /through 9–6a\(5\)/);
+  assert.equal(units[1].children.map((child) => child.marker).join(","), "(1)");
+  assert.match(units[1].children[0].children[0].text, /or more certified UDLs Rate/);
+  const sec = section("9-6", "9-6", "UDL", body);
+  assert.equal(buildSummaryOfChange({ "9-6": sec }, { "9-6": sec }, [sec]).rows.length, 0);
+});
+
 test("does not emit rows when original and draft match", () => {
   const body = "a. Same wording.\n  (1) Nested same.";
   const sec = section("2-1", "2-1", "Same", body);

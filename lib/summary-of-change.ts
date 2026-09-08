@@ -84,6 +84,29 @@ function appendText(node: ParaNode, line: string): void {
   node.text = node.text ? `${node.text}\n${line}` : line;
 }
 
+function looksLikeUnitStart(rest: string): boolean {
+  const trimmed = rest.trimStart();
+  if (!trimmed) return true;
+  return /^[A-Z0-9“"‘'(\[]/.test(trimmed);
+}
+
+function uniqueSuffix(path: string[], used: Set<string>): string {
+  let suffix = citeSuffix(path);
+  if (!used.has(suffix)) {
+    used.add(suffix);
+    return suffix;
+  }
+  let n = 2;
+  while (used.has(`${suffix}#${n}`)) n += 1;
+  const next = `${suffix}#${n}`;
+  used.add(next);
+  return next;
+}
+
+function displaySuffix(suffix: string): string {
+  return suffix.replace(/#\d+/g, "");
+}
+
 export function parseApdUnits(body: string): ParaNode[] {
   const roots: ParaNode[] = [];
   let lead: ParaNode | null = null;
@@ -113,7 +136,7 @@ export function parseApdUnits(body: string): ParaNode[] {
     }
 
     const numberMatch = rawLine.match(NUMBER_LINE);
-    if (numberMatch) {
+    if (numberMatch && looksLikeUnitStart(numberMatch[2])) {
       const node: ParaNode = {
         kind: "number",
         marker: `(${numberMatch[1]})`,
@@ -132,7 +155,7 @@ export function parseApdUnits(body: string): ParaNode[] {
     }
 
     const romanMatch = rawLine.match(ROMAN_MULTI_LINE);
-    if (romanMatch && (subletter || number)) {
+    if (romanMatch && (subletter || number) && looksLikeUnitStart(romanMatch[2])) {
       const node: ParaNode = {
         kind: "roman",
         marker: `(${romanMatch[1].toLowerCase()})`,
@@ -146,7 +169,7 @@ export function parseApdUnits(body: string): ParaNode[] {
     }
 
     const parenLetterMatch = rawLine.match(PAREN_LETTER_LINE);
-    if (parenLetterMatch && (number || letter)) {
+    if (parenLetterMatch && (number || letter) && looksLikeUnitStart(parenLetterMatch[2])) {
       const token = parenLetterMatch[1];
       const treatAsRoman = Boolean(subletter) && isRomanToken(token);
       if (treatAsRoman) {
@@ -215,11 +238,13 @@ function walkUnits(
   nodes: ParaNode[],
   path: string[],
   visit: (node: ParaNode, suffix: string) => void,
+  used: Set<string> = new Set(),
 ): void {
   for (const node of nodes) {
     const nextPath = node.kind === "lead" ? path : [...path, node.marker];
-    visit(node, citeSuffix(nextPath));
-    walkUnits(node.children, nextPath, visit);
+    const suffix = uniqueSuffix(nextPath, used);
+    visit(node, suffix);
+    walkUnits(node.children, node.kind === "lead" ? path : nextPath, visit, used);
   }
 }
 
@@ -231,8 +256,11 @@ function indexUnits(nodes: ParaNode[]): Map<string, ParaNode> {
   return map;
 }
 
-function childSuffixes(node: ParaNode, suffix: string): string[] {
-  return node.children.map((child) => `${suffix}${child.marker}`);
+function isDescendantSuffix(child: string, parent: string): boolean {
+  if (child === parent) return false;
+  if (parent === "") return child !== "";
+  const next = child[parent.length];
+  return child.startsWith(parent) && (next === "(" || next === "#");
 }
 
 function compareTrees(
@@ -243,7 +271,8 @@ function compareTrees(
 ): void {
   const originalMap = indexUnits(originalNodes);
   const draftMap = indexUnits(draftNodes);
-  const seen = new Set<string>();
+  const skipDraft = new Set<string>();
+  const skipOriginal = new Set<string>();
 
   const push = (
     action: ChangeAction,
@@ -251,7 +280,7 @@ function compareTrees(
     originalText: string | null,
     revisedText: string | null,
   ) => {
-    const cite = formatParaCite(section.number, suffix);
+    const cite = formatParaCite(section.number, displaySuffix(suffix));
     rows.push({
       id: `${action}:${section.id}:${suffix || "lead"}`,
       action,
@@ -264,42 +293,26 @@ function compareTrees(
     });
   };
 
-  const visitDraft = (node: ParaNode, suffix: string) => {
-    if (seen.has(suffix)) return;
-    seen.add(suffix);
+  for (const [suffix, node] of draftMap) {
+    if (skipDraft.has(suffix)) continue;
     const original = originalMap.get(suffix);
     if (!original) {
       push("adds", suffix, null, reconstructUnit(node));
-      return;
-    }
-    const originalOwn = normalizeUnitText(original.text);
-    const draftOwn = normalizeUnitText(node.text);
-    if (originalOwn !== draftOwn) {
-      push("revises", suffix, originalOwn, draftOwn);
-    }
-    const originalChildKeys = new Set(childSuffixes(original, suffix));
-    for (const child of node.children) {
-      visitDraft(child, `${suffix}${child.marker}`);
-    }
-    for (const child of original.children) {
-      const childSuffix = `${suffix}${child.marker}`;
-      if (!originalChildKeys.has(childSuffix)) continue;
-      if (!draftMap.has(childSuffix) && !seen.has(childSuffix)) {
-        seen.add(childSuffix);
-        push("rescinds", childSuffix, excerpt(reconstructUnit(child)), null);
+      for (const childSuffix of draftMap.keys()) {
+        if (isDescendantSuffix(childSuffix, suffix)) skipDraft.add(childSuffix);
       }
+      continue;
     }
-  };
-
-  for (const node of draftNodes) {
-    visitDraft(node, node.kind === "lead" ? "" : node.marker);
+    if (normalizeUnitText(original.text) !== normalizeUnitText(node.text)) {
+      push("revises", suffix, normalizeUnitText(original.text), normalizeUnitText(node.text));
+    }
   }
 
-  for (const node of originalNodes) {
-    const suffix = node.kind === "lead" ? "" : node.marker;
-    if (!seen.has(suffix) && !draftMap.has(suffix)) {
-      seen.add(suffix);
-      push("rescinds", suffix, excerpt(reconstructUnit(node)), null);
+  for (const [suffix, node] of originalMap) {
+    if (skipOriginal.has(suffix) || draftMap.has(suffix)) continue;
+    push("rescinds", suffix, excerpt(reconstructUnit(node)), null);
+    for (const childSuffix of originalMap.keys()) {
+      if (isDescendantSuffix(childSuffix, suffix)) skipOriginal.add(childSuffix);
     }
   }
 }
