@@ -117,5 +117,7 @@ test("panel titles share one chrome class", () => {
   assert.match(editor, /className="pane-title">WORKING COPY</);
   assert.match(draft, /className="pane-title">YOUR DRAFT</);
   assert.match(assist, /className="pane-title">ASSISTANT</);
+  assert.match(assist, /className="pane-title">EDITOR TASKS</);
+  assert.match(assist, /className="pane-title">ACTIVITY</);
   assert.match(summary, /className="pane-title">SUMMARY OF CHANGE</);
 });

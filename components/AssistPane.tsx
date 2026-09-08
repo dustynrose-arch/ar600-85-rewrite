@@ -638,7 +638,9 @@ function TimelineTab({
   onSelect: (id: string) => void;
 }) {
   return (
-    <ol className="space-y-2">
+    <div className="space-y-2">
+      <h3 className="pane-title">ACTIVITY</h3>
+      <ol className="space-y-2">
       {timeline.map((event) => (
         <li key={event.id} className="bg-white border border-army-black/10 p-2">
           <div className="text-[10px] uppercase tracking-wide text-army-slate">
@@ -652,7 +654,8 @@ function TimelineTab({
           ) : null}
         </li>
       ))}
-    </ol>
+      </ol>
+    </div>
   );
 }
 

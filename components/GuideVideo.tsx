@@ -88,7 +88,7 @@ export function GuideVideo({ src = GUIDE_VIDEO_SRC }: { src?: string }) {
           className="mt-3 flex min-h-[220px] flex-col items-center justify-center border border-army-black/15 bg-army-black px-6 py-10 text-center text-army-cream"
           role="status"
         >
-          <p className="text-[10px] font-bold tracking-[0.22em] text-army-gold">TUTORIAL</p>
+          <p className="pane-title">TUTORIAL</p>
           <p className="mt-2 text-lg font-semibold">Short videos coming soon</p>
           <p className="mt-1 max-w-md text-sm text-army-cream/75">
             Use the clickable walkthrough below until recordings are posted. When posted, they will appear

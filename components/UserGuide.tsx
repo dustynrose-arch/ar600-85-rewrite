@@ -4,7 +4,7 @@ import { GuideWalkthrough } from "@/components/GuideWalkthrough";
 export function UserGuide() {
   return (
     <article className="prose prose-slate max-w-none font-doc text-army-ink">
-      <p className="mt-4 text-xs font-ui font-bold tracking-[0.2em] text-army-goldDark">USER GUIDE</p>
+      <p className="pane-title mt-4">USER GUIDE</p>
       <h1 className="text-3xl font-bold mt-1">AR 600–85 Rewrite — User Guide</h1>
       <p className="text-army-slate">
         Internal G–1 rewrite working group use only. This application never changes the original

@@ -82,7 +82,7 @@ export function EditorPane({
           >
             {compareBody != null ? (
               <>
-                <p className="text-[10px] font-ui font-bold tracking-wide text-army-goldDark mb-1">
+                <p className="pane-title mb-1">
                   COMPARISON: {compareLabel}
                 </p>
                 {query ? <SearchHighlight text={compareBody} query={query} /> : compareBody}

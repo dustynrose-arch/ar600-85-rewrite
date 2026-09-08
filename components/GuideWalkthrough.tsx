@@ -18,7 +18,7 @@ function GuideCallout({
 }) {
   return (
     <aside className="mt-4 border-l-4 border-army-gold bg-white px-3 py-2 font-ui text-sm text-army-ink">
-      <p className="text-[10px] font-bold tracking-[0.16em] text-army-goldDark">{kind.toUpperCase()}</p>
+      <p className="pane-title">{kind.toUpperCase()}</p>
       <p className="mt-0.5 font-semibold">{title}</p>
       <div className="mt-1 text-army-slate leading-relaxed">{children}</div>
     </aside>
