@@ -140,7 +140,8 @@ export function GuideWalkthrough() {
           </li>
           <li>
             Want to hunt by words? Use the outline search. Search looks at the original regulation
-            (read-only), then jumps you there.
+            (read-only), then jumps you there and highlights the word in the open section. Use × to
+            clear the search.
           </li>
         </ol>
         <p className="mt-3 font-semibold">Tips</p>

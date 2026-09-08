@@ -32,7 +32,10 @@ export function UserGuide() {
           (that writes a “Manual save” line in the activity list). Editors can Undo in your draft (button or
           Ctrl+Z / ⌘Z). The original regulation pane does not undo and is not spellchecked.
         </li>
-        <li>Search looks only at the original regulation (read-only).</li>
+        <li>
+          Search looks only at the original regulation (read-only). Click a result to highlight matches in
+          the open section; × clears the query, results, and highlights.
+        </li>
         <li>
           Editors reshape the <strong>working-copy</strong> outline from the left pane: Add before / after,
           Split, Delete (confirm), Rename, and drag to reorder. Display numbers renumber inside the parent

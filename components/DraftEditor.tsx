@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { SearchHighlight } from "@/components/SearchHighlight";
+import { normalizedSearchQuery } from "@/lib/search";
 
 type Props = {
   sectionId: string;
@@ -9,13 +11,25 @@ type Props = {
   saveState: "saved" | "saving" | "dirty" | "blocked";
   onChange: (value: string) => void;
   onSave: (value: string) => void;
+  searchQuery?: string;
 };
 
-export function DraftEditor({ sectionId, value, editable, saveState, onChange, onSave }: Props) {
+export function DraftEditor({
+  sectionId,
+  value,
+  editable,
+  saveState,
+  onChange,
+  onSave,
+  searchQuery = "",
+}: Props) {
   const ref = useRef<HTMLTextAreaElement>(null);
+  const backdropRef = useRef<HTMLDivElement>(null);
   const historyRef = useRef<string[]>([]);
   const lastInputAt = useRef(0);
   const [canUndo, setCanUndo] = useState(false);
+  const query = normalizedSearchQuery(searchQuery);
+  const highlighting = Boolean(query);
 
   useEffect(() => {
     historyRef.current = [];
@@ -27,6 +41,26 @@ export function DraftEditor({ sectionId, value, editable, saveState, onChange, o
     const el = ref.current;
     if (el && el.value !== value) el.value = value;
   }, [value, sectionId]);
+
+  const syncBackdrop = () => {
+    const el = ref.current;
+    const backdrop = backdropRef.current;
+    if (!el || !backdrop) return;
+    backdrop.scrollTop = el.scrollTop;
+    backdrop.scrollLeft = el.scrollLeft;
+  };
+
+  useLayoutEffect(() => {
+    syncBackdrop();
+    if (!highlighting) return;
+    const el = ref.current;
+    const backdrop = backdropRef.current;
+    const first = backdrop?.querySelector<HTMLElement>('[data-search-hit="first"]');
+    if (!el || !backdrop || !first) return;
+    const top = Math.max(0, first.offsetTop - el.clientHeight / 3);
+    el.scrollTop = top;
+    backdrop.scrollTop = top;
+  }, [sectionId, query, value, highlighting]);
 
   function currentValue(): string {
     return ref.current?.value ?? value;
@@ -78,33 +112,45 @@ export function DraftEditor({ sectionId, value, editable, saveState, onChange, o
           </div>
         ) : null}
       </div>
-      <textarea
-        key={sectionId}
-        ref={ref}
-        id="draft-editor"
-        name="draft-editor"
-        defaultValue={value}
-        readOnly={!editable}
-        spellCheck={true}
-        lang="en-US"
-        autoCorrect="on"
-        autoCapitalize="sentences"
-        autoComplete="off"
-        wrap="soft"
-        aria-label="Your draft"
-        data-spellcheck="enabled"
-        onChange={(event) => {
-          pushHistory(value);
-          onChange(event.target.value);
-        }}
-        onKeyDown={(event) => {
-          if ((event.metaKey || event.ctrlKey) && event.key === "z" && !event.shiftKey) {
-            event.preventDefault();
-            undo();
-          }
-        }}
-        className="flex-1 min-h-0 h-full m-3 p-3 border border-army-black/15 bg-white font-doc text-[14px] leading-relaxed resize-none disabled:bg-army-cream"
-      />
+      <div className="search-highlight-wrap relative flex-1 min-h-0 h-full m-3 border border-army-black/15 bg-white">
+        <div
+          ref={backdropRef}
+          aria-hidden
+          className="search-highlight-backdrop absolute inset-0 p-3 font-doc text-[14px] leading-relaxed whitespace-pre-wrap break-words"
+        >
+          {highlighting ? <SearchHighlight text={`${value}\n`} query={query} /> : null}
+        </div>
+        <textarea
+          key={sectionId}
+          ref={ref}
+          id="draft-editor"
+          name="draft-editor"
+          defaultValue={value}
+          readOnly={!editable}
+          spellCheck={true}
+          lang="en-US"
+          autoCorrect="on"
+          autoCapitalize="sentences"
+          autoComplete="off"
+          wrap="soft"
+          aria-label="Your draft"
+          data-spellcheck="enabled"
+          onScroll={syncBackdrop}
+          onChange={(event) => {
+            pushHistory(value);
+            onChange(event.target.value);
+          }}
+          onKeyDown={(event) => {
+            if ((event.metaKey || event.ctrlKey) && event.key === "z" && !event.shiftKey) {
+              event.preventDefault();
+              undo();
+            }
+          }}
+          className={`relative z-10 w-full h-full min-h-0 p-3 font-doc text-[14px] leading-relaxed resize-none overflow-auto disabled:bg-army-cream ${
+            highlighting ? "search-highlighting" : "bg-white"
+          }`}
+        />
+      </div>
     </div>
   );
 }

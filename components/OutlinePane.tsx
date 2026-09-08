@@ -162,12 +162,26 @@ export function OutlinePane({
         <label className="text-[10px] font-bold tracking-[0.16em] text-army-slate block mb-1">
           SEARCH ORIGINAL REGULATION
         </label>
-        <input
-          value={query}
-          onChange={(event) => onQuery(event.target.value)}
-          placeholder="Search AR 600-85"
-          className="w-full border border-army-black/20 bg-army-paper px-2 py-1.5 text-sm"
-        />
+        <div className="relative">
+          <input
+            value={query}
+            onChange={(event) => onQuery(event.target.value)}
+            placeholder="Search AR 600-85"
+            aria-label="Search original regulation"
+            className="w-full border border-army-black/20 bg-army-paper px-2 py-1.5 pr-8 text-sm"
+          />
+          {query.trim() ? (
+            <button
+              type="button"
+              aria-label="Clear search"
+              title="Clear search"
+              onClick={() => onQuery("")}
+              className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 text-base leading-none text-army-slate hover:text-army-ink"
+            >
+              ×
+            </button>
+          ) : null}
+        </div>
         {searching ? <p className="text-[11px] text-army-slate mt-1">Searching…</p> : null}
         {editable && !query.trim() ? (
           <div className="mt-2 space-y-1">

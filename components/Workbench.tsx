@@ -387,6 +387,7 @@ export function Workbench({
               onSave={onSave}
               compareBody={compareBody}
               compareLabel={compareLabel}
+              searchQuery={query}
             />
           )}
         </div>

@@ -15,4 +15,6 @@ test("center pane gives the draft editor more height than the original pane", ()
   const draft = readRepoFile("components/DraftEditor.tsx");
   assert.match(draft, /id="draft-editor"/);
   assert.match(draft, /flex-1 min-h-0 h-full/);
+  assert.match(draft, /searchQuery/);
+  assert.match(draft, /SearchHighlight/);
 });

@@ -23,6 +23,21 @@ test("Editor outline UI does not surface Add child; before/after remain", () => 
   assert.equal(/Add child/i.test(walkthrough), false);
 });
 
+test("search bar has a clear control that empties the query", () => {
+  const pane = readRepoFile("components/OutlinePane.tsx");
+  assert.match(pane, /aria-label="Clear search"/);
+  assert.match(pane, /onQuery\(""\)/);
+  assert.match(pane, /aria-label="Search original regulation"/);
+
+  const workbench = readRepoFile("components/Workbench.tsx");
+  assert.match(workbench, /searchQuery=\{query\}/);
+  assert.match(workbench, /setHits\(\[\]\)/);
+
+  const editor = readRepoFile("components/EditorPane.tsx");
+  assert.match(editor, /searchQuery/);
+  assert.match(editor, /SearchHighlight/);
+});
+
 test("structure API still accepts child position on chapter targets", () => {
   const child: StructurePosition = "child";
   const outline: WorkingOutlineChapter[] = [
