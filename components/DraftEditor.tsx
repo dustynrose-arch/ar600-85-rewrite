@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { SearchHighlight } from "@/components/SearchHighlight";
-import { normalizedSearchQuery } from "@/lib/search";
+import { normalizedSearchQuery } from "@/lib/search-highlight";
 
 type Props = {
   sectionId: string;

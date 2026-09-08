@@ -1,6 +1,6 @@
 "use client";
 
-import { splitQueryHighlights } from "@/lib/search";
+import { splitQueryHighlights } from "@/lib/search-highlight";
 
 export function SearchHighlight({ text, query }: { text: string; query: string }) {
   const parts = splitQueryHighlights(text, query);

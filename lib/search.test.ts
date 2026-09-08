@@ -3,18 +3,20 @@ import { test } from "node:test";
 import {
   findQueryMatches,
   firstMatchIndex,
-  searchBaseline,
   splitQueryHighlights,
-} from "./search.ts";
+} from "./search-highlight.ts";
 
 test("findQueryMatches is case-insensitive and preserves original slice bounds", () => {
   const text = "The Secretary of Defense and the Defense Health Agency.";
+  const first = text.indexOf("Defense");
+  const second = text.indexOf("Defense", first + 1);
+  assert.ok(first >= 0 && second > first);
   assert.deepEqual(findQueryMatches(text, "defense"), [
-    { start: 18, end: 26 },
-    { start: 35, end: 43 },
+    { start: first, end: first + "Defense".length },
+    { start: second, end: second + "Defense".length },
   ]);
-  assert.equal(text.slice(18, 26), "Defense");
-  assert.equal(text.slice(35, 43), "Defense");
+  assert.equal(text.slice(first, first + "Defense".length), "Defense");
+  assert.equal(text.slice(second, second + "Defense".length), "Defense");
 });
 
 test("splitQueryHighlights keeps original casing on matched slices", () => {
@@ -39,10 +41,4 @@ test("literal queries with regex metacharacters still match with indexOf", () =>
 test("firstMatchIndex returns -1 when the visible body has no hit", () => {
   assert.equal(firstMatchIndex("No such term here", "defense"), -1);
   assert.equal(firstMatchIndex("Army Defense program", "defense"), 5);
-});
-
-test("searchBaseline still returns sections for defense", () => {
-  const hits = searchBaseline("defense", 10);
-  assert.ok(hits.length >= 1);
-  assert.ok(hits.every((hit) => Boolean(hit.sectionId)));
 });

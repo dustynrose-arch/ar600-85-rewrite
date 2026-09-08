@@ -3,7 +3,7 @@
 import { useLayoutEffect, useRef } from "react";
 import { DraftEditor } from "@/components/DraftEditor";
 import { SearchHighlight, scrollHitIntoContainer } from "@/components/SearchHighlight";
-import { normalizedSearchQuery } from "@/lib/search";
+import { normalizedSearchQuery } from "@/lib/search-highlight";
 import type { Role, Section, WorkingSection } from "@/lib/types";
 
 type Props = {
