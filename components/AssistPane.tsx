@@ -443,13 +443,13 @@ function VersionsTab({
           <div className="font-semibold text-[12px]">
             {hunk.number} {hunk.title}
           </div>
-          <div className="grid grid-cols-2 gap-2 mt-1 text-[11px]">
+          <div className="space-y-2 mt-1 text-[11px]">
             <div>
-              <p className="text-army-rust font-bold">Original regulation</p>
+              <p className="text-army-rust font-bold">Original regulation (above)</p>
               <p className="whitespace-pre-wrap">{hunk.baseline}</p>
             </div>
             <div>
-              <p className="text-army-oliveDark font-bold">Your draft</p>
+              <p className="text-army-oliveDark font-bold">Your draft (below)</p>
               <p className="whitespace-pre-wrap">{hunk.current}</p>
             </div>
           </div>
