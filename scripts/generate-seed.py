@@ -497,6 +497,16 @@ def write_png(path: Path) -> None:
 
 
 def main() -> None:
+    dest = ROOT / "lib" / "seed" / "baseline-document.json"
+    keep: dict[str, str] = {}
+    if dest.exists():
+        old = json.loads(dest.read_text(encoding="utf-8"))
+        for chapter in old.get("chapters", []):
+            for section in chapter.get("sections", []):
+                body = section.get("body") or ""
+                if body and not body.startswith("Working-copy baseline text for"):
+                    keep[section["id"]] = body
+
     chapters = []
     for cid, label, title in CHAPTERS:
         sections = []
@@ -508,7 +518,7 @@ def main() -> None:
                     "id": number,
                     "number": number,
                     "title": sec_title,
-                    "body": body_for(chapter, number, sec_title),
+                    "body": keep.get(number) or body_for(chapter, number, sec_title),
                 }
             )
         chapters.append({"id": cid, "label": label, "title": title, "sections": sections})
@@ -523,7 +533,6 @@ def main() -> None:
         "chapters": chapters,
     }
 
-    dest = ROOT / "lib" / "seed" / "baseline-document.json"
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_text(json.dumps(out, indent=2), encoding="utf-8")
     seal = ROOT / "public" / "g1-seal.png"
