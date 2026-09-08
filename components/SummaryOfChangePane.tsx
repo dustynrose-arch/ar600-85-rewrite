@@ -3,7 +3,10 @@
 import { PaneToggle } from "@/components/PaneToggle";
 import {
   actionLabel,
+  originalCell,
+  revisedCell,
   SUMMARY_EXPORT_TITLE,
+  SUMMARY_TABLE_COLUMNS,
   type ChangeAction,
   type SummaryOfChangeResult,
   type SummaryOfChangeRow,
@@ -37,65 +40,6 @@ function ActionBadge({ action }: { action: ChangeAction }) {
   );
 }
 
-function RowCard({ row, onOpenSection }: { row: SummaryOfChangeRow; onOpenSection: (id: string) => void }) {
-  return (
-    <article className="border border-army-black/10 bg-white p-3">
-      <header className="flex flex-wrap items-center gap-2">
-        <ActionBadge action={row.action} />
-        <h3 className="font-doc font-semibold text-[15px]">{actionLabel(row.action)} {row.cite}.</h3>
-      </header>
-      <p className="text-[11px] text-army-slate mt-1">
-        {row.sectionNumber} {row.sectionTitle}
-      </p>
-      {row.action === "revises" ? (
-        <div className="grid md:grid-cols-2 gap-3 mt-3 text-[13px] font-doc">
-          <div className="min-w-0">
-            <p className="text-[10px] font-ui font-bold tracking-[0.14em] text-army-rust">
-              ORIGINAL — ORIGINAL REGULATION (READ-ONLY)
-            </p>
-            <p className="mt-1 whitespace-pre-wrap max-h-48 overflow-y-auto pane-scroll leading-relaxed">
-              {row.originalText}
-            </p>
-          </div>
-          <div className="min-w-0">
-            <p className="text-[10px] font-ui font-bold tracking-[0.14em] text-army-oliveDark">
-              REVISED — YOUR DRAFT
-            </p>
-            <p className="mt-1 whitespace-pre-wrap max-h-48 overflow-y-auto pane-scroll leading-relaxed">
-              {row.revisedText}
-            </p>
-          </div>
-        </div>
-      ) : null}
-      {row.action === "adds" ? (
-        <div className="mt-3 text-[13px] font-doc">
-          <p className="text-[10px] font-ui font-bold tracking-[0.14em] text-army-oliveDark">ADDED IN YOUR DRAFT</p>
-          <p className="mt-1 whitespace-pre-wrap max-h-48 overflow-y-auto pane-scroll leading-relaxed">
-            {row.revisedText}
-          </p>
-        </div>
-      ) : null}
-      {row.action === "rescinds" ? (
-        <div className="mt-3 text-[13px] font-doc">
-          <p className="text-[10px] font-ui font-bold tracking-[0.14em] text-army-rust">
-            REMOVED FROM THE ORIGINAL REGULATION
-          </p>
-          <p className="mt-1 whitespace-pre-wrap max-h-48 overflow-y-auto pane-scroll leading-relaxed">
-            {row.originalText}
-          </p>
-        </div>
-      ) : null}
-      <button
-        type="button"
-        onClick={() => onOpenSection(row.sectionId)}
-        className="mt-3 text-[12px] underline text-army-goldDark"
-      >
-        Open {row.cite} in your draft
-      </button>
-    </article>
-  );
-}
-
 export function SummaryOfChangePane({
   summary,
   dirty,
@@ -116,8 +60,8 @@ export function SummaryOfChangePane({
           <p className="text-[10px] font-bold tracking-[0.18em] text-army-goldDark">SUMMARY OF CHANGE</p>
           <h2 className="font-doc text-xl font-semibold leading-snug">{SUMMARY_EXPORT_TITLE}</h2>
           <p className="text-[11px] text-army-slate mt-1">
-            Deltas only between the original regulation (read-only) and your draft. This list updates as you
-            edit.
+            Deltas only. Location cites use regulation paragraph style. Original is the original regulation
+            (read-only); Revised is your draft.
           </p>
         </div>
         <div className="flex flex-wrap items-center justify-end gap-2">
@@ -155,7 +99,7 @@ export function SummaryOfChangePane({
           <span className="text-army-slate">Export uses the last saved draft and stays marked DRAFT.</span>
         )}
       </div>
-      <div className="pane-scroll overflow-y-auto flex-1 min-h-0 p-4 space-y-3">
+      <div className="pane-scroll overflow-auto flex-1 min-h-0 p-4">
         {visible.length === 0 ? (
           <p className="text-sm text-army-slate">
             {summary.counts.total === 0
@@ -163,9 +107,47 @@ export function SummaryOfChangePane({
               : "No rows in this filter."}
           </p>
         ) : (
-          visible.map((row) => <RowCard key={row.id} row={row} onOpenSection={onOpenSection} />)
+          <table className="w-full min-w-[720px] border-collapse text-[13px] font-doc bg-white">
+            <caption className="sr-only">{SUMMARY_EXPORT_TITLE}</caption>
+            <thead>
+              <tr className="bg-army-olive text-army-cream text-left text-[11px] font-ui">
+                {SUMMARY_TABLE_COLUMNS.map((label) => (
+                  <th key={label} className="border border-army-black/20 px-2 py-1.5 font-semibold">
+                    {label}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {visible.map((row: SummaryOfChangeRow) => (
+                <tr key={row.id} className="align-top">
+                  <td className="border border-army-black/15 px-2 py-2 whitespace-nowrap">
+                    <ActionBadge action={row.action} />
+                  </td>
+                  <td className="border border-army-black/15 px-2 py-2">
+                    <button
+                      type="button"
+                      onClick={() => onOpenSection(row.sectionId)}
+                      className="underline text-army-goldDark text-left"
+                    >
+                      {row.cite}
+                    </button>
+                    <div className="text-[11px] text-army-slate font-ui mt-0.5">
+                      {row.sectionNumber} {row.sectionTitle}
+                    </div>
+                  </td>
+                  <td className="border border-army-black/15 px-2 py-2 whitespace-pre-wrap max-w-[28rem]">
+                    {originalCell(row)}
+                  </td>
+                  <td className="border border-army-black/15 px-2 py-2 whitespace-pre-wrap max-w-[28rem]">
+                    {revisedCell(row)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
-        <p className="text-[11px] text-army-slate pt-2">
+        <p className="text-[11px] text-army-slate pt-3">
           Moved paragraphs (same wording, new location) are not listed separately yet. They appear as Rescinds
           at the old cite and Adds at the new cite.
         </p>

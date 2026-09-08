@@ -47,7 +47,7 @@ npm start
 | Tasks | Editors create and complete tasks. |
 | Roles | Editor (edit / tasks / snapshots). Reviewer (read-only). Approver (WG-review marks; can unlock). |
 | Idle | Warn at 14 minutes. At 15 minutes: save current section and lock. |
-| Export | Word `.docx` always DRAFT-stamped (header, footer, title-page disclaimer citing AR 25-30 / DA Pam 25-40). Full working-copy export includes the Summary of Change. Dedicated Summary export uses the title *Summary of Change (DRAFT — working copy; not authenticated under AR 25-30)*. |
+| Export | Word `.docx` always DRAFT-stamped (header, footer, title-page disclaimer citing AR 25-30 / DA Pam 25-40). Full working-copy export includes the Summary of Change table. Dedicated Summary export uses the title *Summary of Change (DRAFT — working copy; not authenticated under AR 25-30 / DA Pam 25-40)* with columns Action \| Location \| Original (ACTIVE) \| Revised (your draft). |
 | Upload | PDF/Word, 25 MB cap, file name + size + unique file ID in the activity log. |
 | Assist | Glossary locked-term reminders; Limited Use reminders + AR 600-8-2 / 635-200 / 135-175 / 135-178 cites; 22 overlap checks (Keep wording \| Insert See cite). |
 | Process | ID → rehab map with branch labels. |

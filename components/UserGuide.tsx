@@ -120,7 +120,7 @@ export function UserGuide() {
         25–40). Open <strong>Summary of Change</strong> in the outline (or the Assist <strong>Summary</strong>{" "}
         tab) for an APD-style list of only the paragraphs that differ between the original regulation
         (read-only) and your draft. Export Summary stays marked{" "}
-        <em>Summary of Change (DRAFT — working copy; not authenticated under AR 25-30)</em>. There is no
+        <em>Summary of Change (DRAFT — working copy; not authenticated under AR 25-30 / DA Pam 25-40)</em>. There is no
         clean non-DRAFT export. PDF and Word source uploads are capped at 25 MB. Each upload is recorded with
         the file name, size, and a unique file ID.
       </p>

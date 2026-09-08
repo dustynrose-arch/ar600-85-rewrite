@@ -469,7 +469,8 @@ function SummaryTab({
       <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">SUMMARY OF CHANGE</h3>
       <p className="text-xs text-army-slate">{SUMMARY_EXPORT_TITLE}</p>
       <p className="text-xs">
-        Deltas only — original regulation (read-only) versus your draft.{" "}
+        Deltas only — original regulation (read-only) versus your draft. Table columns: Action | Location |
+        Original (ACTIVE) | Revised (your draft).{" "}
         {summary.counts.total === 0
           ? "No wording differences yet."
           : `${summary.counts.total} change(s): ${summary.counts.revises} Revises, ${summary.counts.adds} Adds, ${summary.counts.rescinds} Rescinds.`}
@@ -490,7 +491,7 @@ function SummaryTab({
         {summary.rows.slice(0, 20).map((row) => (
           <li key={row.id} className="bg-white border border-army-black/10 p-2">
             <div className="font-semibold text-[12px]">
-              {actionLabel(row.action)} {row.cite}.
+              {actionLabel(row.action)} · {row.cite}
             </div>
             <button type="button" className="text-[11px] underline mt-1" onClick={() => onSelect(row.sectionId)}>
               Open {row.sectionNumber} {row.sectionTitle}

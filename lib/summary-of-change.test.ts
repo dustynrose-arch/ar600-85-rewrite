@@ -5,9 +5,14 @@ import {
   actionLabel,
   buildSummaryOfChange,
   formatParaCite,
+  originalCell,
   parseApdUnits,
   reconstructUnit,
+  revisedCell,
+  SUMMARY_ADDS_ORIGINAL,
   SUMMARY_EXPORT_TITLE,
+  SUMMARY_RESCINDS_REVISED,
+  SUMMARY_TABLE_COLUMNS,
 } from "./summary-of-change.ts";
 
 function section(id: string, number: string, title: string, body: string): Section {
@@ -87,7 +92,17 @@ test("builds Revises / Adds / Rescinds from real paragraph diffs", () => {
   };
 
   const result = buildSummaryOfChange(original, draft, Object.values(original));
+  assert.equal(
+    result.title,
+    "Summary of Change (DRAFT — working copy; not authenticated under AR 25-30 / DA Pam 25-40)",
+  );
   assert.equal(result.title, SUMMARY_EXPORT_TITLE);
+  assert.deepEqual(SUMMARY_TABLE_COLUMNS, [
+    "Action",
+    "Location",
+    "Original (ACTIVE)",
+    "Revised (your draft)",
+  ]);
   assert.equal(result.movesDeferred, true);
 
   const revisesPurpose = result.rows.find((row) => row.cite === "para 1–1");
@@ -107,11 +122,14 @@ test("builds Revises / Adds / Rescinds from real paragraph diffs", () => {
   assert.equal(adds.action, "adds");
   assert.match(adds.revisedText ?? "", /poppy seeds/);
   assert.equal(adds.originalText, null);
+  assert.equal(originalCell(adds), SUMMARY_ADDS_ORIGINAL);
+  assert.match(revisedCell(adds), /poppy seeds/);
 
   const rescindsLetter = result.rows.find((row) => row.cite === "para 4–2m");
   assert.ok(rescindsLetter);
   assert.equal(rescindsLetter.action, "rescinds");
   assert.match(rescindsLetter.originalText ?? "", /Legacy closeout/);
+  assert.equal(revisedCell(rescindsLetter), SUMMARY_RESCINDS_REVISED);
 
   const rescindsPara = result.rows.find((row) => row.cite === "para 1–9");
   assert.ok(rescindsPara);

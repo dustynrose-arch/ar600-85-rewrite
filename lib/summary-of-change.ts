@@ -3,7 +3,22 @@ import type { Section, WorkingSection } from "./types";
 export const SUMMARY_VIEW_ID = "summary-of-change";
 
 export const SUMMARY_EXPORT_TITLE =
-  "Summary of Change (DRAFT — working copy; not authenticated under AR 25-30)";
+  "Summary of Change (DRAFT — working copy; not authenticated under AR 25-30 / DA Pam 25-40)";
+
+export const SUMMARY_TABLE_COLUMNS = ["Action", "Location", "Original (ACTIVE)", "Revised (your draft)"] as const;
+
+export const SUMMARY_ADDS_ORIGINAL = "(none — new)";
+export const SUMMARY_RESCINDS_REVISED = "(rescinded)";
+
+export function originalCell(row: { action: ChangeAction; originalText: string | null }): string {
+  if (row.action === "adds") return SUMMARY_ADDS_ORIGINAL;
+  return row.originalText ?? "";
+}
+
+export function revisedCell(row: { action: ChangeAction; revisedText: string | null }): string {
+  if (row.action === "rescinds") return SUMMARY_RESCINDS_REVISED;
+  return row.revisedText ?? "";
+}
 
 export type ChangeAction = "revises" | "adds" | "rescinds";
 
