@@ -1,8 +1,9 @@
 import { writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { NextResponse } from "next/server";
-import { publicState, recordUpload, sha256 } from "@/lib/store";
-import { MAX_UPLOAD_BYTES, type Role } from "@/lib/types";
+import { publicState, readState, recordUpload, sha256 } from "@/lib/store";
+import { canUpload } from "@/lib/roles";
+import { MAX_UPLOAD_BYTES } from "@/lib/types";
 
 export const runtime = "nodejs";
 
@@ -15,7 +16,13 @@ const ALLOWED = new Set([
 export async function POST(request: Request) {
   const form = await request.formData();
   const file = form.get("file");
-  const role = (form.get("role") as Role) || "editor";
+  const role = readState().role;
+  if (!canUpload(role)) {
+    return NextResponse.json(
+      { error: "Reviewers cannot upload files. Switch to Editor or Approver." },
+      { status: 403 },
+    );
+  }
   if (!(file instanceof File)) {
     return NextResponse.json({ error: "Choose a PDF or DOCX file." }, { status: 400 });
   }

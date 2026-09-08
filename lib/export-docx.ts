@@ -1,10 +1,33 @@
-import { Document, Footer, Header, Packer, PageNumber, Paragraph, TextRun, AlignmentType } from "docx";
-import { baselineDocument } from "./baseline";
+import {
+  AlignmentType,
+  Document,
+  Footer,
+  Header,
+  Packer,
+  PageNumber,
+  Paragraph,
+  Table,
+  TableCell,
+  TableRow,
+  TextRun,
+  WidthType,
+} from "docx";
+import { baselineDocument, flattenSections, sectionMap } from "./baseline";
+import {
+  actionLabel,
+  buildSummaryOfChange,
+  originalCell,
+  revisedCell,
+  SUMMARY_EXPORT_TITLE,
+  SUMMARY_TABLE_COLUMNS,
+} from "./summary-of-change";
 import { BASELINE_LABEL } from "./types";
 import type { WorkspaceState } from "./types";
 
+type DocChild = Paragraph | Table;
+
 const DISCLAIMER =
-  "DRAFT / WORKING COPY — Not an official Army publication. This document is an internal Deputy Chief of Staff, G–1 rewrite working-copy for working-group use only. It has not been authenticated under AR 25–30 (Army Publishing Program) or processed under DA Pam 25–40 (Army Publishing Program Procedures). Do not cite, implement, or distribute outside the G–1 rewrite working group. The locked baseline remains ACTIVE AR 600–85 (4 October 2024, administrative revisions 27 February 2025 and 19 February 2026).";
+  "DRAFT / WORKING COPY — Not an official Army publication. This document is an internal Deputy Chief of Staff, G–1 rewrite working-copy for working-group use only. It has not been authenticated under AR 25–30 (Army Publishing Program) or processed under DA Pam 25–40 (Army Publishing Program Procedures). Do not cite, implement, or distribute outside the G–1 rewrite working group. The original regulation remains ACTIVE AR 600–85 (4 October 2024, administrative revisions 27 February 2025 and 19 February 2026).";
 
 function draftRun(text: string, opts: { bold?: boolean; size?: number; italics?: boolean } = {}) {
   return new TextRun({
@@ -27,8 +50,8 @@ function bodyRun(text: string, opts: { bold?: boolean; size?: number; italics?: 
   });
 }
 
-export async function buildDraftDocx(state: WorkspaceState): Promise<Buffer> {
-  const children: Paragraph[] = [
+function titlePage(extraTitle?: string): Paragraph[] {
+  return [
     new Paragraph({
       alignment: AlignmentType.CENTER,
       spacing: { after: 200 },
@@ -37,7 +60,7 @@ export async function buildDraftDocx(state: WorkspaceState): Promise<Buffer> {
     new Paragraph({
       alignment: AlignmentType.CENTER,
       spacing: { after: 120 },
-      children: [bodyRun("AR 600–85 Rewrite — Working Copy", { bold: true, size: 36 })],
+      children: [draftRun(extraTitle ?? "AR 600–85 Rewrite — Working Copy", { bold: true, size: 36 })],
     }),
     new Paragraph({
       alignment: AlignmentType.CENTER,
@@ -50,43 +73,106 @@ export async function buildDraftDocx(state: WorkspaceState): Promise<Buffer> {
     }),
     new Paragraph({
       spacing: { after: 200 },
-      children: [bodyRun(`Baseline: ${BASELINE_LABEL}`)],
+      children: [bodyRun(`Original regulation (read-only): ${BASELINE_LABEL}`)],
     }),
     new Paragraph({
       spacing: { after: 400 },
       children: [bodyRun(DISCLAIMER, { italics: true, size: 20 })],
     }),
   ];
+}
 
-  for (const chapter of baselineDocument.chapters) {
-    children.push(
+function summaryCell(text: string, width: number, opts: { header?: boolean; draft?: boolean } = {}) {
+  return new TableCell({
+    width: { size: width, type: WidthType.DXA },
+    margins: { top: 60, bottom: 60, left: 80, right: 80 },
+    children: [
       new Paragraph({
-        spacing: { before: 360, after: 160 },
-        children: [bodyRun(`${chapter.label}. ${chapter.title}`, { bold: true, size: 28 })],
+        children: [
+          opts.draft
+            ? draftRun(text, { bold: opts.header, size: 18 })
+            : bodyRun(text, { bold: opts.header, size: 18 }),
+        ],
+      }),
+    ],
+  });
+}
+
+function summaryTable(state: WorkspaceState): DocChild[] {
+  const summary = buildSummaryOfChange(sectionMap(), state.workingSections, flattenSections());
+  const widths = [1400, 1600, 3540, 3540];
+  const children: DocChild[] = [
+    new Paragraph({
+      spacing: { before: 200, after: 160 },
+      children: [draftRun(SUMMARY_EXPORT_TITLE, { bold: true, size: 28 })],
+    }),
+    new Paragraph({
+      spacing: { after: 160 },
+      children: [
+        bodyRun(
+          "This table lists only wording differences between the original regulation (read-only) and your draft. It is not an authenticated Army Publishing Directorate summary.",
+          { italics: true, size: 20 },
+        ),
+      ],
+    }),
+    new Paragraph({
+      spacing: { after: 200 },
+      children: [
+        bodyRun(
+          summary.counts.total === 0
+            ? "No wording differences between the original regulation (read-only) and your draft."
+            : `${summary.counts.total} change(s): ${summary.counts.revises} Revises, ${summary.counts.adds} Adds, ${summary.counts.rescinds} Rescinds.`,
+        ),
+      ],
+    }),
+  ];
+
+  if (summary.rows.length) {
+    const header = new TableRow({
+      tableHeader: true,
+      children: SUMMARY_TABLE_COLUMNS.map((label, index) =>
+        summaryCell(label, widths[index], { header: true, draft: index === 0 }),
+      ),
+    });
+    const rows = summary.rows.map(
+      (row) =>
+        new TableRow({
+          children: [
+            summaryCell(actionLabel(row.action), widths[0], { draft: true, header: true }),
+            summaryCell(row.cite, widths[1]),
+            summaryCell(originalCell(row), widths[2]),
+            summaryCell(revisedCell(row), widths[3]),
+          ],
+        }),
+    );
+    children.push(
+      new Table({
+        width: { size: widths.reduce((sum, value) => sum + value, 0), type: WidthType.DXA },
+        columnWidths: widths,
+        rows: [header, ...rows],
       }),
     );
-    for (const section of chapter.sections) {
-      const working = state.workingSections[section.id] ?? section;
-      children.push(
-        new Paragraph({
-          spacing: { before: 200, after: 80 },
-          children: [bodyRun(`${working.number}. ${working.title}`, { bold: true })],
-        }),
-      );
-      for (const para of working.body.split(/\n{2,}/)) {
-        children.push(
-          new Paragraph({
-            spacing: { after: 160 },
-            children: [bodyRun(para.replace(/\s+/g, " ").trim())],
-          }),
-        );
-      }
-    }
   }
 
-  const doc = new Document({
+  children.push(
+    new Paragraph({
+      spacing: { before: 240, after: 200 },
+      children: [
+        bodyRun(
+          "Moved paragraphs (same wording, new location) are not listed separately yet. They appear as Rescinds at the old cite and Adds at the new cite.",
+          { italics: true, size: 20 },
+        ),
+      ],
+    }),
+  );
+
+  return children;
+}
+
+function draftChrome(docTitle: string, children: DocChild[]) {
+  return new Document({
     creator: "AR 600-85 Rewrite Working Group",
-    title: "AR 600-85 Rewrite — Working Copy (DRAFT)",
+    title: docTitle,
     description: DISCLAIMER,
     styles: {
       default: {
@@ -136,6 +222,50 @@ export async function buildDraftDocx(state: WorkspaceState): Promise<Buffer> {
       },
     ],
   });
+}
 
+export async function buildDraftDocx(state: WorkspaceState): Promise<Buffer> {
+  const children: DocChild[] = [
+    ...titlePage(),
+    ...summaryTable(state),
+    new Paragraph({
+      spacing: { before: 360, after: 200 },
+      children: [draftRun("Working-copy text (DRAFT)", { bold: true, size: 28 })],
+    }),
+  ];
+
+  for (const chapter of baselineDocument.chapters) {
+    children.push(
+      new Paragraph({
+        spacing: { before: 360, after: 160 },
+        children: [bodyRun(`${chapter.label}. ${chapter.title}`, { bold: true, size: 28 })],
+      }),
+    );
+    for (const section of chapter.sections) {
+      const working = state.workingSections[section.id] ?? section;
+      children.push(
+        new Paragraph({
+          spacing: { before: 200, after: 80 },
+          children: [bodyRun(`${working.number}. ${working.title}`, { bold: true })],
+        }),
+      );
+      for (const para of working.body.split(/\n{2,}/)) {
+        children.push(
+          new Paragraph({
+            spacing: { after: 160 },
+            children: [bodyRun(para.replace(/\s+/g, " ").trim())],
+          }),
+        );
+      }
+    }
+  }
+
+  const doc = draftChrome("AR 600-85 Rewrite — Working Copy (DRAFT)", children);
+  return Buffer.from(await Packer.toBuffer(doc));
+}
+
+export async function buildSummaryOfChangeDocx(state: WorkspaceState): Promise<Buffer> {
+  const children = [...titlePage(SUMMARY_EXPORT_TITLE), ...summaryTable(state)];
+  const doc = draftChrome(`${SUMMARY_EXPORT_TITLE}`, children);
   return Buffer.from(await Packer.toBuffer(doc));
 }

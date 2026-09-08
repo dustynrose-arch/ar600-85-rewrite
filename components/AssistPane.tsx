@@ -6,6 +6,7 @@ import { PaneToggle } from "@/components/PaneToggle";
 import { CITE_HOT_LIST, SISTER_PUBS } from "@/lib/seed/sister-pubs";
 import { GLOSSARY_TERMS } from "@/lib/seed/glossary";
 import { PROCESS_MAP } from "@/lib/seed/process-map";
+import { actionLabel, SUMMARY_EXPORT_TITLE, type SummaryOfChangeResult } from "@/lib/summary-of-change";
 import type {
   DiffHunk,
   Role,
@@ -18,7 +19,7 @@ import type {
   WorkingSection,
 } from "@/lib/types";
 
-type Tab = "assist" | "authority" | "process" | "tasks" | "versions" | "timeline" | "upload";
+type Tab = "assist" | "authority" | "process" | "tasks" | "versions" | "timeline" | "upload" | "summary";
 
 type SergeantFinding = {
   laneId: string;
@@ -42,6 +43,8 @@ type Props = {
   marks: WgReviewMark[];
   wgReady: boolean;
   findings: SergeantFinding[];
+  summary: SummaryOfChangeResult;
+  onOpenSummary: () => void;
   onSelect: (id: string) => void;
   onCreateTask: (title: string, notes: string) => void;
   onCompleteTask: (id: string) => void;
@@ -60,6 +63,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "process", label: "Process" },
   { id: "tasks", label: "Tasks" },
   { id: "versions", label: "Versions" },
+  { id: "summary", label: "Summary" },
   { id: "timeline", label: "Timeline" },
   { id: "upload", label: "Upload" },
 ];
@@ -92,6 +96,7 @@ export function AssistPane(props: Props) {
         {tab === "process" ? <ProcessTab onSelect={props.onSelect} /> : null}
         {tab === "tasks" ? <TasksTab {...props} /> : null}
         {tab === "versions" ? <VersionsTab {...props} /> : null}
+        {tab === "summary" ? <SummaryTab {...props} /> : null}
         {tab === "timeline" ? <TimelineTab timeline={props.timeline} onSelect={props.onSelect} /> : null}
         {tab === "upload" ? <UploadTab {...props} /> : null}
       </div>
@@ -361,6 +366,7 @@ function VersionsTab({
   onSnapshot,
   onDiff,
   onSummarize,
+  onOpenSummary,
   role,
 }: Props) {
   const [label, setLabel] = useState("");
@@ -398,7 +404,7 @@ function VersionsTab({
           onChange={(event) => setAgainst(event.target.value)}
           className="block w-full mt-1 border border-army-black/15 px-2 py-1 text-sm"
         >
-          <option value="baseline">Locked baseline</option>
+          <option value="baseline">Original regulation (read-only)</option>
           {snapshots.map((snapshot) => (
             <option key={snapshot.id} value={snapshot.id}>
               {snapshot.label} ({new Date(snapshot.createdAt).toLocaleString()})
@@ -412,7 +418,7 @@ function VersionsTab({
           className="border border-army-black/20 px-2 py-1 text-xs bg-white"
           onClick={async () => setHunks(await onDiff(against))}
         >
-          Compare side by side
+          Compare (original above, your draft below)
         </button>
         <button
           type="button"
@@ -422,6 +428,9 @@ function VersionsTab({
           List the changes
         </button>
       </div>
+      <button type="button" className="text-xs underline text-army-goldDark" onClick={onOpenSummary}>
+        Open Summary of Change (deltas only)
+      </button>
       {bullets.length ? (
         <ul className="list-disc pl-4 text-[11px] space-y-1">
           {bullets.map((bullet) => (
@@ -434,18 +443,70 @@ function VersionsTab({
           <div className="font-semibold text-[12px]">
             {hunk.number} {hunk.title}
           </div>
-          <div className="grid grid-cols-2 gap-2 mt-1 text-[11px]">
+          <div className="space-y-2 mt-1 text-[11px]">
             <div>
-              <p className="text-army-rust font-bold">Comparison</p>
+              <p className="text-army-rust font-bold">Original regulation (above)</p>
               <p className="whitespace-pre-wrap">{hunk.baseline}</p>
             </div>
             <div>
-              <p className="text-army-oliveDark font-bold">Working copy</p>
+              <p className="text-army-oliveDark font-bold">Your draft (below)</p>
               <p className="whitespace-pre-wrap">{hunk.current}</p>
             </div>
           </div>
         </div>
       ))}
+    </div>
+  );
+}
+
+function SummaryTab({
+  summary,
+  onOpenSummary,
+  onSelect,
+}: Props) {
+  return (
+    <div className="space-y-3">
+      <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">SUMMARY OF CHANGE</h3>
+      <p className="text-xs text-army-slate">{SUMMARY_EXPORT_TITLE}</p>
+      <p className="text-xs">
+        Deltas only — original regulation (read-only) versus your draft. Table columns: Action | Location |
+        Original (ACTIVE) | Revised (your draft).{" "}
+        {summary.counts.total === 0
+          ? "No wording differences yet."
+          : `${summary.counts.total} change(s): ${summary.counts.revises} Revises, ${summary.counts.adds} Adds, ${summary.counts.rescinds} Rescinds.`}
+      </p>
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={onOpenSummary}
+          className="bg-army-olive text-army-cream px-2 py-1 text-xs font-semibold"
+        >
+          Open full list
+        </button>
+        <a href="/api/export?kind=summary" className="border border-army-black/20 px-2 py-1 text-xs bg-white">
+          Export Summary (DRAFT)
+        </a>
+      </div>
+      <ul className="space-y-2">
+        {summary.rows.slice(0, 20).map((row) => (
+          <li key={row.id} className="bg-white border border-army-black/10 p-2">
+            <div className="font-semibold text-[12px]">
+              {actionLabel(row.action)} · {row.cite}
+            </div>
+            <button type="button" className="text-[11px] underline mt-1" onClick={() => onSelect(row.sectionId)}>
+              Open {row.sectionNumber} {row.sectionTitle}
+            </button>
+          </li>
+        ))}
+      </ul>
+      {summary.rows.length > 20 ? (
+        <button type="button" className="text-xs underline" onClick={onOpenSummary}>
+          Show all {summary.rows.length} rows
+        </button>
+      ) : null}
+      <p className="text-[11px] text-army-slate">
+        Moved paragraphs are not listed separately yet. They appear as Rescinds plus Adds.
+      </p>
     </div>
   );
 }
@@ -482,9 +543,13 @@ function UploadTab({ uploads, onUpload, onWgMark, role, wgReady, sectionId }: Pr
     <div className="space-y-3">
       <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">SOURCE UPLOAD (25 MB)</h3>
       <p className="text-xs text-army-slate">PDF or Word file. File name, size, and a unique file ID are written to the activity log.</p>
+      {role === "reviewer" ? (
+        <p className="text-xs text-army-rust">Reviewers cannot upload files. Switch to Editor or Approver.</p>
+      ) : null}
       <input
         type="file"
         accept=".pdf,.doc,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        disabled={role === "reviewer"}
         onChange={async (event) => {
           const file = event.target.files?.[0];
           if (!file) return;
