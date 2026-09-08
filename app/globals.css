@@ -15,6 +15,62 @@ body {
   @apply bg-army-cream text-army-ink font-ui antialiased;
 }
 
+button:focus-visible,
+a:focus-visible,
+select:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #c5a14a;
+  outline-offset: 2px;
+}
+
+@layer components {
+  /* Shared chrome radius — rounded rectangles, not pills. */
+  .btn {
+    @apply inline-flex items-center justify-center gap-1 rounded-lg font-semibold leading-none transition-colors disabled:opacity-40;
+  }
+
+  .btn-primary {
+    @apply btn bg-army-olive text-army-cream px-3 py-1.5 text-xs;
+  }
+
+  .btn-secondary {
+    @apply btn border border-army-black/20 bg-white text-army-ink px-3 py-1.5 text-xs hover:bg-army-gold/15;
+  }
+
+  .btn-header {
+    @apply btn bg-army-gold text-army-black border border-transparent px-2.5 py-1 text-[11px];
+  }
+
+  .btn-header-ghost {
+    @apply btn border border-army-gold/50 text-army-cream px-2.5 py-1 text-[11px] hover:bg-white/10;
+  }
+
+  /* Parent / chapter headings — same family, visibly larger than children. */
+  .panel-heading {
+    @apply font-ui text-sm font-bold tracking-[0.12em] uppercase text-army-goldDark;
+  }
+
+  .section-heading {
+    @apply font-ui text-[11px] font-bold tracking-[0.16em] uppercase text-army-oliveDark;
+  }
+
+  .chapter-heading {
+    @apply font-ui text-[13px] font-bold tracking-wide text-army-oliveDark;
+  }
+
+  /* Sister-pub / STEER AR suggestions — clearly clickable, no Assist logic change. */
+  .steer-ar {
+    @apply inline-flex items-center cursor-pointer rounded-lg border border-army-gold/55 bg-white px-2 py-1 text-[11px] font-semibold text-army-goldDark underline decoration-army-gold underline-offset-2;
+    @apply hover:bg-army-gold/15 hover:decoration-2;
+  }
+
+  .assist-link {
+    @apply inline-flex items-center cursor-pointer rounded-sm underline decoration-army-goldDark underline-offset-2 text-army-goldDark text-[11px];
+    @apply hover:decoration-2 hover:text-army-oliveDark;
+  }
+}
+
 .training-banner {
   background: #8b2e1f;
 }

@@ -160,11 +160,11 @@ export function OutlinePane({
     <aside className="flex flex-col min-h-0 h-full border-r border-army-black/15 bg-[#efe8d8]">
       <div className="p-3 border-b border-army-black/10">
         <div className="flex items-center justify-between gap-2 mb-2">
-          <p className="text-[10px] font-bold tracking-[0.16em] text-army-slate">OUTLINE</p>
+          <p className="panel-heading">Outline</p>
           <PaneToggle label="outline" expanded onClick={onCollapse} />
         </div>
-        <label className="text-[10px] font-bold tracking-[0.16em] text-army-slate block mb-1">
-          SEARCH ORIGINAL REGULATION
+        <label className="section-heading block mb-1 text-army-slate">
+          Search original regulation
         </label>
         <input
           value={query}
@@ -184,7 +184,7 @@ export function OutlinePane({
                 type="button"
                 disabled={!selected}
                 onClick={() => selected && openAdd(selected.id, "before")}
-                className="text-[10px] px-1.5 py-0.5 bg-white border border-army-black/15 disabled:opacity-40"
+                className="rounded-lg text-[10px] px-1.5 py-0.5 bg-white border border-army-black/15 disabled:opacity-40"
               >
                 Add before
               </button>
@@ -192,7 +192,7 @@ export function OutlinePane({
                 type="button"
                 disabled={!selected}
                 onClick={() => selected && openAdd(selected.id, "after")}
-                className="text-[10px] px-1.5 py-0.5 bg-white border border-army-black/15 disabled:opacity-40"
+                className="rounded-lg text-[10px] px-1.5 py-0.5 bg-white border border-army-black/15 disabled:opacity-40"
               >
                 Add after
               </button>
@@ -200,7 +200,7 @@ export function OutlinePane({
                 type="button"
                 disabled={!selectedChapter}
                 onClick={() => selectedChapter && openAdd(selectedChapter.id, "child")}
-                className="text-[10px] px-1.5 py-0.5 bg-white border border-army-black/15 disabled:opacity-40"
+                className="rounded-lg text-[10px] px-1.5 py-0.5 bg-white border border-army-black/15 disabled:opacity-40"
               >
                 Add child
               </button>
@@ -208,7 +208,7 @@ export function OutlinePane({
                 type="button"
                 disabled={!selected || busy}
                 onClick={() => selected && void onSplit(selected.id)}
-                className="text-[10px] px-1.5 py-0.5 bg-white border border-army-black/15 disabled:opacity-40"
+                className="rounded-lg text-[10px] px-1.5 py-0.5 bg-white border border-army-black/15 disabled:opacity-40"
               >
                 Split
               </button>
@@ -216,7 +216,7 @@ export function OutlinePane({
                 type="button"
                 disabled={!selected}
                 onClick={() => selected && openRename(selected.id)}
-                className="text-[10px] px-1.5 py-0.5 bg-white border border-army-black/15 disabled:opacity-40"
+                className="rounded-lg text-[10px] px-1.5 py-0.5 bg-white border border-army-black/15 disabled:opacity-40"
               >
                 Rename
               </button>
@@ -224,7 +224,7 @@ export function OutlinePane({
                 type="button"
                 disabled={!selected}
                 onClick={() => selected && openDelete(selected.id)}
-                className="text-[10px] px-1.5 py-0.5 bg-white border border-army-rust/40 text-army-rust disabled:opacity-40"
+                className="rounded-lg text-[10px] px-1.5 py-0.5 bg-white border border-army-rust/40 text-army-rust disabled:opacity-40"
               >
                 Delete
               </button>
@@ -273,8 +273,8 @@ export function OutlinePane({
                     : "bg-army-paper/90 border-army-black/10 hover:bg-army-gold/15"
                 }`}
               >
-                <span className="block text-[10px] font-bold tracking-[0.16em] text-army-goldDark">
-                  FRONT MATTER
+                <span className="section-heading block text-army-goldDark">
+                  Front matter
                 </span>
                 Summary of Change
                 <span className="ml-1 text-[10px] text-army-rust font-bold">DRAFT</span>
@@ -304,7 +304,7 @@ export function OutlinePane({
                   }}
                 >
                   <summary
-                    className="cursor-pointer text-[11px] font-bold tracking-wide text-army-oliveDark py-1 flex items-center justify-between gap-2"
+                    className="chapter-heading cursor-pointer py-1 flex items-center justify-between gap-2"
                     onContextMenu={(event) => {
                       if (!editable) return;
                       event.preventDefault();
@@ -317,7 +317,7 @@ export function OutlinePane({
                     {editable ? (
                       <button
                         type="button"
-                        className="text-[10px] font-semibold px-1 border border-army-black/15 bg-white"
+                        className="rounded-lg text-[10px] font-semibold px-1 border border-army-black/15 bg-white"
                         onClick={(event) => {
                           event.preventDefault();
                           openAdd(chapter.id, "child");
@@ -472,13 +472,13 @@ export function OutlinePane({
             )}
             {dialogError ? <p className="text-xs text-army-rust">{dialogError}</p> : null}
             <div className="flex justify-end gap-2">
-              <button type="button" className="px-2 py-1 text-xs border" onClick={() => setDialog(null)}>
+              <button type="button" className="btn-secondary" onClick={() => setDialog(null)}>
                 Cancel
               </button>
               <button
                 type="button"
                 disabled={busy || (dialog !== "delete" && !dialogTitle.trim())}
-                className={`px-2 py-1 text-xs font-semibold ${dialog === "delete" ? "bg-army-rust text-white" : "bg-army-olive text-army-cream"}`}
+                className={`rounded-lg px-2 py-1 text-xs font-semibold ${dialog === "delete" ? "bg-army-rust text-white" : "bg-army-olive text-army-cream"}`}
                 onClick={() => void submitDialog()}
               >
                 {dialog === "delete" ? "Delete" : dialog === "rename" ? "Rename" : "Add"}

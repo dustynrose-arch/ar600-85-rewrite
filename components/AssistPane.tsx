@@ -90,7 +90,7 @@ export function AssistPane(props: Props) {
   return (
     <aside className="flex flex-col min-h-0 h-full border-l border-army-black/15 bg-[#f7f2e6]">
       <div className="flex items-center justify-between gap-2 px-2 py-1.5 border-b border-army-black/10">
-        <p className="text-[10px] font-bold tracking-[0.16em] text-army-slate">ASSIST</p>
+        <p className="panel-heading">Assist</p>
         <PaneToggle label="Assist" expanded onClick={props.onCollapse} />
       </div>
       <div className="flex flex-wrap gap-1 p-2 border-b border-army-black/10">
@@ -99,7 +99,7 @@ export function AssistPane(props: Props) {
             key={item.id}
             type="button"
             onClick={() => setTab(item.id)}
-            className={`px-2 py-1 text-[11px] font-semibold ${
+            className={`rounded-lg px-2 py-1 text-[11px] font-semibold ${
               tab === item.id ? "bg-army-olive text-army-cream" : "bg-white text-army-ink border border-army-black/10"
             }`}
           >
@@ -108,7 +108,7 @@ export function AssistPane(props: Props) {
         ))}
       </div>
       <div className="pane-scroll overflow-y-auto flex-1 min-h-0 p-3 text-sm">
-        {tab === "assist" ? <AssistTab {...props} /> : null}
+        {tab === "assist" ? <AssistTab {...props} onOpenAuthority={() => setTab("authority")} /> : null}
         {tab === "authority" ? (
           <AuthorityTab
             sections={props.sections}
@@ -151,7 +151,8 @@ function AssistTab({
   assistBindings,
   draftBody,
   sections,
-}: Props) {
+  onOpenAuthority,
+}: Props & { onOpenAuthority: () => void }) {
   const chips = useMemo(
     () => viewAssistChips(working, assistBindings?.[working.id], draftBody),
     [working, assistBindings, draftBody],
@@ -172,7 +173,7 @@ function AssistTab({
   return (
     <div className="space-y-4">
       <section>
-        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">WHAT THIS PANEL DOES</h3>
+        <h3 className="section-heading">What this panel does</h3>
         <p className="text-xs text-army-slate mt-1">
           Assist watches the paragraph open in the center. When it finds locked glossary wording, Limited Use
           Policy (self-referral), other legal / adverse-action hints, or overlap with another publication, it
@@ -180,7 +181,7 @@ function AssistTab({
         </p>
       </section>
       <section>
-        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-goldDark">GLOSSARY TIP — LOCKED TERMS</h3>
+        <h3 className="section-heading text-army-goldDark">Glossary — terms you must keep</h3>
         <p className="text-xs text-army-slate mt-1">
           Locked terms keep one official meaning. Underlined wording below is in this paragraph — do not write a
           second definition in a commander’s guide or component chapter.
@@ -199,8 +200,8 @@ function AssistTab({
         </div>
       </section>
       <section>
-        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-rust">
-          LIMITED USE POLICY (SELF-REFERRAL)
+        <h3 className="section-heading text-army-rust">
+          Limited Use Policy (self-referral)
         </h3>
         <p className="text-xs text-army-slate mt-1">{LEGAL_CHIP_BODY}</p>
         {lupChips.length ? (
@@ -219,7 +220,7 @@ function AssistTab({
         )}
       </section>
       <section>
-        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-rust">LEGAL / ADVERSE-ACTION HINT</h3>
+        <h3 className="section-heading text-army-rust">Legal / adverse-action hint</h3>
         {adverseChips.length ? (
           <div className="mt-2 space-y-1.5">
             {adverseChips.map((chip) => (
@@ -238,14 +239,21 @@ function AssistTab({
       {chips.limitedUse ? (
         <div className="flex flex-wrap gap-1">
           {LEGAL_CITE_PUBS.map((pub) => (
-            <span key={pub} className="bg-white border border-army-rust/40 px-2 py-0.5 text-[11px]">
-              Cite {pub}
-            </span>
+            <button
+              key={pub}
+              type="button"
+              data-steer-ar=""
+              className="steer-ar"
+              title={`Open Authority for ${pub} — cite this sister publication; do not copy it`}
+              onClick={onOpenAuthority}
+            >
+              STEER {pub}
+            </button>
           ))}
         </div>
       ) : null}
       <section>
-        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">DOCTRINE TIP — OVERLAP CHECKS</h3>
+        <h3 className="section-heading">Doctrine tip — overlap checks</h3>
         <p className="text-xs text-army-slate mt-1">
           {findings.length} overlap topics are available. Keep the current wording, or insert a short “See …”
           pointer to the controlling paragraph.
@@ -266,7 +274,7 @@ function AssistTab({
                   type="button"
                   disabled={role !== "editor"}
                   onClick={() => onSergeant(finding.laneId, "keep")}
-                  className={`text-[11px] px-2 py-1 border ${
+                  className={`rounded-lg text-[11px] px-2 py-1 border ${
                     finding.decision?.decision === "keep" ? "bg-army-olive text-white" : "bg-army-cream"
                   }`}
                 >
@@ -275,8 +283,9 @@ function AssistTab({
                 <button
                   type="button"
                   disabled={role !== "editor"}
+                  data-steer-ar=""
                   onClick={() => onSergeant(finding.laneId, "see-cite", sectionId)}
-                  className={`text-[11px] px-2 py-1 border ${
+                  className={`rounded-lg text-[11px] px-2 py-1 border cursor-pointer underline decoration-army-gold underline-offset-2 ${
                     finding.decision?.decision === "see-cite" ? "bg-army-gold" : "bg-army-cream"
                   }`}
                 >
@@ -286,7 +295,7 @@ function AssistTab({
               {finding.hits[0] ? (
                 <button
                   type="button"
-                  className="text-[11px] underline mt-1"
+                  className="assist-link mt-1"
                   onClick={() => openStable(finding.primaryCite)}
                 >
                   Open primary cite
@@ -296,7 +305,7 @@ function AssistTab({
           ))}
         </ul>
       </section>
-      <Link href="/guide" className="inline-block text-xs underline text-army-goldDark">
+      <Link href="/guide" className="assist-link text-xs">
         Open User Guide (walkthrough + video)
       </Link>
     </div>
@@ -312,24 +321,32 @@ function AuthorityTab({
   return (
     <div className="space-y-4">
       <section>
-        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-rust">CITE-DON’T-COPY HOT LIST</h3>
+        <h3 className="section-heading text-army-rust">Cite-don’t-copy hot list</h3>
         <ul className="mt-2 space-y-2">
           {CITE_HOT_LIST.map((item) => (
             <li key={item.id} className="bg-white border border-army-black/10 p-2">
               <div className="font-semibold text-[12px]">{item.topic}</div>
-              <div className="text-[11px] text-army-goldDark">{item.cite}</div>
+              <div className="text-[11px] font-semibold text-army-goldDark underline decoration-army-gold underline-offset-2">
+                {item.cite}
+              </div>
               <p className="text-[11px] mt-1">{item.warning}</p>
             </li>
           ))}
         </ul>
       </section>
       <section>
-        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">SISTER PUBLICATIONS</h3>
+        <h3 className="section-heading">Sister publications</h3>
         <ul className="mt-2 space-y-2">
           {SISTER_PUBS.map((pub) => (
             <li key={pub.id} className="bg-white border border-army-black/10 p-2">
               <div className="font-semibold text-[12px]">
-                {pub.pub} — {pub.title}
+                <span
+                  data-steer-ar=""
+                  className="inline-flex items-center mr-1 rounded-lg border border-army-gold/55 bg-army-gold/10 px-2 py-0.5 text-[11px] font-semibold text-army-goldDark"
+                >
+                  STEER {pub.pub}
+                </span>
+                {pub.title}
               </div>
               <p className="text-[11px] mt-1">{pub.whyCite}</p>
               <p className="text-[11px] text-army-rust mt-1">{pub.doNotCopy}</p>
@@ -339,7 +356,7 @@ function AuthorityTab({
       </section>
       <button
         type="button"
-        className="text-xs underline"
+        className="assist-link text-xs"
         onClick={() => onSelect("A-1")}
       >
         Open appendix A references
@@ -367,7 +384,7 @@ function ProcessTab({
   const highlighted = new Set(stored);
   return (
     <div>
-      <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">ID → REHAB PROCESS MAP</h3>
+      <h3 className="section-heading">ID → rehab process map</h3>
       <p className="text-xs text-army-slate mt-1">{PROCESS_MAP.summary}</p>
       <p className="text-[11px] text-army-slate mt-1">
         Highlight follows the open paragraph’s stable id, not the display number. Empty split siblings do not
@@ -388,7 +405,7 @@ function ProcessTab({
               </div>
               <p className="text-[11px] mt-1">{node.detail}</p>
               {bound ? (
-                <button type="button" className="text-[11px] underline mt-1" onClick={() => onSelect(bound.id)}>
+                <button type="button" className="assist-link mt-1" onClick={() => onSelect(bound.id)}>
                   Open {bound.number} {bound.title}
                 </button>
               ) : (
@@ -416,7 +433,7 @@ function TasksTab({ role, tasks, sectionId, onCreateTask, onCompleteTask, sectio
   const [notes, setNotes] = useState("");
   return (
     <div>
-      <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">EDITOR TASKS</h3>
+      <h3 className="section-heading">Editor tasks</h3>
       <form
         className="mt-2 space-y-2"
         onSubmit={(event) => {
@@ -444,7 +461,7 @@ function TasksTab({ role, tasks, sectionId, onCreateTask, onCompleteTask, sectio
         <button
           type="submit"
           disabled={role !== "editor"}
-          className="bg-army-olive text-army-cream px-3 py-1 text-xs font-semibold disabled:opacity-50"
+          className="btn-primary"
         >
           Create task on {working.number}
         </button>
@@ -465,7 +482,7 @@ function TasksTab({ role, tasks, sectionId, onCreateTask, onCompleteTask, sectio
                 type="button"
                 disabled={role !== "editor"}
                 onClick={() => onCompleteTask(task.id)}
-                className="mt-1 text-[11px] underline disabled:no-underline"
+                className="assist-link mt-1 disabled:no-underline disabled:cursor-not-allowed"
               >
                 Complete
               </button>
@@ -492,7 +509,7 @@ function VersionsTab({
 
   return (
     <div className="space-y-3">
-      <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">CHECKPOINTS & COMPARE</h3>
+      <h3 className="section-heading">Checkpoints & compare</h3>
       <div className="flex gap-2">
         <input
           value={label}
@@ -508,13 +525,13 @@ function VersionsTab({
             onSnapshot(label);
             setLabel("");
           }}
-          className="bg-army-olive text-army-cream px-2 py-1 text-xs font-semibold disabled:opacity-50"
+          className="btn-primary !px-2"
         >
           Save
         </button>
       </div>
       <label className="block text-[11px] font-semibold">
-        Compare working copy against
+        Compare your draft against
         <select
           value={against}
           onChange={(event) => setAgainst(event.target.value)}
@@ -531,20 +548,20 @@ function VersionsTab({
       <div className="flex gap-2">
         <button
           type="button"
-          className="border border-army-black/20 px-2 py-1 text-xs bg-white"
+          className="btn-secondary"
           onClick={async () => setHunks(await onDiff(against))}
         >
           Compare (original above, your draft below)
         </button>
         <button
           type="button"
-          className="border border-army-black/20 px-2 py-1 text-xs bg-white"
+          className="btn-secondary"
           onClick={async () => setBullets(await onSummarize(against))}
         >
           List the changes
         </button>
       </div>
-      <button type="button" className="text-xs underline text-army-goldDark" onClick={onOpenSummary}>
+      <button type="button" className="assist-link text-xs" onClick={onOpenSummary}>
         Open Summary of Change (deltas only)
       </button>
       {bullets.length ? (
@@ -582,7 +599,7 @@ function SummaryTab({
 }: Props) {
   return (
     <div className="space-y-3">
-      <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">SUMMARY OF CHANGE</h3>
+      <h3 className="section-heading">Summary of Change</h3>
       <p className="text-xs text-army-slate">{SUMMARY_EXPORT_TITLE}</p>
       <p className="text-xs">
         Deltas only — original regulation (read-only) versus your draft. Table columns: Action | Location |
@@ -595,11 +612,11 @@ function SummaryTab({
         <button
           type="button"
           onClick={onOpenSummary}
-          className="bg-army-olive text-army-cream px-2 py-1 text-xs font-semibold"
+          className="btn-primary !px-2"
         >
           Open full list
         </button>
-        <a href="/api/export?kind=summary" className="border border-army-black/20 px-2 py-1 text-xs bg-white">
+        <a href="/api/export?kind=summary" className="btn-secondary">
           Export Summary (DRAFT)
         </a>
       </div>
@@ -609,14 +626,14 @@ function SummaryTab({
             <div className="font-semibold text-[12px]">
               {actionLabel(row.action)} · {row.cite}
             </div>
-            <button type="button" className="text-[11px] underline mt-1" onClick={() => onSelect(row.sectionId)}>
+            <button type="button" className="assist-link mt-1" onClick={() => onSelect(row.sectionId)}>
               Open {row.sectionNumber} {row.sectionTitle}
             </button>
           </li>
         ))}
       </ul>
       {summary.rows.length > 20 ? (
-        <button type="button" className="text-xs underline" onClick={onOpenSummary}>
+        <button type="button" className="assist-link text-xs" onClick={onOpenSummary}>
           Show all {summary.rows.length} rows
         </button>
       ) : null}
@@ -646,7 +663,7 @@ function TimelineTab({
           </div>
           <p className="text-[12px] mt-0.5">{event.summary}</p>
           {event.sectionId ? (
-            <button type="button" className="text-[11px] underline" onClick={() => onSelect(event.sectionId!)}>
+            <button type="button" className="assist-link" onClick={() => onSelect(event.sectionId!)}>
               Open {sections?.[event.sectionId]?.number ?? event.sectionId}
             </button>
           ) : null}
@@ -661,7 +678,7 @@ function UploadTab({ uploads, onUpload, onRecompare, onWgMark, role, wgReady, se
   const [busy, setBusy] = useState(false);
   return (
     <div className="space-y-3">
-      <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">COMPARE TO YOUR DRAFT (25 MB)</h3>
+      <h3 className="section-heading">Compare to your draft (25 MB)</h3>
       <p className="text-xs text-army-slate">
         Upload a policy, training, or PAR file as <strong>.docx</strong>, <strong>.pdf</strong>, or{" "}
         <strong>.pptx</strong>. The app lists Match / Miss / Unclear suggestions against your draft. Nothing is
@@ -709,8 +726,8 @@ function UploadTab({ uploads, onUpload, onRecompare, onWgMark, role, wgReady, se
             <div>
               {new Date(row.uploadedAt).toLocaleString()} · {row.uploadedBy}
             </div>
-            <p className="mt-2 text-[10px] font-bold tracking-[0.14em] text-army-oliveDark">
-              SUGGESTIONS — MATCH / MISS / UNCLEAR
+            <p className="section-heading mt-2">
+              Suggestions — Match / Miss / Unclear
             </p>
             <div className="mt-1">
               <CrossmatchRows rows={row.findings ?? []} onSelect={onSelect} />
@@ -719,7 +736,7 @@ function UploadTab({ uploads, onUpload, onRecompare, onWgMark, role, wgReady, se
               <button
                 type="button"
                 disabled={busy}
-                className="underline mt-2"
+                className="assist-link mt-2"
                 onClick={async () => {
                   setBusy(true);
                   setError(null);
@@ -739,14 +756,14 @@ function UploadTab({ uploads, onUpload, onRecompare, onWgMark, role, wgReady, se
         ))}
       </ul>
       <div className="border-t border-army-black/10 pt-3">
-        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-goldDark">APPROVER WG-REVIEW</h3>
+        <h3 className="section-heading text-army-goldDark">Approver WG-review</h3>
         <p className="text-xs mt-1">{wgReady ? "Working copy is marked ready for WG review." : "Not yet marked ready."}</p>
         <div className="flex flex-wrap gap-2 mt-2">
           <button
             type="button"
             disabled={role !== "approver"}
             onClick={() => onWgMark(sectionId)}
-            className="text-xs px-2 py-1 bg-army-gold disabled:opacity-50"
+            className="btn rounded-lg text-xs px-2 py-1 bg-army-gold disabled:opacity-50"
           >
             Mark this paragraph
           </button>
@@ -754,7 +771,7 @@ function UploadTab({ uploads, onUpload, onRecompare, onWgMark, role, wgReady, se
             type="button"
             disabled={role !== "approver"}
             onClick={() => onWgMark("all")}
-            className="text-xs px-2 py-1 bg-army-olive text-white disabled:opacity-50"
+            className="btn-primary !px-2"
           >
             Mark ready for WG review
           </button>
@@ -762,7 +779,7 @@ function UploadTab({ uploads, onUpload, onRecompare, onWgMark, role, wgReady, se
             type="button"
             disabled={role !== "approver"}
             onClick={() => onWgMark("clear")}
-            className="text-xs px-2 py-1 border disabled:opacity-50"
+            className="btn-secondary"
           >
             Clear marks
           </button>

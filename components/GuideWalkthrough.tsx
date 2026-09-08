@@ -124,7 +124,7 @@ export function GuideWalkthrough() {
             <td className={tdClass}>
               <strong>Top</strong>
             </td>
-            <td className={tdClass}>Save status, your role, Guide, Word export, G–1 seal, DRAFT banner</td>
+            <td className={tdClass}>Save status, your role, Guide, Word export, G–1 and Army seals, DRAFT / WORKING COPY banner</td>
           </tr>
         </tbody>
       </table>

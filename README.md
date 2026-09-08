@@ -1,4 +1,4 @@
-# AR 600-85 Rewrite — Working Copy
+# AR 600-85 Rewrite
 
 Browser-only Next.js application for the internal Army Deputy Chief of Staff, G–1 rewrite working group. Editors maintain a **working copy** of AR 600–85 against a **read-only embedded baseline**. The baseline is never mutated.
 
@@ -39,7 +39,7 @@ npm start
 
 | Area | Behavior |
 | --- | --- |
-| Chrome | Outline \| editor \| Assist/authority. Official G–1 seal at `public/g1-seal.png`, always paired with the DRAFT / WORKING COPY banner. Title *AR 600-85 Rewrite — Working Copy*. Subtitle *Internal G-1 rewrite working group use only*. Outline and Assist collapse so the center editor can widen; the tab remembers that choice for the session. |
+| Chrome | Outline \| editor \| Assist/authority. Official G–1 seal (`public/g1-seal.png`, left) and official Department of the Army emblem (`public/army-seal.png`, right) always paired with the gold DRAFT / WORKING COPY banner — never seals alone. Title *AR 600-85 Rewrite*. Subtitle *Directorate of Prevention, Resilience and Readiness*. The editor pane is labeled **Your draft**. Outline and Assist collapse so the center editor can widen; the tab remembers that choice for the session. |
 | Editing | Section edit with automatic save plus an Editor-only **Save** button (timeline: “Manual save”). The original regulation pane is read-only. Your draft has Undo (button and Ctrl+Z / ⌘Z) and browser spellcheck; the original regulation pane is not spellchecked. Hide outline / Hide Assist live on those side panes only — not in the center chrome. |
 | Structure | Editors only (Reviewer/Approver get 403). Add before/after/child, split, delete (confirm), rename title, drag-reorder including across chapters. Stable node ids stay put; display numbers renumber IAW AR 25-30 / DA Pam 25-40. Every add/delete/move/rename/split is audited. ACTIVE baseline seed is never written. Assist chips, Process highlight, tasks, drafts, and snapshots keep the stable id. Split leaves chips on the source; delete drops assist state for that id. |
 | Search | Queries the original regulation (read-only) only. |
@@ -64,6 +64,6 @@ Working-copy state lives in `data/runtime/` (created at first run, not committed
 app/            App Router pages and API routes
 components/     Three-pane chrome and Assist tabs
 lib/            Store, diff, export, roles, seed data
-public/         Official G-1 seal (never shown without the DRAFT banner); optional guide video at public/guide/
+public/         Official G-1 seal and Army emblem (never shown without the DRAFT banner); optional guide video at public/guide/
 scripts/        Baseline seed generator
 ```
