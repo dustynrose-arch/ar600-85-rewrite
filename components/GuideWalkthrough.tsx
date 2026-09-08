@@ -12,7 +12,7 @@ function GuideCallout({
   title,
   children,
 }: {
-  kind: "Legal tip" | "Glossary tip" | "Doctrine tip";
+  kind: "Justice" | "Cheech" | "Sergeant";
   title: string;
   children: ReactNode;
 }) {
@@ -181,7 +181,7 @@ export function GuideWalkthrough() {
           </li>
         </ol>
         <p className="mt-3">You’re always drafting. The gold banner at the top is there on purpose.</p>
-        <GuideCallout kind="Doctrine tip" title="Original regulation vs your draft">
+        <GuideCallout kind="Sergeant" title="Original regulation vs your draft">
           The left outline and search show the original regulation (read-only). Only edit your draft in the
           center.
         </GuideCallout>
@@ -235,16 +235,16 @@ export function GuideWalkthrough() {
           </li>
         </ul>
         <p className="mt-3">Reviewers can read every reminder. Only Editors can record Keep wording or Insert See cite.</p>
-        <GuideCallout kind="Legal tip" title="Limited Use">
+        <GuideCallout kind="Justice" title="Limited Use">
           When Assist highlights testing, referral, or discipline wording (especially self-identification), do
           not treat that as open season for punishment. Follow Limited Use and the SJA, and cite AR 600-8-2 /
           635-200 instead of rewriting those publications into 600-85.
         </GuideCallout>
-        <GuideCallout kind="Glossary tip" title="Glossary">
+        <GuideCallout kind="Cheech" title="Glossary">
           When Assist underlines a term, prefer the locked ASAP wording (IR versus other test bases, SUDCC
           versus ADAPT, illicit use versus prescription misuse). Reminders never rewrite the paragraph for you.
         </GuideCallout>
-        <GuideCallout kind="Doctrine tip" title="Sister publications">
+        <GuideCallout kind="Sergeant" title="Sister publications">
           When Assist flags wording that belongs in another publication, prefer “See AR …” (flags → AR 600-8-2,
           separations → AR 635-200, and so on). Keep short language only if the ASAP context needs it.
         </GuideCallout>
@@ -265,7 +265,7 @@ export function GuideWalkthrough() {
           <li>Open the notes when your draft touches Limited Use, alcohol incidents, or civilian TDP/EAP.</li>
         </ol>
         <p className="mt-3">Use it when you’re unsure what “right-shaped” policy language should cover.</p>
-        <GuideCallout kind="Glossary tip" title="Process">
+        <GuideCallout kind="Cheech" title="Process">
           Use the Process tab for identification → referral → screen → treat → outcome (and the civilian TDP and
           EAP branch) so those sections stay one system.
         </GuideCallout>
@@ -303,7 +303,7 @@ export function GuideWalkthrough() {
             The rows never rewrite your draft or the original regulation.
           </li>
         </ol>
-        <GuideCallout kind="Legal tip" title="DRAFT export">
+        <GuideCallout kind="Justice" title="DRAFT export">
           Every Word export stays marked DRAFT — that is expected when you submit to APD.
         </GuideCallout>
       </article>

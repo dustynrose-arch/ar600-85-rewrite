@@ -19,8 +19,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        ui: ['"Source Sans 3"', "Segoe UI", "Tahoma", "sans-serif"],
-        doc: ['"Source Serif 4"', "Georgia", "Times New Roman", "serif"],
+        ui: ["Segoe UI", "Tahoma", "Calibri", "sans-serif"],
+        doc: ["Georgia", "Times New Roman", "serif"],
       },
       boxShadow: {
         pane: "inset 0 0 0 1px rgba(22,20,16,0.08)",
