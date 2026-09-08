@@ -59,14 +59,30 @@ export type TimelineEvent = {
   sectionId?: string;
 };
 
+export type CrossmatchVerdict = "match" | "miss" | "unclear";
+
+export type CrossmatchRow = {
+  id: string;
+  sourceFile: string;
+  locator: string;
+  locationCite: string;
+  sectionId: string | null;
+  draftExcerpt: string;
+  documentExcerpt: string;
+  verdict: CrossmatchVerdict;
+  reason: string;
+};
+
 export type UploadAudit = {
   id: string;
   filename: string;
   mimeType: string;
   sizeBytes: number;
   sha256: string;
+  storedAs?: string;
   uploadedAt: string;
   uploadedBy: Role;
+  findings: CrossmatchRow[];
 };
 
 export type WgReviewMark = {

@@ -1,5 +1,6 @@
 "use client";
 
+import { DraftEditor } from "@/components/DraftEditor";
 import { PaneToggle } from "@/components/PaneToggle";
 import type { Role, Section, WorkingSection } from "@/lib/types";
 
@@ -66,7 +67,11 @@ export function EditorPane({
           <p className="px-4 pt-2 text-[10px] font-bold tracking-[0.16em] text-army-slate">
             ORIGINAL REGULATION — READ ONLY
           </p>
-          <div className="pane-scroll overflow-y-auto px-4 py-2 font-doc text-[13px] leading-relaxed text-army-ink/90 whitespace-pre-wrap">
+          <div
+            spellCheck={false}
+            data-spellcheck="disabled"
+            className="pane-scroll overflow-y-auto px-4 py-2 font-doc text-[13px] leading-relaxed text-army-ink/90 whitespace-pre-wrap"
+          >
             {compareBody != null ? (
               <>
                 <p className="text-[10px] font-ui font-bold tracking-wide text-army-goldDark mb-1">
@@ -79,18 +84,7 @@ export function EditorPane({
             )}
           </div>
         </div>
-        <div className="min-h-0 flex flex-col">
-          <p className="px-4 pt-2 text-[10px] font-bold tracking-[0.16em] text-army-oliveDark">
-            EDITABLE WORKING COPY
-          </p>
-          <textarea
-            value={draft}
-            onChange={(event) => onChange(event.target.value)}
-            readOnly={!editable}
-            className="flex-1 min-h-0 m-3 p-3 border border-army-black/15 bg-white font-doc text-[14px] leading-relaxed resize-none disabled:bg-army-cream"
-            spellCheck
-          />
-        </div>
+        <DraftEditor sectionId={working.id} value={draft} editable={editable} onChange={onChange} />
       </div>
     </section>
   );

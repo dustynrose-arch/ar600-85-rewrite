@@ -38,3 +38,11 @@ body {
   background: #c5a14a;
   border-radius: 999px;
 }
+
+#draft-editor::spelling-error {
+  text-decoration: wavy underline #8b2e1f;
+}
+
+#draft-editor::grammar-error {
+  text-decoration: wavy underline #8d7328;
+}

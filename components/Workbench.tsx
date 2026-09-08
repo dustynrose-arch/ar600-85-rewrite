@@ -406,6 +406,16 @@ export function Workbench({
             if (!res.ok) throw new Error(data.error ?? "Upload failed");
             applyState(data);
           }}
+          onRecompare={async (uploadId) => {
+            const res = await fetch("/api/crossmatch", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ uploadId }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error ?? "Compare failed");
+            applyState(data);
+          }}
           onWgMark={async (sectionId) => {
             const res = await fetch("/api/wg-review", {
               method: "POST",

@@ -26,7 +26,11 @@ export function UserGuide() {
         <li>
           Original regulation (read-only): AR 600–85 (4 Oct 2024, admin revs 27 Feb 2025 / 19 Feb 2026).
         </li>
-        <li>Your edits save automatically. This computer does not keep a separate copy.</li>
+        <li>
+          Your edits save automatically. This computer does not keep a separate copy. Editors can Undo in
+          your draft (button or Ctrl+Z / ⌘Z). The original regulation pane does not undo and is not
+          spellchecked.
+        </li>
         <li>Search looks only at the original regulation (read-only).</li>
         <li>Idle warning at 14 minutes; at 15 minutes the current section is saved and the workspace locks.</li>
       </ul>
@@ -34,16 +38,17 @@ export function UserGuide() {
       <h2 className="text-xl font-bold mt-8">Roles and gates</h2>
       <ul className="list-disc pl-6 space-y-1">
         <li>
-          <strong>Editor</strong> — edit your draft, create and complete tasks, save checkpoints,
-          record overlap decisions. May unlock after an idle lock.
+          <strong>Editor</strong> — edit your draft, undo draft typing, create and complete tasks, save
+          checkpoints, record overlap decisions, and upload files to compare against your draft. May unlock
+          after an idle lock.
         </li>
         <li>
           <strong>Reviewer</strong> — read-only. May inspect comparisons, the activity list, and authority
           reminders. Cannot unlock after an idle lock.
         </li>
         <li>
-          <strong>Approver</strong> — read-only text. May mark sections or the full book ready for
-          working-group review. May unlock after an idle lock.
+          <strong>Approver</strong> — read-only text. May upload files to compare against your draft, and
+          mark sections or the full book ready for working-group review. May unlock after an idle lock.
         </li>
       </ul>
 
@@ -121,8 +126,10 @@ export function UserGuide() {
         tab) for an APD-style list of only the paragraphs that differ between the original regulation
         (read-only) and your draft. Export Summary stays marked{" "}
         <em>Summary of Change (DRAFT — working copy; not authenticated under AR 25-30 / DA Pam 25-40)</em>. There is no
-        clean non-DRAFT export. PDF and Word source uploads are capped at 25 MB. Each upload is recorded with
-        the file name, size, and a unique file ID.
+        clean non-DRAFT export. Editors and Approvers may upload <strong>.docx</strong>, <strong>.pdf</strong>,
+        or <strong>.pptx</strong> files (25 MB). Each upload is recorded with who uploaded it, when, the file
+        name, size, and SHA-256. Compare rows are suggestions only (Match / Miss / Unclear) against your
+        draft. They never rewrite your draft or the original regulation.
       </p>
     </article>
   );
