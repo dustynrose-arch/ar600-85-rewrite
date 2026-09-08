@@ -8,7 +8,7 @@ function readRepoFile(relativePath: string): string {
 
 test("center pane gives the draft editor more height than the original pane", () => {
   const pane = readRepoFile("components/EditorPane.tsx");
-  assert.match(pane, /grid-rows-\[minmax\(7\.5rem,1fr\)_minmax\(12rem,2fr\)\]/);
+  assert.match(pane, /grid-rows-\[minmax\(9rem,1fr\)_minmax\(14rem,2fr\)\]/);
   assert.equal(pane.includes("grid-rows-2"), false);
   assert.match(pane, /pane-scroll overflow-y-auto flex-1 min-h-0/);
 

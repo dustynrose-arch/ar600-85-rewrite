@@ -88,7 +88,7 @@ export function DraftEditor({
   return (
     <div className="min-h-0 h-full flex flex-col flex-1">
       <div className="px-4 pt-2 flex items-center justify-between gap-2">
-        <p className="text-[10px] font-bold tracking-[0.16em] text-army-oliveDark">YOUR DRAFT</p>
+        <p className="pane-title">YOUR DRAFT</p>
         {editable ? (
           <div className="flex items-center gap-1.5">
             <button

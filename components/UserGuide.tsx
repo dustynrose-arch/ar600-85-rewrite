@@ -16,7 +16,7 @@ export function UserGuide() {
 
       <h2 className="text-xl font-bold mt-10">Workspace</h2>
       <ul className="list-disc pl-6 space-y-1">
-        <li>Three panes: outline on the left, your draft in the center, and Assist on the right.</li>
+        <li>Three panes: outline on the left, your draft in the center, and Assistant on the right.</li>
         <li>
           Use <strong>Hide outline</strong> on the left pane and <strong>Hide Assistant</strong> on the right pane
           to widen the center editor. Use <strong>Show outline</strong> or <strong>Show Assistant</strong> — or
@@ -68,16 +68,16 @@ export function UserGuide() {
         </li>
       </ul>
 
-      <h2 className="text-xl font-bold mt-8">Assist — the right-hand writing helper</h2>
+      <h2 className="text-xl font-bold mt-8">Assistant — the right-hand writing helper</h2>
       <p>
-        Assist watches the paragraph you have open in the center. It is a reminder list for G–1 editors, not an
+        Assistant watches the paragraph you have open in the center. It is a reminder list for G–1 editors, not an
         automatic rewrite tool. When the current wording touches a locked glossary term, Limited Use Policy
-        (self-referral), another legal / adverse-action hint, or a topic another publication already covers, Assist
+        (self-referral), another legal / adverse-action hint, or a topic another publication already covers, Assistant
         lists those reminders on the right.
       </p>
       <h3 className="text-lg font-semibold mt-4">How underlined wording appears</h3>
       <p>
-        Open a paragraph. If Assist finds matching wording, those terms and topics show up on the Assist tab as
+        Open a paragraph. If Assistant finds matching wording, those terms and topics show up on the Assistant tab as
         underlined reminders (locked glossary terms, Limited Use Policy or legal / adverse-action hints, or overlap
         with another publication). They are suggestions only. Your draft does not change until you choose an action.
       </p>
@@ -99,7 +99,7 @@ export function UserGuide() {
       <h3 className="text-lg font-semibold mt-4">When to use Glossary, Process, and authority references</h3>
       <ul className="list-disc pl-6 space-y-1">
         <li>
-          <strong>Glossary reminders (Assist tab)</strong> — when you use a defined term such as ASAP, ADAPT,
+          <strong>Glossary reminders (Assistant tab)</strong> — when you use a defined term such as ASAP, ADAPT,
           Limited Use Policy, SUDCC, UDL, MRO, or DAMIS. Keep one official meaning and point readers to the
           glossary or the controlling paragraph. Do not invent a second definition in a commander’s guide.
         </li>
@@ -141,7 +141,7 @@ export function UserGuide() {
 
       <h2 className="text-xl font-bold mt-8">Doctrine tip — overlap checks</h2>
       <p>
-        Assist runs 22 overlap checks across your draft. For each topic, choose <em>Keep wording</em> or{" "}
+        Assistant runs 22 overlap checks across your draft. For each topic, choose <em>Keep wording</em> or{" "}
         <em>Insert See cite</em>. Inserting a See cite appends the topic’s citation to the current paragraph and
         records the decision.
       </p>
@@ -149,7 +149,7 @@ export function UserGuide() {
       <h2 className="text-xl font-bold mt-8">Working-copy outline (Editors)</h2>
       <p>
         Use the left outline to reshape <em>your draft</em> only. Every add, split, delete, move, or rename is
-        written to the activity list with who, when, the stable paragraph id, and the action. Assist reminders,
+        written to the activity list with who, when, the stable paragraph id, and the action. Assistant reminders,
         tasks, and checkpoints stay attached to that id even after the display number changes. They never
         rebind against the original regulation.
       </p>
@@ -185,7 +185,7 @@ export function UserGuide() {
       <h2 className="text-xl font-bold mt-8">Export and upload</h2>
       <p>
         Word export is always DRAFT-stamped in the header, footer, and title-page disclaimer (AR 25–30 / DA Pam
-        25–40). Open <strong>Summary of Change</strong> in the outline (or the Assist <strong>Summary</strong>{" "}
+        25–40). Open <strong>Summary of Change</strong> in the outline (or the Assistant <strong>Summary</strong>{" "}
         tab) for an APD-style list of only the paragraphs that differ between the original regulation
         (read-only) and your draft. Export Summary stays marked{" "}
         <em>Summary of Change (DRAFT — working copy; not authenticated under AR 25-30 / DA Pam 25-40)</em>. There is no

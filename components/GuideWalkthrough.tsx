@@ -116,7 +116,7 @@ export function GuideWalkthrough() {
             <td className={tdClass}>
               <strong>Right</strong>
             </td>
-            <td className={tdClass}>Assist — helpful reminders, glossary, Process map, and authority cites</td>
+            <td className={tdClass}>Assistant — helpful reminders, glossary, Process map, and authority cites</td>
           </tr>
           <tr>
             <td className={tdClass}>
@@ -202,7 +202,7 @@ export function GuideWalkthrough() {
       <hr className="mt-8 border-army-black/15" />
 
       <article id="assist" className="scroll-mt-4 mt-8">
-        <h3 className="text-lg font-bold">Step 3 — Use Assist reminders on the right</h3>
+        <h3 className="text-lg font-bold">Step 3 — Use Assistant reminders on the right</h3>
         <p className="mt-2">
           The right-hand panel is a writing helper for this regulation. It watches the paragraph you have open
           and lists reminders when the wording needs a glossary check, Limited Use Policy (self-referral) or a
@@ -213,7 +213,7 @@ export function GuideWalkthrough() {
         <ol className="list-decimal pl-6 space-y-2 mt-2">
           <li>Open a paragraph in the center.</li>
           <li>
-            Open the <strong>Assist</strong> tab on the <strong>right</strong>.
+            Open the <strong>Assistant</strong> tab on the <strong>right</strong>.
           </li>
           <li>
             If Assist finds matching wording, those terms show up as <strong>underlined reminders</strong>:
@@ -312,7 +312,7 @@ export function GuideWalkthrough() {
             a Word file. Both stay clearly marked <strong>DRAFT</strong> for internal use only.
           </li>
           <li>
-            Use Assist <strong>Upload</strong> to drop a <strong>.docx</strong>, <strong>.pdf</strong>, or{" "}
+            Use Assistant <strong>Upload</strong> to drop a <strong>.docx</strong>, <strong>.pdf</strong>, or{" "}
             <strong>.pptx</strong> (25 MB). You get Match / Miss / Unclear suggestion rows against your draft.
             The rows never rewrite your draft or the original regulation.
           </li>

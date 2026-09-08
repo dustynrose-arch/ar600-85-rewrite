@@ -90,7 +90,7 @@ export function AssistPane(props: Props) {
   return (
     <aside className="flex flex-col min-h-0 h-full border-l border-army-black/[0.06] bg-[#f7f2e6]">
       <div className="flex items-center justify-between gap-2 px-2 py-1.5 border-b border-army-black/10">
-        <p className="text-[10px] font-bold tracking-[0.16em] text-army-slate">ASSISTANT</p>
+        <p className="pane-title">ASSISTANT</p>
         <PaneToggle label="Assistant" expanded onClick={props.onCollapse} />
       </div>
       <div className="flex flex-wrap gap-1 p-2 border-b border-army-black/10">
@@ -172,7 +172,7 @@ function AssistTab({
   return (
     <div className="space-y-4">
       <section>
-        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">WHAT THIS PANEL DOES</h3>
+        <h3 className="pane-title">WHAT THIS PANEL DOES</h3>
         <p className="text-xs text-army-slate mt-1">
           Assistant watches the paragraph open in the center. When it finds locked glossary wording, Limited Use
           Policy (self-referral), other legal / adverse-action hints, or overlap with another publication, it
@@ -180,7 +180,7 @@ function AssistTab({
         </p>
       </section>
       <section>
-        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-goldDark">GLOSSARY TIP — LOCKED TERMS</h3>
+        <h3 className="pane-title">GLOSSARY TIP — LOCKED TERMS</h3>
         <p className="text-xs text-army-slate mt-1">
           Locked terms keep one official meaning. Underlined wording below is in this paragraph — do not write a
           second definition in a commander’s guide or component chapter.
@@ -199,7 +199,7 @@ function AssistTab({
         </div>
       </section>
       <section>
-        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-rust">
+        <h3 className="pane-title">
           LIMITED USE POLICY (SELF-REFERRAL)
         </h3>
         <p className="text-xs text-army-slate mt-1">{LEGAL_CHIP_BODY}</p>
@@ -219,7 +219,7 @@ function AssistTab({
         )}
       </section>
       <section>
-        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-rust">LEGAL / ADVERSE-ACTION HINT</h3>
+        <h3 className="pane-title">LEGAL / ADVERSE-ACTION HINT</h3>
         {adverseChips.length ? (
           <div className="mt-2 space-y-1.5">
             {adverseChips.map((chip) => (
@@ -245,7 +245,7 @@ function AssistTab({
         </div>
       ) : null}
       <section>
-        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">DOCTRINE TIP — OVERLAP CHECKS</h3>
+        <h3 className="pane-title">DOCTRINE TIP — OVERLAP CHECKS</h3>
         <p className="text-xs text-army-slate mt-1">
           {findings.length} overlap topics are available. Keep the current wording, or insert a short “See …”
           pointer to the controlling paragraph.
@@ -312,7 +312,7 @@ function AuthorityTab({
   return (
     <div className="space-y-4">
       <section>
-        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-rust">CITE-DON’T-COPY HOT LIST</h3>
+        <h3 className="pane-title">CITE-DON’T-COPY HOT LIST</h3>
         <ul className="mt-2 space-y-2">
           {CITE_HOT_LIST.map((item) => (
             <li key={item.id} className="bg-white border border-army-black/10 p-2">
@@ -324,7 +324,7 @@ function AuthorityTab({
         </ul>
       </section>
       <section>
-        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">SISTER PUBLICATIONS</h3>
+        <h3 className="pane-title">SISTER PUBLICATIONS</h3>
         <ul className="mt-2 space-y-2">
           {SISTER_PUBS.map((pub) => (
             <li key={pub.id} className="bg-white border border-army-black/10 p-2">
@@ -367,7 +367,7 @@ function ProcessTab({
   const highlighted = new Set(stored);
   return (
     <div>
-      <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">ID → REHAB PROCESS MAP</h3>
+      <h3 className="pane-title">ID → REHAB PROCESS MAP</h3>
       <p className="text-xs text-army-slate mt-1">{PROCESS_MAP.summary}</p>
       <p className="text-[11px] text-army-slate mt-1">
         Highlight follows the open paragraph’s stable id, not the display number. Empty split siblings do not
@@ -416,7 +416,7 @@ function TasksTab({ role, tasks, sectionId, onCreateTask, onCompleteTask, sectio
   const [notes, setNotes] = useState("");
   return (
     <div>
-      <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">EDITOR TASKS</h3>
+      <h3 className="pane-title">EDITOR TASKS</h3>
       <form
         className="mt-2 space-y-2"
         onSubmit={(event) => {
@@ -492,7 +492,7 @@ function VersionsTab({
 
   return (
     <div className="space-y-3">
-      <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">CHECKPOINTS & COMPARE</h3>
+      <h3 className="pane-title">CHECKPOINTS & COMPARE</h3>
       <div className="flex gap-2">
         <input
           value={label}
@@ -582,7 +582,7 @@ function SummaryTab({
 }: Props) {
   return (
     <div className="space-y-3">
-      <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">SUMMARY OF CHANGE</h3>
+      <h3 className="pane-title">SUMMARY OF CHANGE</h3>
       <p className="text-xs text-army-slate">{SUMMARY_EXPORT_TITLE}</p>
       <p className="text-xs">
         Deltas only — original regulation (read-only) versus your draft. Table columns: Action | Location |
@@ -661,7 +661,7 @@ function UploadTab({ uploads, onUpload, onRecompare, onWgMark, role, wgReady, se
   const [busy, setBusy] = useState(false);
   return (
     <div className="space-y-3">
-      <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">COMPARE TO YOUR DRAFT (25 MB)</h3>
+      <h3 className="pane-title">COMPARE TO YOUR DRAFT (25 MB)</h3>
       <p className="text-xs text-army-slate">
         Upload a policy, training, or PAR file as <strong>.docx</strong>, <strong>.pdf</strong>, or{" "}
         <strong>.pptx</strong>. The app lists Match / Miss / Unclear suggestions against your draft. Nothing is
@@ -710,7 +710,7 @@ function UploadTab({ uploads, onUpload, onRecompare, onWgMark, role, wgReady, se
             <div>
               {new Date(row.uploadedAt).toLocaleString()} · {row.uploadedBy}
             </div>
-            <p className="mt-2 text-[10px] font-bold tracking-[0.14em] text-army-oliveDark">
+            <p className="mt-2 pane-title">
               SUGGESTIONS — MATCH / MISS / UNCLEAR
             </p>
             <div className="mt-1">
@@ -740,7 +740,7 @@ function UploadTab({ uploads, onUpload, onRecompare, onWgMark, role, wgReady, se
         ))}
       </ul>
       <div className="border-t border-army-black/10 pt-3">
-        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-goldDark">APPROVER WG-REVIEW</h3>
+        <h3 className="pane-title">APPROVER WG-REVIEW</h3>
         <p className="text-xs mt-1">{wgReady ? "Working copy is marked ready for WG review." : "Not yet marked ready."}</p>
         <div className="flex flex-wrap gap-2 mt-2">
           <button

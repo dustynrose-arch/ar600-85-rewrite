@@ -114,6 +114,10 @@ textarea:focus-visible {
     @apply rounded-lg border border-army-black/20 bg-army-paper px-2.5 py-1.5 text-sm text-army-ink min-h-8;
   }
 
+  .pane-title {
+    @apply text-[10px] font-bold tracking-[0.16em] uppercase text-army-goldDark;
+  }
+
   .assist-chip {
     @apply inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px];
     background: color-mix(in srgb, var(--g1-cream) 70%, var(--g1-header) 6%);

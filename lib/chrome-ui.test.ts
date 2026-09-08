@@ -104,3 +104,18 @@ test("right pane chrome is labeled Assistant", () => {
   assert.match(workbench, /label="Show Assistant"/);
   assert.equal(workbench.includes('label="Show Assist"'), false);
 });
+
+test("panel titles share one chrome class", () => {
+  const css = readRepoFile("app/globals.css");
+  const outline = readRepoFile("components/OutlinePane.tsx");
+  const editor = readRepoFile("components/EditorPane.tsx");
+  const draft = readRepoFile("components/DraftEditor.tsx");
+  const assist = readRepoFile("components/AssistPane.tsx");
+  const summary = readRepoFile("components/SummaryOfChangePane.tsx");
+  assert.match(css, /\.pane-title \{[\s\S]*text-army-goldDark/);
+  assert.match(outline, /className="pane-title">OUTLINE</);
+  assert.match(editor, /className="pane-title">WORKING COPY</);
+  assert.match(draft, /className="pane-title">YOUR DRAFT</);
+  assert.match(assist, /className="pane-title">ASSISTANT</);
+  assert.match(summary, /className="pane-title">SUMMARY OF CHANGE</);
+});

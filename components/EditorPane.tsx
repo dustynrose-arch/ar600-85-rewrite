@@ -55,7 +55,7 @@ export function EditorPane({
   return (
     <section className="flex flex-col min-h-0 h-full bg-army-paper">
       <header className="px-4 py-3 border-b border-army-black/10">
-        <p className="text-[10px] font-bold tracking-[0.18em] text-army-goldDark">WORKING COPY</p>
+        <p className="pane-title">WORKING COPY</p>
         <h2 className="font-doc text-xl font-semibold">
           {query ? (
             <SearchHighlight text={`${working.number}. ${working.title}`} query={query} />
@@ -69,9 +69,9 @@ export function EditorPane({
           Last saved {new Date(working.updatedAt).toLocaleString()} · {status}
         </p>
       </header>
-      <div className="grid grid-rows-[minmax(7.5rem,1fr)_minmax(12rem,2fr)] min-h-0 flex-1 overflow-hidden">
+      <div className="grid grid-rows-[minmax(9rem,1fr)_minmax(14rem,2fr)] min-h-0 flex-1 overflow-hidden">
         <div className="min-h-0 border-b border-army-black/10 flex flex-col overflow-hidden">
-          <p className="px-4 pt-2 text-[10px] font-bold tracking-[0.16em] text-army-slate">
+          <p className="px-4 pt-2 pane-title">
             ORIGINAL REGULATION — READ ONLY
           </p>
           <div

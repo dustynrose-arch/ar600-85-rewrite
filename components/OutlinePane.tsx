@@ -156,10 +156,10 @@ export function OutlinePane({
     <aside className="flex flex-col min-h-0 h-full border-r border-army-black/[0.06] bg-[#efe8d8]">
       <div className="p-3 border-b border-army-black/10">
         <div className="flex items-center justify-between gap-2 mb-2">
-          <p className="text-[10px] font-bold tracking-[0.16em] text-army-slate">OUTLINE</p>
+          <p className="pane-title">OUTLINE</p>
           <PaneToggle label="outline" expanded onClick={onCollapse} />
         </div>
-        <label className="text-[10px] font-bold tracking-[0.16em] text-army-slate block mb-1">
+        <label className="pane-title block mb-1">
           SEARCH ORIGINAL REGULATION
         </label>
         <div className="relative">
@@ -275,7 +275,7 @@ export function OutlinePane({
                     : "bg-army-paper/90 border-army-black/10 hover:bg-army-gold/15 rounded-lg"
                 }`}
               >
-                <span className="block text-[10px] font-bold tracking-[0.16em] text-army-goldDark">
+                <span className="block pane-title">
                   FRONT MATTER
                 </span>
                 Summary of Change
