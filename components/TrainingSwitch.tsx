@@ -76,7 +76,7 @@ export function TrainingSwitch({ mode, role, beforeSwitch, onResetApplied }: Pro
               type="button"
               disabled={busy}
               onClick={() => void switchMode("live")}
-              className="bg-army-cream text-army-black px-2.5 py-1 text-xs font-bold"
+              className="bg-army-gold text-army-black px-3 py-1.5 text-xs font-bold border border-army-cream disabled:opacity-60"
             >
               Leave Training
             </button>
@@ -136,7 +136,7 @@ export function TrainingSwitch({ mode, role, beforeSwitch, onResetApplied }: Pro
               <button
                 type="button"
                 disabled={busy}
-                className="px-3 py-1.5 text-sm font-semibold border-2 border-army-black/40 bg-white"
+                className="px-3 py-1.5 text-sm font-bold border-2 border-army-black bg-army-ink text-army-cream disabled:opacity-60"
                 onClick={() => setConfirmReset(false)}
               >
                 Cancel
@@ -144,7 +144,7 @@ export function TrainingSwitch({ mode, role, beforeSwitch, onResetApplied }: Pro
               <button
                 type="button"
                 disabled={busy}
-                className="px-3 py-1.5 text-sm font-semibold bg-army-rust text-white"
+                className="px-3 py-1.5 text-sm font-bold border-2 border-army-rust bg-army-rust text-white disabled:opacity-60"
                 onClick={() => void resetTraining()}
               >
                 Reset to original

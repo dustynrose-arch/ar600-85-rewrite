@@ -318,7 +318,8 @@ export function GuideWalkthrough() {
           </li>
         </ol>
         <GuideCallout kind="Legal tip" title="DRAFT export">
-          Every Word export stays marked DRAFT — that is expected when you submit to APD.
+          Every Word export stays marked DRAFT — that is expected when you submit to APD. Training
+          exports also say TRAINING in the header, title, and footer.
         </GuideCallout>
       </article>
 

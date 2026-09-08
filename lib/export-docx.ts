@@ -24,6 +24,7 @@ import {
 } from "./summary-of-change";
 import { BASELINE_LABEL } from "./types";
 import type { WorkspaceState } from "./types";
+import { wordFooterMark, wordHeaderMark } from "./export-stamps";
 
 type DocChild = Paragraph | Table;
 
@@ -56,7 +57,7 @@ function titlePage(extraTitle?: string, training = false): Paragraph[] {
     new Paragraph({
       alignment: AlignmentType.CENTER,
       spacing: { after: 200 },
-      children: [draftRun(training ? "TRAINING / DRAFT / WORKING COPY" : "DRAFT / WORKING COPY", { bold: true, size: 48 })],
+      children: [draftRun(wordHeaderMark(training), { bold: true, size: 48 })],
     }),
     new Paragraph({
       alignment: AlignmentType.CENTER,
@@ -208,7 +209,7 @@ function draftChrome(docTitle: string, children: DocChild[], training = false) {
               new Paragraph({
                 alignment: AlignmentType.CENTER,
                 children: [
-                  draftRun(training ? "TRAINING / DRAFT / WORKING COPY" : "DRAFT / WORKING COPY", { bold: true, size: 18 }),
+                  draftRun(wordHeaderMark(training), { bold: true, size: 18 }),
                   bodyRun("  ·  AR 600–85 Rewrite  ·  Internal G–1 use only  ·  ", { size: 18 }),
                   draftRun("NOT FOR IMPLEMENTATION", { bold: true, size: 18 }),
                 ],
@@ -222,7 +223,7 @@ function draftChrome(docTitle: string, children: DocChild[], training = false) {
               new Paragraph({
                 alignment: AlignmentType.CENTER,
                 children: [
-                  draftRun("DRAFT", { bold: true, size: 16 }),
+                  draftRun(wordFooterMark(training), { bold: true, size: 16 }),
                   bodyRun("  ·  Working copy — AR 25–30 / DA Pam 25–40 authentication not complete  ·  Page ", { size: 16 }),
                   new TextRun({ children: [PageNumber.CURRENT], size: 16, font: "Times New Roman" }),
                   bodyRun(" of ", { size: 16 }),
