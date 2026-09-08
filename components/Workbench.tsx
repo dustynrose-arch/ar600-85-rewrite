@@ -21,6 +21,7 @@ import {
   type BaselineDocument,
   type DiffHunk,
   type Role,
+  type SaveSource,
   type SearchHit,
   type Section,
   type SergeantLaneState,
@@ -134,13 +135,13 @@ export function Workbench({
   };
 
   const persistDraft = useCallback(
-    async (sectionId: string, body: string, role: Role) => {
+    async (sectionId: string, body: string, role: Role, source: SaveSource = "autosave") => {
       if (role !== "editor" || state.locked) return;
       setSaveState("saving");
       const res = await fetch("/api/section", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sectionId, body, role }),
+        body: JSON.stringify({ sectionId, body, role, source }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -162,8 +163,18 @@ export function Workbench({
     setSaveState("dirty");
     if (saveTimer.current) window.clearTimeout(saveTimer.current);
     saveTimer.current = window.setTimeout(() => {
-      void persistDraft(editorSectionId, value, state.role);
+      void persistDraft(editorSectionId, value, state.role, "autosave");
     }, 800);
+  };
+
+  const onSave = (value: string) => {
+    setDraft(value);
+    if (state.role !== "editor" || state.locked) {
+      setSaveState("blocked");
+      return;
+    }
+    if (saveTimer.current) window.clearTimeout(saveTimer.current);
+    void persistDraft(editorSectionId, value, state.role, "manual");
   };
 
   const changeRole = async (role: Role) => {
@@ -300,10 +311,6 @@ export function Workbench({
               filter={summaryFilter}
               onFilter={setSummaryFilter}
               onOpenSection={setSelectedId}
-              leftCollapsed={leftCollapsed}
-              rightCollapsed={rightCollapsed}
-              onToggleLeft={() => setLeftCollapsed((value) => !value)}
-              onToggleRight={() => setRightCollapsed((value) => !value)}
             />
           ) : (
             <EditorPane
@@ -314,12 +321,9 @@ export function Workbench({
               draft={draft}
               saveState={saveState}
               onChange={onChange}
+              onSave={onSave}
               compareBody={compareBody}
               compareLabel={compareLabel}
-              leftCollapsed={leftCollapsed}
-              rightCollapsed={rightCollapsed}
-              onToggleLeft={() => setLeftCollapsed((value) => !value)}
-              onToggleRight={() => setRightCollapsed((value) => !value)}
             />
           )}
         </div>
@@ -404,6 +408,16 @@ export function Workbench({
             const res = await fetch("/api/upload", { method: "POST", body: form });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error ?? "Upload failed");
+            applyState(data);
+          }}
+          onRecompare={async (uploadId) => {
+            const res = await fetch("/api/crossmatch", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ uploadId }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error ?? "Compare failed");
             applyState(data);
           }}
           onWgMark={async (sectionId) => {

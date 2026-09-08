@@ -152,9 +152,10 @@ export function GuideWalkthrough() {
             A <strong>WG</strong> mark means an Approver said it’s ready for working-group review.
           </li>
           <li>
-            Need more room to write? Click <strong>Hide outline</strong> or <strong>Hide Assist</strong>. The
-            center pane grows. Bring a side back with <strong>Show outline</strong> / <strong>Show Assist</strong>{" "}
-            or the thin strip on that side.
+            Need more room to write? Click <strong>Hide outline</strong> on the left pane or{" "}
+            <strong>Hide Assist</strong> on the right pane. The center pane has no hide buttons. Bring a side
+            back with <strong>Show outline</strong> / <strong>Show Assist</strong> or the thin strip on that
+            side.
           </li>
         </ul>
       </article>
@@ -165,7 +166,10 @@ export function GuideWalkthrough() {
         <h3 className="text-lg font-bold">Step 2 — Edit your draft (not the original regulation)</h3>
         <ol className="list-decimal pl-6 space-y-1 mt-2">
           <li>
-            Stay on <strong>your draft</strong> in the center (the lower box).
+            Stay on <strong>your draft</strong> in the center (the lower box). Type a misspelled word if
+            you want to confirm the red underline — spellcheck is on for your draft only. Use{" "}
+            <strong>Undo</strong> (or Ctrl+Z / ⌘Z) if you need to take a draft edit back. Press{" "}
+            <strong>Save</strong> when you want a manual save in the activity list; autosave still runs.
           </li>
           <li>
             Type your changes. Watch the top of the center pane — it should say <strong>Saved</strong> when your
@@ -293,6 +297,11 @@ export function GuideWalkthrough() {
             Click <strong>Word export</strong> or <strong>Export Summary (DRAFT)</strong> up top when you need
             a Word file. Both stay clearly marked <strong>DRAFT</strong> for internal use only.
           </li>
+          <li>
+            Use Assist <strong>Upload</strong> to drop a <strong>.docx</strong>, <strong>.pdf</strong>, or{" "}
+            <strong>.pptx</strong> (25 MB). You get Match / Miss / Unclear suggestion rows against your draft.
+            The rows never rewrite your draft or the original regulation.
+          </li>
         </ol>
         <GuideCallout kind="Legal tip" title="DRAFT export">
           Every Word export stays marked DRAFT — that is expected when you submit to APD.
@@ -316,7 +325,10 @@ export function GuideWalkthrough() {
               <td className={tdClass}>
                 <strong>Editor</strong>
               </td>
-              <td className={tdClass}>Write the draft, tasks, activity notes, uploads, Assist actions, checkpoints</td>
+              <td className={tdClass}>
+                Write the draft, undo draft typing, tasks, activity notes, uploads and document compare,
+                Assist actions, checkpoints
+              </td>
             </tr>
             <tr>
               <td className={tdClass}>
@@ -329,7 +341,8 @@ export function GuideWalkthrough() {
                 <strong>Approver</strong>
               </td>
               <td className={tdClass}>
-                Same read-only draft view; you alone can mark <strong>Ready for WG review</strong>
+                Same read-only draft view; you may upload files to compare against your draft; you alone
+                can mark <strong>Ready for WG review</strong>
               </td>
             </tr>
           </tbody>

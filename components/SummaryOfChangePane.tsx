@@ -1,6 +1,5 @@
 "use client";
 
-import { PaneToggle } from "@/components/PaneToggle";
 import {
   actionLabel,
   originalCell,
@@ -20,10 +19,6 @@ type Props = {
   filter: ChangeAction | "all";
   onFilter: (value: ChangeAction | "all") => void;
   onOpenSection: (sectionId: string) => void;
-  leftCollapsed: boolean;
-  rightCollapsed: boolean;
-  onToggleLeft: () => void;
-  onToggleRight: () => void;
 };
 
 function ActionBadge({ action }: { action: ChangeAction }) {
@@ -46,10 +41,6 @@ export function SummaryOfChangePane({
   filter,
   onFilter,
   onOpenSection,
-  leftCollapsed,
-  rightCollapsed,
-  onToggleLeft,
-  onToggleRight,
 }: Props) {
   const visible = filter === "all" ? summary.rows : summary.rows.filter((row) => row.action === filter);
 
@@ -71,8 +62,6 @@ export function SummaryOfChangePane({
           >
             Export Summary (DRAFT)
           </a>
-          <PaneToggle label="outline" expanded={!leftCollapsed} onClick={onToggleLeft} />
-          <PaneToggle label="Assist" expanded={!rightCollapsed} onClick={onToggleRight} />
         </div>
       </header>
       <div className="px-4 py-2 border-b border-army-black/10 flex flex-wrap items-center gap-2 text-[11px]">

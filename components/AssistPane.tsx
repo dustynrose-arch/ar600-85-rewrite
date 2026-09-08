@@ -2,11 +2,14 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { CrossmatchRows } from "@/components/CrossmatchRows";
 import { PaneToggle } from "@/components/PaneToggle";
+import { Toast } from "@/components/Toast";
 import { CITE_HOT_LIST, SISTER_PUBS } from "@/lib/seed/sister-pubs";
 import { GLOSSARY_TERMS } from "@/lib/seed/glossary";
 import { PROCESS_MAP } from "@/lib/seed/process-map";
 import { actionLabel, SUMMARY_EXPORT_TITLE, type SummaryOfChangeResult } from "@/lib/summary-of-change";
+import { rejectUploadReason, UPLOAD_ACCEPT } from "@/lib/upload-guard";
 import type {
   DiffHunk,
   Role,
@@ -53,6 +56,7 @@ type Props = {
   onSummarize: (against: string) => Promise<string[]>;
   onSergeant: (laneId: string, decision: "keep" | "see-cite", citeTo?: string) => void;
   onUpload: (file: File) => Promise<void>;
+  onRecompare: (uploadId: string) => Promise<void>;
   onWgMark: (sectionId: string | "all" | "clear") => void;
   onCollapse: () => void;
 };
@@ -537,41 +541,85 @@ function TimelineTab({
   );
 }
 
-function UploadTab({ uploads, onUpload, onWgMark, role, wgReady, sectionId }: Props) {
+function UploadTab({ uploads, onUpload, onRecompare, onWgMark, role, wgReady, sectionId, onSelect }: Props) {
   const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
   return (
     <div className="space-y-3">
-      <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">SOURCE UPLOAD (25 MB)</h3>
-      <p className="text-xs text-army-slate">PDF or Word file. File name, size, and a unique file ID are written to the activity log.</p>
+      <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">COMPARE TO YOUR DRAFT (25 MB)</h3>
+      <p className="text-xs text-army-slate">
+        Upload a policy, training, or PAR file as <strong>.docx</strong>, <strong>.pdf</strong>, or{" "}
+        <strong>.pptx</strong>. The app lists Match / Miss / Unclear suggestions against your draft. Nothing is
+        written into your draft or the original regulation unless you edit it yourself.
+      </p>
       {role === "reviewer" ? (
         <p className="text-xs text-army-rust">Reviewers cannot upload files. Switch to Editor or Approver.</p>
       ) : null}
       <input
         type="file"
-        accept=".pdf,.doc,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-        disabled={role === "reviewer"}
+        accept={UPLOAD_ACCEPT}
+        disabled={role === "reviewer" || busy}
         onChange={async (event) => {
-          const file = event.target.files?.[0];
+          const input = event.target;
+          const file = input.files?.[0];
           if (!file) return;
+          const rejected = rejectUploadReason(file);
+          if (rejected) {
+            setError(rejected);
+            input.value = "";
+            return;
+          }
           setError(null);
+          setBusy(true);
           try {
             await onUpload(file);
           } catch (err) {
             setError(err instanceof Error ? err.message : "Upload failed");
+          } finally {
+            setBusy(false);
+            input.value = "";
           }
         }}
       />
+      {busy ? <p className="text-xs text-army-slate">Comparing to your draft…</p> : null}
+      {error ? <Toast message={error} onDismiss={() => setError(null)} /> : null}
       {error ? <p className="text-xs text-army-rust">{error}</p> : null}
-      <ul className="space-y-2">
+      <ul className="space-y-3">
         {uploads.map((row) => (
           <li key={row.id} className="bg-white border border-army-black/10 p-2 text-[11px]">
             <div className="font-semibold">{row.filename}</div>
             <div>
-              {(row.sizeBytes / 1024).toFixed(1)} KB · File ID {row.sha256}
+              {(row.sizeBytes / 1024).toFixed(1)} KB · SHA-256 {row.sha256}
             </div>
             <div>
               {new Date(row.uploadedAt).toLocaleString()} · {row.uploadedBy}
             </div>
+            <p className="mt-2 text-[10px] font-bold tracking-[0.14em] text-army-oliveDark">
+              SUGGESTIONS — MATCH / MISS / UNCLEAR
+            </p>
+            <div className="mt-1">
+              <CrossmatchRows rows={row.findings ?? []} onSelect={onSelect} />
+            </div>
+            {row.storedAs && role !== "reviewer" ? (
+              <button
+                type="button"
+                disabled={busy}
+                className="underline mt-2"
+                onClick={async () => {
+                  setBusy(true);
+                  setError(null);
+                  try {
+                    await onRecompare(row.id);
+                  } catch (err) {
+                    setError(err instanceof Error ? err.message : "Compare failed");
+                  } finally {
+                    setBusy(false);
+                  }
+                }}
+              >
+                Compare again to your draft
+              </button>
+            ) : null}
           </li>
         ))}
       </ul>
