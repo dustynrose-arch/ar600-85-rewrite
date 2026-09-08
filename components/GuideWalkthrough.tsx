@@ -60,7 +60,7 @@ export function GuideWalkthrough() {
       </p>
       <p className="mt-3">
         Everything you write here is a <strong>draft</strong>. It is not Army policy until officially
-        published. The gold banner at the top marks it that way.
+        published. Word exports stay marked DRAFT; the workspace itself has no DRAFT banner.
       </p>
 
       <nav className="mt-4" aria-label="First session walkthrough anchors">
@@ -192,7 +192,7 @@ export function GuideWalkthrough() {
             text for reference only.
           </li>
         </ol>
-        <p className="mt-3">You’re always drafting. The gold banner at the top is there on purpose.</p>
+        <p className="mt-3">You’re always drafting. Word exports stay marked DRAFT on purpose.</p>
         <GuideCallout kind="Doctrine tip" title="Original regulation vs your draft">
           The left outline and search show the original regulation (read-only). Only edit your draft in the
           center.
