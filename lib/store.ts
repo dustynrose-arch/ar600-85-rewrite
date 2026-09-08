@@ -1,7 +1,23 @@
 import { createHash, randomUUID } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { flattenSections, sectionMap } from "./baseline";
+import {
+  bindingFromWorking,
+  dropAssistState,
+  emptyAssistBinding,
+  seedAssistBindings,
+} from "./assist-bind";
+import { baselineDocument, flattenSections, sectionMap } from "./baseline";
+import {
+  applyDisplayNumbers,
+  deleteSectionId,
+  firstSectionId,
+  flattenOutlineSections,
+  insertSectionId,
+  moveSectionId,
+  seedWorkingOutline,
+} from "./outline";
+import { ForbiddenError } from "./roles";
 import { REDUNDANCY_LANES } from "./seed/redundancy-lanes";
 import type {
   CrossmatchRow,
@@ -9,10 +25,12 @@ import type {
   SaveSource,
   SergeantLaneState,
   Snapshot,
+  StructurePosition,
   Task,
   TimelineEvent,
   UploadAudit,
   WgReviewMark,
+  WorkingOutlineChapter,
   WorkingSection,
   WorkspaceState,
 } from "./types";
@@ -37,6 +55,7 @@ function seedWorkingSections(): Record<string, WorkingSection> {
 }
 
 function emptyState(): WorkspaceState {
+  const workingSections = seedWorkingSections();
   return {
     role: "editor",
     locked: false,
@@ -45,7 +64,9 @@ function emptyState(): WorkspaceState {
     wgReviewReady: false,
     wgReviewReadyAt: null,
     lastActivityAt: now(),
-    workingSections: seedWorkingSections(),
+    workingSections,
+    workingOutline: seedWorkingOutline(baselineDocument),
+    assistBindings: seedAssistBindings(workingSections),
     tasks: [
       {
         id: randomUUID(),
@@ -120,23 +141,55 @@ function ensureStore(): WorkspaceState {
   }
   const baseline = sectionMap();
   let changed = false;
+  const hadOutline = Array.isArray(parsed.workingOutline) && parsed.workingOutline.length > 0;
+  if (!hadOutline) {
+    parsed.workingOutline = seedWorkingOutline(baselineDocument);
+    changed = true;
+  }
   for (const section of Object.values(baseline)) {
-    if (!parsed.workingSections[section.id]) {
-      parsed.workingSections[section.id] = { ...section, updatedAt: now(), updatedBy: "editor" };
-      changed = true;
+    const working = parsed.workingSections[section.id];
+    if (!working) {
+      if (!hadOutline) {
+        parsed.workingSections[section.id] = { ...section, updatedAt: now(), updatedBy: "editor" };
+        changed = true;
+      }
       continue;
     }
-    if (needsSeedRefresh(parsed.workingSections[section.id].body, section.body)) {
+    if (needsSeedRefresh(working.body, section.body)) {
       parsed.workingSections[section.id] = {
-        ...parsed.workingSections[section.id],
+        ...working,
         body: section.body,
         updatedAt: now(),
       };
       changed = true;
     }
   }
+  if (!parsed.assistBindings || Object.keys(parsed.assistBindings).length === 0) {
+    parsed.assistBindings = seedAssistBindings(parsed.workingSections);
+    changed = true;
+  }
   if (changed) persist(parsed);
   return parsed;
+}
+
+function assertCanEditStructure(state: WorkspaceState, role: Role): void {
+  if (state.locked) throw new Error("Workspace is locked. Unlock before editing.");
+  if (role !== "editor") {
+    throw new ForbiddenError("Only Editors may change working-copy structure.");
+  }
+}
+
+function renumberWorkingCopy(state: WorkspaceState): void {
+  applyDisplayNumbers(state.workingOutline, state.workingSections);
+}
+
+function chapterLabel(state: WorkspaceState, chapterId: string): string {
+  const chapter = state.workingOutline.find((item) => item.id === chapterId);
+  if (!chapter) return chapterId;
+  const peers = state.workingOutline.filter((item) => item.kind === chapter.kind);
+  const index = peers.findIndex((item) => item.id === chapter.id);
+  if (chapter.kind === "appendix") return `Appendix ${String.fromCharCode(65 + Math.max(0, index))}`;
+  return `Chapter ${index + 1}`;
 }
 
 function persist(state: WorkspaceState): WorkspaceState {
@@ -187,6 +240,8 @@ export function saveSection(
     updatedAt: now(),
     updatedBy: role,
   };
+  const saved = state.workingSections[sectionId];
+  state.assistBindings[sectionId] = bindingFromWorking(saved);
   const manual = source === "manual";
   pushEvent(state, {
     actor: role,
@@ -237,6 +292,7 @@ export function createSnapshot(label: string, role: Role): WorkspaceState {
     createdAt: now(),
     createdBy: role,
     sections: structuredClone(state.workingSections),
+    outline: structuredClone(state.workingOutline),
   };
   state.snapshots.unshift(snapshot);
   pushEvent(state, { actor: role, kind: "snapshot", summary: `Saved snapshot “${snapshot.label}”.` });
@@ -275,7 +331,7 @@ export function markWgReview(sectionId: string | "all" | "clear", role: Role): W
   if (sectionId === "all") {
     state.wgReviewReady = true;
     state.wgReviewReadyAt = now();
-    state.wgReviewMarks = flattenSections().map((section) => ({
+    state.wgReviewMarks = flattenOutlineSections(state.workingOutline, state.workingSections).map((section) => ({
       sectionId: section.id,
       markedAt: now(),
       markedBy: role,
@@ -302,12 +358,13 @@ export function setSergeantDecision(laneId: string, decision: SergeantLaneState[
   if (decision === "see-cite" && citeTo) {
     const target = state.workingSections[citeTo];
     const lane = REDUNDANCY_LANES.find((item) => item.id === laneId);
-    if (target && lane) {
+    if (target && target.id === citeTo && lane) {
       const insert = `\n\n${lane.seeCite}`;
       if (!target.body.includes(lane.seeCite)) {
         target.body = `${target.body.trim()}${insert}`;
         target.updatedAt = now();
         target.updatedBy = role;
+        state.assistBindings[target.id] = bindingFromWorking(target);
       }
     }
   }
@@ -367,6 +424,140 @@ export function sha256(buffer: Buffer): string {
   return createHash("sha256").update(buffer).digest("hex");
 }
 
+export function addWorkingSection(
+  input: { targetId: string; position: StructurePosition; title?: string },
+  role: Role,
+): WorkspaceState {
+  const state = ensureStore();
+  assertCanEditStructure(state, role);
+  const title = (input.title ?? "New paragraph").trim() || "New paragraph";
+  const id = `wc-${randomUUID()}`;
+  const parentHint = state.workingOutline.find((chapter) => chapter.id === input.targetId)?.id;
+  state.workingSections[id] = {
+    id,
+    number: "",
+    title,
+    body: "",
+    updatedAt: now(),
+    updatedBy: role,
+  };
+  state.workingOutline = insertSectionId(state.workingOutline, id, input.targetId, input.position);
+  state.assistBindings[id] = emptyAssistBinding(id);
+  renumberWorkingCopy(state);
+  const created = state.workingSections[id];
+  const parent = state.workingOutline.find((chapter) => chapter.sectionIds.includes(id));
+  pushEvent(state, {
+    actor: role,
+    kind: "structure-add",
+    summary: `Added paragraph “${title}” (${id}) as ${created.number} under ${parent ? chapterLabel(state, parent.id) : parentHint ?? "the working copy"}.`,
+    sectionId: id,
+  });
+  return persist(state);
+}
+
+export function deleteWorkingSection(sectionId: string, role: Role): WorkspaceState {
+  const state = ensureStore();
+  assertCanEditStructure(state, role);
+  const current = state.workingSections[sectionId];
+  if (!current) throw new Error(`Unknown section ${sectionId}`);
+  if (flattenOutlineSections(state.workingOutline, state.workingSections).length <= 1) {
+    throw new Error("Cannot delete the last working-copy paragraph.");
+  }
+  const removed = deleteSectionId(state.workingOutline, sectionId);
+  state.workingOutline = removed.outline;
+  delete state.workingSections[sectionId];
+  dropAssistState(state, sectionId);
+  renumberWorkingCopy(state);
+  pushEvent(state, {
+    actor: role,
+    kind: "structure-delete",
+    summary: `Deleted paragraph ${current.number} ${current.title} (${sectionId}) from ${chapterLabel(state, removed.parentId)}.`,
+    sectionId,
+  });
+  return persist(state);
+}
+
+export function moveWorkingSection(
+  input: { sectionId: string; parentId: string; index: number },
+  role: Role,
+): WorkspaceState {
+  const state = ensureStore();
+  assertCanEditStructure(state, role);
+  const current = state.workingSections[input.sectionId];
+  if (!current) throw new Error(`Unknown section ${input.sectionId}`);
+  const fromNumber = current.number;
+  const moved = moveSectionId(state.workingOutline, input.sectionId, input.parentId, input.index);
+  state.workingOutline = moved.outline;
+  renumberWorkingCopy(state);
+  const updated = state.workingSections[input.sectionId];
+  pushEvent(state, {
+    actor: role,
+    kind: "structure-move",
+    summary: `Moved paragraph ${input.sectionId} from ${fromNumber} (${chapterLabel(state, moved.fromParentId)}) to ${updated.number} (${chapterLabel(state, moved.toParentId)}).`,
+    sectionId: input.sectionId,
+  });
+  return persist(state);
+}
+
+export function splitWorkingSection(sectionId: string, role: Role): WorkspaceState {
+  const state = ensureStore();
+  assertCanEditStructure(state, role);
+  const source = state.workingSections[sectionId];
+  if (!source) throw new Error(`Unknown section ${sectionId}`);
+  const sourceBinding = state.assistBindings[sectionId] ?? bindingFromWorking(source);
+  const id = `wc-${randomUUID()}`;
+  state.workingSections[id] = {
+    id,
+    number: "",
+    title: "New paragraph",
+    body: "",
+    updatedAt: now(),
+    updatedBy: role,
+  };
+  state.workingOutline = insertSectionId(state.workingOutline, id, sectionId, "after");
+  state.assistBindings[sectionId] = sourceBinding;
+  state.assistBindings[id] = emptyAssistBinding(id);
+  renumberWorkingCopy(state);
+  pushEvent(state, {
+    actor: role,
+    kind: "structure-split",
+    summary: `Split ${source.number} ${source.title} (${sectionId}); empty sibling ${state.workingSections[id].number} (${id}) has no Assist chips until text is moved.`,
+    sectionId,
+  });
+  return persist(state);
+}
+
+export function renameWorkingSection(sectionId: string, title: string, role: Role): WorkspaceState {
+  const state = ensureStore();
+  assertCanEditStructure(state, role);
+  const current = state.workingSections[sectionId];
+  if (!current) throw new Error(`Unknown section ${sectionId}`);
+  const nextTitle = title.trim();
+  if (!nextTitle) throw new Error("Paragraph title is required.");
+  const previous = current.title;
+  state.workingSections[sectionId] = {
+    ...current,
+    title: nextTitle,
+    updatedAt: now(),
+    updatedBy: role,
+  };
+  pushEvent(state, {
+    actor: role,
+    kind: "structure-rename",
+    summary: `Renamed paragraph ${current.number} (${sectionId}) from “${previous}” to “${nextTitle}”.`,
+    sectionId,
+  });
+  return persist(state);
+}
+
+export function workingOutline(): WorkingOutlineChapter[] {
+  return ensureStore().workingOutline;
+}
+
+export function fallbackSectionId(state: WorkspaceState = ensureStore()): string {
+  return firstSectionId(state.workingOutline) ?? "1-1";
+}
+
 export function publicState() {
   const state = ensureStore();
   const baseline = flattenSections();
@@ -379,12 +570,14 @@ export function publicState() {
     wgReviewReadyAt: state.wgReviewReadyAt,
     lastActivityAt: state.lastActivityAt,
     tasks: state.tasks,
-    snapshots: state.snapshots.map(({ sections: _sections, ...rest }) => rest),
+    snapshots: state.snapshots.map(({ sections: _sections, outline: _outline, ...rest }) => rest),
     timeline: state.timeline,
     uploads: state.uploads,
     wgReviewMarks: state.wgReviewMarks,
     sergeant: state.sergeant,
     workingSections: state.workingSections,
+    workingOutline: state.workingOutline,
+    assistBindings: state.assistBindings,
     baselineSections: Object.fromEntries(baseline.map((section) => [section.id, section])),
   };
 }

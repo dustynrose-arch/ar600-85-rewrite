@@ -103,7 +103,8 @@ test("builds Revises / Adds / Rescinds from real paragraph diffs", () => {
     "Original (ACTIVE)",
     "Revised (your draft)",
   ]);
-  assert.equal(result.movesDeferred, true);
+  assert.equal(result.movesDeferred, false);
+  assert.equal(result.counts.moves, 0);
 
   const revisesPurpose = result.rows.find((row) => row.cite === "para 1–1");
   assert.ok(revisesPurpose);
@@ -161,6 +162,22 @@ test("does not treat wrapped mid-sentence (1)/(2) as new units", () => {
   assert.match(units[1].children[0].children[0].text, /or more certified UDLs Rate/);
   const sec = section("9-6", "9-6", "UDL", body);
   assert.equal(buildSummaryOfChange({ "9-6": sec }, { "9-6": sec }, [sec]).rows.length, 0);
+});
+
+test("flags title rename without treating body keystrokes as structure", () => {
+  const original = {
+    "1-1": section("1-1", "1-1", "Purpose", "Same body."),
+  };
+  const draft = {
+    "1-1": section("1-1", "1-1", "Purpose and scope", "Same body."),
+  };
+  const result = buildSummaryOfChange(original, draft, Object.values(original));
+  assert.deepEqual(
+    result.rows.map((row) => `${row.action} ${row.id}`),
+    ["revises revises:1-1:title"],
+  );
+  assert.equal(result.rows[0].originalText, "Purpose");
+  assert.equal(result.rows[0].revisedText, "Purpose and scope");
 });
 
 test("does not emit rows when original and draft match", () => {

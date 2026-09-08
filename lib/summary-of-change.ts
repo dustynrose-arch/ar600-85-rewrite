@@ -1,4 +1,10 @@
-import type { Section, WorkingSection } from "./types";
+import {
+  flattenOutlineSections,
+  movedSectionIds,
+  parentIndexFromOutline,
+  type OutlineParents,
+} from "./outline.ts";
+import type { Section, WorkingSection, WorkspaceState } from "./types.ts";
 
 export const SUMMARY_VIEW_ID = "summary-of-change";
 
@@ -20,7 +26,7 @@ export function revisedCell(row: { action: ChangeAction; revisedText: string | n
   return row.revisedText ?? "";
 }
 
-export type ChangeAction = "revises" | "adds" | "rescinds";
+export type ChangeAction = "revises" | "adds" | "rescinds" | "moves";
 
 export type SummaryOfChangeRow = {
   id: string;
@@ -36,8 +42,8 @@ export type SummaryOfChangeRow = {
 export type SummaryOfChangeResult = {
   title: string;
   rows: SummaryOfChangeRow[];
-  counts: { revises: number; adds: number; rescinds: number; total: number };
-  movesDeferred: true;
+  counts: { revises: number; adds: number; rescinds: number; moves: number; total: number };
+  movesDeferred: boolean;
 };
 
 type MarkerKind = "lead" | "letter" | "number" | "subletter" | "roman";
@@ -65,6 +71,7 @@ export function formatParaCite(sectionNumber: string, suffix = ""): string {
 export function actionLabel(action: ChangeAction): string {
   if (action === "revises") return "Revises";
   if (action === "adds") return "Adds";
+  if (action === "moves") return "Moves";
   return "Rescinds";
 }
 
@@ -317,10 +324,38 @@ function compareTrees(
   }
 }
 
+function excerptSection(section: Section | WorkingSection): string {
+  const title = section.title?.trim() ?? "";
+  const body = excerpt(section.body ?? "", 280);
+  if (title && body) return `${title} — ${body}`;
+  return title || body || "(empty)";
+}
+
+function pushWhole(
+  rows: SummaryOfChangeRow[],
+  action: ChangeAction,
+  section: Section | WorkingSection,
+  originalText: string | null,
+  revisedText: string | null,
+  suffix: string,
+): void {
+  rows.push({
+    id: `${action}:${section.id}:${suffix}`,
+    action,
+    sectionId: section.id,
+    sectionNumber: section.number,
+    sectionTitle: section.title,
+    cite: formatParaCite(section.number),
+    originalText,
+    revisedText,
+  });
+}
+
 export function buildSummaryOfChange(
   originalSections: Record<string, Section>,
   draftSections: Record<string, WorkingSection | Section>,
   order?: Section[],
+  structure?: { original: OutlineParents; draft: OutlineParents },
 ): SummaryOfChangeResult {
   const rows: SummaryOfChangeRow[] = [];
   const seenIds = new Set<string>();
@@ -330,26 +365,61 @@ export function buildSummaryOfChange(
       ...Object.values(originalSections),
       ...Object.values(draftSections).filter((section) => !originalSections[section.id]),
     ];
+  const moved = new Set(structure ? movedSectionIds(structure.original, structure.draft) : []);
 
   for (const section of sequence) {
-    const original = originalSections[section.id] ?? section;
-    const draft = draftSections[section.id] ?? original;
-    const before = parseApdUnits(original.body ?? "");
-    const after = parseApdUnits(draft.body ?? "");
-    compareTrees(before, after, original, rows);
+    if (seenIds.has(section.id)) continue;
     seenIds.add(section.id);
+    const original = originalSections[section.id];
+    const draft = draftSections[section.id];
+
+    if (original && !draft) {
+      pushWhole(rows, "rescinds", original, excerptSection(original), null, "structure");
+      continue;
+    }
+    if (!original && draft) {
+      pushWhole(rows, "adds", draft, null, excerptSection(draft), "structure");
+      continue;
+    }
+    if (!original || !draft) continue;
+
+    if (moved.has(section.id)) {
+      pushWhole(
+        rows,
+        "moves",
+        draft,
+        `${formatParaCite(original.number)} ${original.title}`,
+        `${formatParaCite(draft.number)} ${draft.title}`,
+        "structure",
+      );
+    }
+    if (original.title !== draft.title) {
+      pushWhole(rows, "revises", draft, original.title, draft.title, "title");
+    }
+    compareTrees(parseApdUnits(original.body ?? ""), parseApdUnits(draft.body ?? ""), draft, rows);
+  }
+
+  for (const [id, original] of Object.entries(originalSections)) {
+    if (seenIds.has(id)) continue;
+    seenIds.add(id);
+    if (!draftSections[id]) {
+      pushWhole(rows, "rescinds", original, excerptSection(original), null, "structure");
+    }
   }
 
   for (const [id, draft] of Object.entries(draftSections)) {
     if (seenIds.has(id)) continue;
-    const after = parseApdUnits(draft.body ?? "");
-    compareTrees([], after, draft, rows);
+    seenIds.add(id);
+    if (!originalSections[id]) {
+      pushWhole(rows, "adds", draft, null, excerptSection(draft), "structure");
+    }
   }
 
   const counts = {
     revises: rows.filter((row) => row.action === "revises").length,
     adds: rows.filter((row) => row.action === "adds").length,
     rescinds: rows.filter((row) => row.action === "rescinds").length,
+    moves: rows.filter((row) => row.action === "moves").length,
     total: rows.length,
   };
 
@@ -357,8 +427,21 @@ export function buildSummaryOfChange(
     title: SUMMARY_EXPORT_TITLE,
     rows,
     counts,
-    movesDeferred: true,
+    movesDeferred: false,
   };
+}
+
+export function buildSummaryFromWorkspace(
+  state: Pick<WorkspaceState, "workingSections" | "workingOutline">,
+  originalSections: Record<string, Section>,
+  originalParents: OutlineParents,
+): SummaryOfChangeResult {
+  const outline = state.workingOutline ?? [];
+  const order = flattenOutlineSections(outline, state.workingSections);
+  return buildSummaryOfChange(originalSections, state.workingSections, order, {
+    original: originalParents,
+    draft: parentIndexFromOutline(outline),
+  });
 }
 
 export function overlayDraftSection(

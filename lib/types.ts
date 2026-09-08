@@ -16,6 +16,19 @@ export type Chapter = {
   sections: Section[];
 };
 
+export type ChapterKind = "chapter" | "appendix";
+
+export type WorkingOutlineChapter = {
+  id: string;
+  kind: ChapterKind;
+  title: string;
+  sectionIds: string[];
+};
+
+export type StructurePosition = "before" | "after" | "child";
+
+export type StructureAction = "add" | "delete" | "move" | "rename" | "split";
+
 export type BaselineDocument = {
   publication: string;
   longTitle: string;
@@ -50,6 +63,7 @@ export type Snapshot = {
   createdAt: string;
   createdBy: Role;
   sections: Record<string, WorkingSection>;
+  outline?: WorkingOutlineChapter[];
 };
 
 export type TimelineEvent = {
@@ -102,6 +116,13 @@ export type SergeantLaneState = {
   decidedAt?: string;
 };
 
+export type AssistBinding = {
+  sectionId: string;
+  glossaryTermIds: string[];
+  limitedUse: boolean;
+  processNodeIds: string[];
+};
+
 export type WorkspaceState = {
   role: Role;
   locked: boolean;
@@ -111,6 +132,8 @@ export type WorkspaceState = {
   wgReviewReadyAt: string | null;
   lastActivityAt: string;
   workingSections: Record<string, WorkingSection>;
+  workingOutline: WorkingOutlineChapter[];
+  assistBindings: Record<string, AssistBinding>;
   tasks: Task[];
   snapshots: Snapshot[];
   timeline: TimelineEvent[];

@@ -6,7 +6,24 @@ export const ROLE_LABEL: Record<Role, string> = {
   approver: "Approver",
 };
 
+export class ForbiddenError extends Error {
+  readonly status = 403;
+  constructor(message: string) {
+    super(message);
+    this.name = "ForbiddenError";
+  }
+}
+
+export function statusForError(error: unknown, fallback = 400): number {
+  if (error instanceof ForbiddenError) return 403;
+  return fallback;
+}
+
 export function canEdit(role: Role, locked: boolean): boolean {
+  return role === "editor" && !locked;
+}
+
+export function canEditStructure(role: Role, locked: boolean): boolean {
   return role === "editor" && !locked;
 }
 
