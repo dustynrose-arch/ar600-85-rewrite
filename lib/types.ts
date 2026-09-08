@@ -1,5 +1,7 @@
 export type Role = "editor" | "reviewer" | "approver";
 
+export type WorkspaceMode = "live" | "training";
+
 export type SaveSource = "autosave" | "manual";
 
 export type Section = {

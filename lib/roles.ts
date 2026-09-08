@@ -47,6 +47,10 @@ export function canUpload(role: Role): boolean {
   return role === "editor" || role === "approver";
 }
 
+export function canResetTraining(role: Role): boolean {
+  return role === "editor" || role === "approver";
+}
+
 export function assertRole<T extends Role>(role: Role, allowed: T[], action: string): void {
   if (!allowed.includes(role as T)) {
     throw new Error(`${action} is gated to ${allowed.join(" / ")} (current role: ${role}).`);

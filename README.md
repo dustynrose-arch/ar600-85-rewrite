@@ -2,7 +2,7 @@
 
 Browser-only Next.js application for the internal Army Deputy Chief of Staff, G–1 rewrite working group. Editors maintain a **working copy** of AR 600–85 against a **read-only embedded baseline**. The baseline is never mutated.
 
-This is the WP1–WP7 build: three-pane chrome with collapsible outline and Assist panes, automatic save, roles and gates, Assist reminders (glossary, Limited Use Policy (self-referral) vs legal / adverse-action hints, overlap checks), process map, cite-don’t-copy authority, checkpoints, stacked compare (original regulation above your draft), Word export, audited uploads, Editor-only working-copy structure edits, and an in-app User Guide with a First session walkthrough plus video placeholder.
+This is the WP1–WP8 build: three-pane chrome with collapsible outline and Assist panes, automatic save, roles and gates, Assist reminders (glossary, Limited Use Policy (self-referral) vs legal / adverse-action hints, overlap checks), process map, cite-don’t-copy authority, checkpoints, stacked compare (original regulation above your draft), Word export, audited uploads, Editor-only working-copy structure edits, an in-app User Guide with a First session walkthrough plus video placeholder, and a Training sandbox (separate saved data, Reset to original).
 
 **Not an official publication.** The gold-and-black banner, Word header/footer, and title page are always marked **DRAFT / WORKING COPY**.
 
@@ -54,8 +54,9 @@ npm start
 | Process | ID → rehab map with branch labels. |
 | Authority | Cite-don’t-copy hot list and sister publications. |
 | Guide | In-app User Guide at `/guide`: First session walkthrough (anchors: outline, working-copy, assist, process, diff-export, roles), Assist help written for G–1 editors, and a video slot (`public/guide/tutorial.mp4` when present; otherwise “Tutorial video coming soon”). |
+| Training | **Enter Training** / **Leave Training** in the top bar. Training is a practice copy of the same app. A TRAINING stamp stays on the banner, title, and top bar until you leave. **Reset to original** (Editor or Approver; confirm first) wipes the training copy back to the seed. |
 
-Working-copy state lives in `data/runtime/` (created at first run, not committed). Uploads go to `data/uploads/`.
+Working-copy state lives in `data/runtime/` (created at first run, not committed). Uploads go to `data/uploads/`. Training uses parallel paths: `data/runtime-training/` and `data/uploads-training/`. The tab remembers Training vs live in the `ar60085-workspace` cookie (`training` or `live`; survives refresh).
 
 ## Project layout
 
