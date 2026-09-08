@@ -17,7 +17,7 @@ export function HeaderBrand({
         alt="Office of the Deputy Chief of Staff, G-1, United States Army seal"
         className="h-12 w-12 shrink-0 rounded-full object-contain"
       />
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 max-w-[28rem]">
         <h1 className="text-lg font-semibold leading-tight">{title}</h1>
         <p className="text-xs text-army-gold">{HEADER_SUBTITLE}</p>
         {detail ? <p className="text-[11px] text-army-cream/80">{detail}</p> : null}
@@ -27,6 +27,7 @@ export function HeaderBrand({
         alt="United States Army emblem (official Department of the Army emblem)"
         className="h-12 w-12 shrink-0 object-contain"
       />
+      <div className="flex-1 min-w-2" aria-hidden />
     </div>
   );
 }
