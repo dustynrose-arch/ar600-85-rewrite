@@ -1,3 +1,4 @@
+import { sectionByStableId } from "./assist-bind";
 import { REDUNDANCY_LANES } from "./seed/redundancy-lanes";
 import type { SergeantLaneState, Section, WorkingSection } from "./types";
 
@@ -18,16 +19,18 @@ export function runSergeant(
   return REDUNDANCY_LANES.map((lane) => {
     const hits: SergeantFinding["hits"] = [];
     for (const section of Object.values(sections)) {
+      if (!section?.id || sections[section.id] !== section) continue;
       const hay = `${section.title} ${section.body}`.toLowerCase();
       if (lane.keywords.some((keyword) => hay.includes(keyword))) {
         hits.push({ sectionId: section.id, number: section.number, title: section.title });
       }
     }
+    const primary = sectionByStableId(sections, lane.primaryCite);
     return {
       laneId: lane.id,
       name: lane.name,
       rationale: lane.rationale,
-      primaryCite: lane.primaryCite,
+      primaryCite: primary?.id ?? lane.primaryCite,
       seeCite: lane.seeCite,
       hits: hits.slice(0, 8),
       decision: decisions.find((item) => item.laneId === lane.id),

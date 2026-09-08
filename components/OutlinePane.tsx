@@ -35,6 +35,7 @@ type Props = {
   onDelete: (nodeId: string) => Promise<void>;
   onRename: (nodeId: string, title: string) => Promise<void>;
   onMove: (nodeId: string, parentId: string, index: number) => Promise<void>;
+  onSplit: (nodeId: string) => Promise<string | undefined>;
 };
 
 export function OutlinePane({
@@ -56,6 +57,7 @@ export function OutlinePane({
   onDelete,
   onRename,
   onMove,
+  onSplit,
 }: Props) {
   const editable = canEditStructure(role, locked);
   const [menu, setMenu] = useState<MenuState | null>(null);
@@ -201,6 +203,14 @@ export function OutlinePane({
                 className="text-[10px] px-1.5 py-0.5 bg-white border border-army-black/15 disabled:opacity-40"
               >
                 Add child
+              </button>
+              <button
+                type="button"
+                disabled={!selected || busy}
+                onClick={() => selected && void onSplit(selected.id)}
+                className="text-[10px] px-1.5 py-0.5 bg-white border border-army-black/15 disabled:opacity-40"
+              >
+                Split
               </button>
               <button
                 type="button"
@@ -413,6 +423,16 @@ export function OutlinePane({
               <button type="button" className="block w-full text-left px-3 py-1.5 hover:bg-army-gold/20" onClick={() => openAdd(menu.targetId, "child")}>
                 Add child under chapter
               </button>
+              <button
+                type="button"
+                className="block w-full text-left px-3 py-1.5 hover:bg-army-gold/20"
+                onClick={() => {
+                  setMenu(null);
+                  void onSplit(menu.targetId);
+                }}
+              >
+                Split after
+              </button>
               <button type="button" className="block w-full text-left px-3 py-1.5 hover:bg-army-gold/20" onClick={() => openRename(menu.targetId)}>
                 Rename title
               </button>
@@ -436,8 +456,8 @@ export function OutlinePane({
             {dialog === "delete" ? (
               <p className="text-sm">
                 Delete <strong>{sections[dialogTarget]?.number} {sections[dialogTarget]?.title}</strong> from the
-                working copy? The original regulation is unchanged. Tasks and Assist reminders stay bound to
-                remaining stable ids.
+                working copy? Assist reminders for this paragraph are dropped with it. The original regulation
+                is unchanged. Remaining chips stay on their stable ids.
               </p>
             ) : (
               <label className="block text-xs">

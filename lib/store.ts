@@ -1,6 +1,12 @@
 import { createHash, randomUUID } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import {
+  bindingFromWorking,
+  dropAssistState,
+  emptyAssistBinding,
+  seedAssistBindings,
+} from "./assist-bind";
 import { baselineDocument, flattenSections, sectionMap } from "./baseline";
 import {
   applyDisplayNumbers,
@@ -49,6 +55,7 @@ function seedWorkingSections(): Record<string, WorkingSection> {
 }
 
 function emptyState(): WorkspaceState {
+  const workingSections = seedWorkingSections();
   return {
     role: "editor",
     locked: false,
@@ -57,8 +64,9 @@ function emptyState(): WorkspaceState {
     wgReviewReady: false,
     wgReviewReadyAt: null,
     lastActivityAt: now(),
-    workingSections: seedWorkingSections(),
+    workingSections,
     workingOutline: seedWorkingOutline(baselineDocument),
+    assistBindings: seedAssistBindings(workingSections),
     tasks: [
       {
         id: randomUUID(),
@@ -156,6 +164,10 @@ function ensureStore(): WorkspaceState {
       changed = true;
     }
   }
+  if (!parsed.assistBindings || Object.keys(parsed.assistBindings).length === 0) {
+    parsed.assistBindings = seedAssistBindings(parsed.workingSections);
+    changed = true;
+  }
   if (changed) persist(parsed);
   return parsed;
 }
@@ -228,6 +240,8 @@ export function saveSection(
     updatedAt: now(),
     updatedBy: role,
   };
+  const saved = state.workingSections[sectionId];
+  state.assistBindings[sectionId] = bindingFromWorking(saved);
   const manual = source === "manual";
   pushEvent(state, {
     actor: role,
@@ -344,12 +358,13 @@ export function setSergeantDecision(laneId: string, decision: SergeantLaneState[
   if (decision === "see-cite" && citeTo) {
     const target = state.workingSections[citeTo];
     const lane = REDUNDANCY_LANES.find((item) => item.id === laneId);
-    if (target && lane) {
+    if (target && target.id === citeTo && lane) {
       const insert = `\n\n${lane.seeCite}`;
       if (!target.body.includes(lane.seeCite)) {
         target.body = `${target.body.trim()}${insert}`;
         target.updatedAt = now();
         target.updatedBy = role;
+        state.assistBindings[target.id] = bindingFromWorking(target);
       }
     }
   }
@@ -427,6 +442,7 @@ export function addWorkingSection(
     updatedBy: role,
   };
   state.workingOutline = insertSectionId(state.workingOutline, id, input.targetId, input.position);
+  state.assistBindings[id] = emptyAssistBinding(id);
   renumberWorkingCopy(state);
   const created = state.workingSections[id];
   const parent = state.workingOutline.find((chapter) => chapter.sectionIds.includes(id));
@@ -450,6 +466,7 @@ export function deleteWorkingSection(sectionId: string, role: Role): WorkspaceSt
   const removed = deleteSectionId(state.workingOutline, sectionId);
   state.workingOutline = removed.outline;
   delete state.workingSections[sectionId];
+  dropAssistState(state, sectionId);
   renumberWorkingCopy(state);
   pushEvent(state, {
     actor: role,
@@ -478,6 +495,34 @@ export function moveWorkingSection(
     kind: "structure-move",
     summary: `Moved paragraph ${input.sectionId} from ${fromNumber} (${chapterLabel(state, moved.fromParentId)}) to ${updated.number} (${chapterLabel(state, moved.toParentId)}).`,
     sectionId: input.sectionId,
+  });
+  return persist(state);
+}
+
+export function splitWorkingSection(sectionId: string, role: Role): WorkspaceState {
+  const state = ensureStore();
+  assertCanEditStructure(state, role);
+  const source = state.workingSections[sectionId];
+  if (!source) throw new Error(`Unknown section ${sectionId}`);
+  const sourceBinding = state.assistBindings[sectionId] ?? bindingFromWorking(source);
+  const id = `wc-${randomUUID()}`;
+  state.workingSections[id] = {
+    id,
+    number: "",
+    title: "New paragraph",
+    body: "",
+    updatedAt: now(),
+    updatedBy: role,
+  };
+  state.workingOutline = insertSectionId(state.workingOutline, id, sectionId, "after");
+  state.assistBindings[sectionId] = sourceBinding;
+  state.assistBindings[id] = emptyAssistBinding(id);
+  renumberWorkingCopy(state);
+  pushEvent(state, {
+    actor: role,
+    kind: "structure-split",
+    summary: `Split ${source.number} ${source.title} (${sectionId}); empty sibling ${state.workingSections[id].number} (${id}) has no Assist chips until text is moved.`,
+    sectionId,
   });
   return persist(state);
 }
@@ -532,6 +577,7 @@ export function publicState() {
     sergeant: state.sergeant,
     workingSections: state.workingSections,
     workingOutline: state.workingOutline,
+    assistBindings: state.assistBindings,
     baselineSections: Object.fromEntries(baseline.map((section) => [section.id, section])),
   };
 }

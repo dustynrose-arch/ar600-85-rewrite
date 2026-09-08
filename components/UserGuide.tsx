@@ -35,8 +35,9 @@ export function UserGuide() {
         <li>Search looks only at the original regulation (read-only).</li>
         <li>
           Editors reshape the <strong>working-copy</strong> outline from the left pane: Add before / after /
-          child, Delete (confirm), Rename, and drag to reorder. Display numbers renumber inside the parent
-          (chapter→para). The original regulation never changes. Reviewers and Approvers cannot change
+          child, Split, Delete (confirm), Rename, and drag to reorder. Display numbers renumber inside the parent
+          (chapter→para). Assist chips and the Process-step highlight stay on each paragraph’s stable id — never
+          the display number, and never the original regulation. Reviewers and Approvers cannot change
           structure.
         </li>
         <li>Idle warning at 14 minutes; at 15 minutes the current section is saved and the workspace locks.</li>
@@ -45,8 +46,8 @@ export function UserGuide() {
       <h2 className="text-xl font-bold mt-8">Roles and gates</h2>
       <ul className="list-disc pl-6 space-y-1">
         <li>
-          <strong>Editor</strong> — edit your draft, reshape the working-copy outline (add, delete, move,
-          rename), Save or Undo draft typing, create and complete tasks, save checkpoints, record overlap
+          <strong>Editor</strong> — edit your draft, reshape the working-copy outline (add, split, delete,
+          move, rename), Save or Undo draft typing, create and complete tasks, save checkpoints, record overlap
           decisions, and upload files to compare against your draft. May unlock after an idle lock.
         </li>
         <li>
@@ -128,9 +129,10 @@ export function UserGuide() {
 
       <h2 className="text-xl font-bold mt-8">Working-copy outline (Editors)</h2>
       <p>
-        Use the left outline to reshape <em>your draft</em> only. Every add, delete, move, or rename is written
-        to the activity list with who, when, the stable paragraph id, and the action. Assist reminders, tasks,
-        and checkpoints stay attached to that id even after the display number changes.
+        Use the left outline to reshape <em>your draft</em> only. Every add, split, delete, move, or rename is
+        written to the activity list with who, when, the stable paragraph id, and the action. Assist reminders,
+        tasks, and checkpoints stay attached to that id even after the display number changes. They never
+        rebind against the original regulation.
       </p>
       <ul className="list-disc pl-6 space-y-1">
         <li>
@@ -143,8 +145,13 @@ export function UserGuide() {
           <strong>Rename</strong> — change the working-copy title. Summary of Change flags it as Revises.
         </li>
         <li>
-          <strong>Delete</strong> — confirm first. Summary of Change flags it as Rescinds. The original
-          regulation paragraph remains in the read-only pane when you open a surviving neighbor.
+          <strong>Delete</strong> — confirm first. Assist state for that id is dropped. Summary of Change flags
+          it as Rescinds. The original regulation paragraph remains in the read-only pane when you open a
+          surviving neighbor.
+        </li>
+        <li>
+          <strong>Split</strong> — insert an empty sibling after the selected paragraph. Glossary, Limited Use,
+          and Process highlight stay on the source id until you move text into the new paragraph.
         </li>
         <li>
           <strong>Drag ::</strong> — reorder in the same chapter or drop on another chapter. Both parents
@@ -152,8 +159,8 @@ export function UserGuide() {
         </li>
       </ul>
       <p>
-        Reviewer and Approver can browse the working-copy outline but cannot add, delete, move, or rename
-        (the server answers 403). Switch the header Role control to try that gate.
+        Reviewer and Approver can browse the working-copy outline but cannot add, split, delete, move, or
+        rename (the server answers 403). Switch the header Role control to try that gate.
       </p>
 
       <h2 className="text-xl font-bold mt-8">Export and upload</h2>

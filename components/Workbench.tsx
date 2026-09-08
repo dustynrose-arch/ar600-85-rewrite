@@ -31,6 +31,7 @@ import {
   type TimelineEvent,
   type UploadAudit,
   type WgReviewMark,
+  type AssistBinding,
   type WorkingOutlineChapter,
   type WorkingSection,
 } from "@/lib/types";
@@ -52,6 +53,7 @@ type PublicState = {
   sergeant: SergeantLaneState[];
   workingSections: Record<string, WorkingSection>;
   workingOutline: WorkingOutlineChapter[];
+  assistBindings: Record<string, AssistBinding>;
   baselineSections: Record<string, Section>;
 };
 
@@ -148,6 +150,10 @@ export function Workbench({
 
   const applyState = (next: PublicState) => {
     setState(next);
+  };
+
+  const selectStable = (id: string) => {
+    if (id === SUMMARY_VIEW_ID || state.workingSections[id]) setSelectedId(id);
   };
 
   const persistDraft = useCallback(
@@ -327,7 +333,7 @@ export function Workbench({
               outline={outline}
               sections={state.workingSections}
               selectedId={selectedId}
-              onSelect={setSelectedId}
+              onSelect={selectStable}
               query={query}
               onQuery={setQuery}
               hits={hits}
@@ -352,6 +358,11 @@ export function Workbench({
               onMove={async (nodeId, parentId, index) => {
                 await structureRequest({ action: "move", nodeId, parentId, index });
               }}
+              onSplit={async (nodeId) => {
+                const before = new Set(Object.keys(state.workingSections));
+                const next = await structureRequest({ action: "split", nodeId });
+                return Object.keys(next.workingSections).find((id) => !before.has(id));
+              }}
             />
           </div>
         )}
@@ -362,7 +373,7 @@ export function Workbench({
               dirty={saveState === "dirty" || saveState === "saving"}
               filter={summaryFilter}
               onFilter={setSummaryFilter}
-              onOpenSection={setSelectedId}
+              onOpenSection={selectStable}
             />
           ) : (
             <EditorPane
@@ -389,8 +400,10 @@ export function Workbench({
               sectionId={resolvedEditorId}
               working={working}
               sections={state.workingSections}
+              assistBindings={state.assistBindings}
+              draftBody={draft}
               summary={summary}
-              onOpenSummary={() => setSelectedId(SUMMARY_VIEW_ID)}
+              onOpenSummary={() => selectStable(SUMMARY_VIEW_ID)}
               tasks={state.tasks}
               snapshots={state.snapshots}
               timeline={state.timeline}
@@ -398,7 +411,7 @@ export function Workbench({
               marks={state.wgReviewMarks}
               wgReady={state.wgReviewReady}
               findings={findings}
-              onSelect={setSelectedId}
+              onSelect={selectStable}
           onCreateTask={async (title, notes) => {
             const res = await fetch("/api/tasks", {
               method: "POST",

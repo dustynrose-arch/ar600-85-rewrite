@@ -27,7 +27,7 @@ export type WorkingOutlineChapter = {
 
 export type StructurePosition = "before" | "after" | "child";
 
-export type StructureAction = "add" | "delete" | "move" | "rename";
+export type StructureAction = "add" | "delete" | "move" | "rename" | "split";
 
 export type BaselineDocument = {
   publication: string;
@@ -116,6 +116,13 @@ export type SergeantLaneState = {
   decidedAt?: string;
 };
 
+export type AssistBinding = {
+  sectionId: string;
+  glossaryTermIds: string[];
+  limitedUse: boolean;
+  processNodeIds: string[];
+};
+
 export type WorkspaceState = {
   role: Role;
   locked: boolean;
@@ -126,6 +133,7 @@ export type WorkspaceState = {
   lastActivityAt: string;
   workingSections: Record<string, WorkingSection>;
   workingOutline: WorkingOutlineChapter[];
+  assistBindings: Record<string, AssistBinding>;
   tasks: Task[];
   snapshots: Snapshot[];
   timeline: TimelineEvent[];

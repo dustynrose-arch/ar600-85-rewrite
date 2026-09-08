@@ -5,12 +5,14 @@ import { useMemo, useState } from "react";
 import { CrossmatchRows } from "@/components/CrossmatchRows";
 import { PaneToggle } from "@/components/PaneToggle";
 import { Toast } from "@/components/Toast";
+import { processHighlightIds, sectionByStableId, viewAssistChips } from "@/lib/assist-bind";
 import { CITE_HOT_LIST, SISTER_PUBS } from "@/lib/seed/sister-pubs";
 import { GLOSSARY_TERMS } from "@/lib/seed/glossary";
 import { PROCESS_MAP } from "@/lib/seed/process-map";
 import { actionLabel, SUMMARY_EXPORT_TITLE, type SummaryOfChangeResult } from "@/lib/summary-of-change";
 import { rejectUploadReason, UPLOAD_ACCEPT } from "@/lib/upload-guard";
 import type {
+  AssistBinding,
   DiffHunk,
   Role,
   SergeantLaneState,
@@ -40,6 +42,8 @@ type Props = {
   sectionId: string;
   working: WorkingSection;
   sections?: Record<string, WorkingSection>;
+  assistBindings?: Record<string, AssistBinding>;
+  draftBody?: string;
   tasks: Task[];
   snapshots: Omit<Snapshot, "sections">[];
   timeline: TimelineEvent[];
@@ -97,8 +101,26 @@ export function AssistPane(props: Props) {
       </div>
       <div className="pane-scroll overflow-y-auto flex-1 min-h-0 p-3 text-sm">
         {tab === "assist" ? <AssistTab {...props} /> : null}
-        {tab === "authority" ? <AuthorityTab onSelect={props.onSelect} /> : null}
-        {tab === "process" ? <ProcessTab onSelect={props.onSelect} /> : null}
+        {tab === "authority" ? (
+          <AuthorityTab
+            sections={props.sections}
+            onSelect={(id) => {
+              const live = sectionByStableId(props.sections ?? {}, id);
+              if (live) props.onSelect(live.id);
+            }}
+          />
+        ) : null}
+        {tab === "process" ? (
+          <ProcessTab
+            sectionId={props.sectionId}
+            sections={props.sections}
+            binding={props.assistBindings?.[props.sectionId]}
+            onSelect={(id) => {
+              const live = sectionByStableId(props.sections ?? {}, id);
+              if (live) props.onSelect(live.id);
+            }}
+          />
+        ) : null}
         {tab === "tasks" ? <TasksTab {...props} /> : null}
         {tab === "versions" ? <VersionsTab {...props} /> : null}
         {tab === "summary" ? <SummaryTab {...props} /> : null}
@@ -118,19 +140,21 @@ function AssistTab({
   onSelect,
   onSergeant,
   role,
+  assistBindings,
+  draftBody,
+  sections,
 }: Props) {
-  const cheech = useMemo(
-    () =>
-      GLOSSARY_TERMS.filter((term) => {
-        const hay = `${working.title} ${working.body}`.toLowerCase();
-        return hay.includes(term.term.toLowerCase()) || (term.acronym ? hay.includes(term.acronym.toLowerCase()) : false);
-      }),
-    [working],
+  const chips = useMemo(
+    () => viewAssistChips(working, assistBindings?.[working.id], draftBody),
+    [working, assistBindings, draftBody],
   );
-  const justice = /limited use|protected evidence|self-referral|characterization|42 cfr/i.test(
-    `${working.title} ${working.body}`,
-  );
+  const cheech = GLOSSARY_TERMS.filter((term) => chips.glossaryTermIds.includes(term.id));
+  const justice = chips.limitedUse;
   const laneHits = findings.filter((finding) => finding.hits.some((hit) => hit.sectionId === sectionId));
+  const openStable = (id: string) => {
+    const live = sectionByStableId(sections ?? { [working.id]: working }, id);
+    if (live) onSelect(live.id);
+  };
 
   return (
     <div className="space-y-4">
@@ -197,7 +221,9 @@ function AssistTab({
               <p className="text-[11px] text-army-slate">{finding.rationale}</p>
               <p className="text-[11px] mt-1">
                 Primary {finding.primaryCite}
-                {finding.hits.length ? ` · appears in ${finding.hits.map((hit) => hit.number).join(", ")}` : ""}
+                {finding.hits.length
+                  ? ` · appears in ${finding.hits.map((hit) => sections?.[hit.sectionId]?.number ?? hit.number).join(", ")}`
+                  : ""}
               </p>
               <div className="flex gap-2 mt-2">
                 <button
@@ -222,7 +248,11 @@ function AssistTab({
                 </button>
               </div>
               {finding.hits[0] ? (
-                <button type="button" className="text-[11px] underline mt-1" onClick={() => onSelect(finding.primaryCite)}>
+                <button
+                  type="button"
+                  className="text-[11px] underline mt-1"
+                  onClick={() => openStable(finding.primaryCite)}
+                >
                   Open primary cite
                 </button>
               ) : null}
@@ -237,7 +267,12 @@ function AssistTab({
   );
 }
 
-function AuthorityTab({ onSelect }: { onSelect: (id: string) => void }) {
+function AuthorityTab({
+  onSelect,
+}: {
+  sections?: Record<string, WorkingSection>;
+  onSelect: (id: string) => void;
+}) {
   return (
     <div className="space-y-4">
       <section>
@@ -266,31 +301,66 @@ function AuthorityTab({ onSelect }: { onSelect: (id: string) => void }) {
           ))}
         </ul>
       </section>
-      <button type="button" className="text-xs underline" onClick={() => onSelect("A-1")}>
+      <button
+        type="button"
+        className="text-xs underline"
+        onClick={() => onSelect("A-1")}
+      >
         Open appendix A references
       </button>
     </div>
   );
 }
 
-function ProcessTab({ onSelect }: { onSelect: (id: string) => void }) {
+function ProcessTab({
+  sectionId,
+  sections,
+  binding,
+  onSelect,
+}: {
+  sectionId: string;
+  sections?: Record<string, WorkingSection>;
+  binding?: AssistBinding;
+  onSelect: (id: string) => void;
+}) {
+  const liveIds = new Set(Object.keys(sections ?? {}));
+  const stored =
+    binding && binding.sectionId === sectionId && liveIds.has(sectionId)
+      ? binding.processNodeIds
+      : processHighlightIds(sectionId, liveIds);
+  const highlighted = new Set(stored);
   return (
     <div>
       <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">ID → REHAB PROCESS MAP</h3>
       <p className="text-xs text-army-slate mt-1">{PROCESS_MAP.summary}</p>
+      <p className="text-[11px] text-army-slate mt-1">
+        Highlight follows the open paragraph’s stable id, not the display number. Empty split siblings do not
+        take this step.
+      </p>
       <ol className="mt-3 space-y-2">
-        {PROCESS_MAP.nodes.map((node) => (
-          <li key={node.id} className="bg-white border border-army-black/10 p-2">
-            <div className="flex items-center justify-between gap-2">
-              <span className="font-semibold text-[12px]">{node.label}</span>
-              <span className="text-[10px] uppercase tracking-wide text-army-goldDark">{node.kind}</span>
-            </div>
-            <p className="text-[11px] mt-1">{node.detail}</p>
-            <button type="button" className="text-[11px] underline mt-1" onClick={() => onSelect(node.cite)}>
-              Open {node.cite}
-            </button>
-          </li>
-        ))}
+        {PROCESS_MAP.nodes.map((node) => {
+          const bound = sectionByStableId(sections ?? {}, node.cite);
+          const active = highlighted.has(node.id);
+          return (
+            <li
+              key={node.id}
+              className={`border p-2 ${active ? "bg-army-gold/25 border-army-gold" : "bg-white border-army-black/10"}`}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span className="font-semibold text-[12px]">{node.label}</span>
+                <span className="text-[10px] uppercase tracking-wide text-army-goldDark">{node.kind}</span>
+              </div>
+              <p className="text-[11px] mt-1">{node.detail}</p>
+              {bound ? (
+                <button type="button" className="text-[11px] underline mt-1" onClick={() => onSelect(bound.id)}>
+                  Open {bound.number} {bound.title}
+                </button>
+              ) : (
+                <p className="text-[11px] text-army-slate mt-1">Bound paragraph is not in the working copy.</p>
+              )}
+            </li>
+          );
+        })}
       </ol>
       <p className="text-[11px] mt-3 font-semibold">Branches</p>
       <ul className="text-[11px] space-y-1 mt-1">

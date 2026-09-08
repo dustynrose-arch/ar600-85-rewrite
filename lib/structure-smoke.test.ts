@@ -11,8 +11,14 @@ import {
   parentIndexFromOutline,
   seedWorkingOutline,
 } from "./outline.ts";
+import {
+  dropAssistState,
+  emptyAssistBinding,
+  processHighlightIds,
+  seedAssistBindings,
+} from "./assist-bind.ts";
 import { buildSummaryOfChange } from "./summary-of-change.ts";
-import type { BaselineDocument, Section, WorkingSection } from "./types.ts";
+import type { AssistBinding, BaselineDocument, Section, WorkingSection } from "./types.ts";
 
 const baselineDocument = JSON.parse(
   readFileSync(fileURLToPath(new URL("./seed/baseline-document.json", import.meta.url)), "utf8"),
@@ -96,4 +102,45 @@ test("structure smoke: add/delete/move/rename flag Summary without body keystrok
   assert.equal(bodyOnly.rows.some((row) => row.action === "moves"), false);
   assert.equal(bodyOnly.rows.some((row) => row.id.endsWith(":title")), false);
   assert.equal(summary.movesDeferred, false);
+});
+
+test("structure smoke: split keeps source assist; delete drops it; never keys off display number", () => {
+  const original = sectionMap();
+  const outline = seedWorkingOutline(baselineDocument);
+  const draft: Record<string, WorkingSection> = Object.fromEntries(
+    Object.values(original).map((section) => [section.id, asWorking(section)]),
+  );
+  const bindings: Record<string, AssistBinding> = seedAssistBindings(draft);
+  const sourceId = "7-3";
+  const sourceBinding = structuredClone(bindings[sourceId]);
+  assert.ok(sourceBinding.processNodeIds.includes("id-self"));
+
+  const splitOutline = insertSectionId(outline, "wc-split", sourceId, "after");
+  draft["wc-split"] = asWorking({
+    id: "wc-split",
+    number: "",
+    title: "New paragraph",
+    body: "",
+  });
+  applyDisplayNumbers(splitOutline, draft);
+  bindings[sourceId] = sourceBinding;
+  bindings["wc-split"] = emptyAssistBinding("wc-split");
+
+  assert.equal(draft[sourceId].id, sourceId);
+  assert.notEqual(draft[sourceId].number, draft["wc-split"].number);
+  assert.deepEqual(bindings[sourceId], sourceBinding);
+  assert.deepEqual(bindings["wc-split"].glossaryTermIds, []);
+  assert.equal(bindings["wc-split"].limitedUse, false);
+  assert.deepEqual(bindings["wc-split"].processNodeIds, []);
+  assert.deepEqual(processHighlightIds(sourceId, new Set(Object.keys(draft))), sourceBinding.processNodeIds);
+  assert.deepEqual(processHighlightIds("wc-split", new Set(Object.keys(draft))), []);
+
+  const afterDelete = deleteSectionId(splitOutline, sourceId);
+  delete draft[sourceId];
+  dropAssistState({ assistBindings: bindings, wgReviewMarks: [{ sectionId: sourceId }], sergeant: [] }, sourceId);
+  applyDisplayNumbers(afterDelete.outline, draft);
+
+  assert.equal(bindings[sourceId], undefined);
+  assert.ok(bindings["wc-split"]);
+  assert.deepEqual(processHighlightIds(sourceId, new Set(Object.keys(draft))), []);
 });

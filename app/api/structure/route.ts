@@ -6,13 +6,14 @@ import {
   moveWorkingSection,
   publicState,
   renameWorkingSection,
+  splitWorkingSection,
 } from "@/lib/store";
 import type { Role, StructurePosition } from "@/lib/types";
 
 export const runtime = "nodejs";
 
 type StructureBody = {
-  action?: "add" | "delete" | "move" | "rename";
+  action?: "add" | "delete" | "move" | "rename" | "split";
   role?: Role;
   targetId?: string;
   position?: StructurePosition;
@@ -40,6 +41,9 @@ export async function POST(request: Request) {
     } else if (body.action === "rename") {
       if (!body.nodeId || body.title == null) throw new Error("Rename requires nodeId and title.");
       renameWorkingSection(body.nodeId, body.title, role);
+    } else if (body.action === "split") {
+      if (!body.nodeId) throw new Error("Split requires nodeId.");
+      splitWorkingSection(body.nodeId, role);
     } else {
       throw new Error("Unknown structure action.");
     }
