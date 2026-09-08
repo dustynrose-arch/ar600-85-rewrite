@@ -178,8 +178,9 @@ export function GuideWalkthrough() {
         <h3 className="text-lg font-bold">Step 2 — Edit your draft (not the original regulation)</h3>
         <ol className="list-decimal pl-6 space-y-1 mt-2">
           <li>
-            Stay on <strong>your draft</strong> in the center (the lower box). Type a misspelled word if
-            you want to confirm the red underline — spellcheck is on for your draft only. Use{" "}
+            Stay on <strong>your draft</strong> in the center (the lower box). Misspelled words in your
+            draft get a red underline; right-click a marked word for suggestions. The original regulation
+            is not spellchecked. Use{" "}
             <strong>Undo</strong> (or Ctrl+Z / ⌘Z) if you need to take a draft edit back. Press{" "}
             <strong>Save</strong> when you want a manual save in the activity list; autosave still runs.
           </li>

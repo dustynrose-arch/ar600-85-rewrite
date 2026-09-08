@@ -30,7 +30,8 @@ export function UserGuide() {
         <li>
           Your edits save automatically. Editors can also press <strong>Save</strong> next to your draft
           (that writes a “Manual save” line in the activity list). Editors can Undo in your draft (button or
-          Ctrl+Z / ⌘Z). The original regulation pane does not undo and is not spellchecked.
+          Ctrl+Z / ⌘Z). Misspellings in your draft are underlined in red; right-click for suggestions.
+          The original regulation pane does not undo and is not spellchecked.
         </li>
         <li>Search looks only at the original regulation (read-only).</li>
         <li>

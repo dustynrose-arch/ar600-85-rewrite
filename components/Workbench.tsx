@@ -102,8 +102,7 @@ export function Workbench({
 
   // Snap the visible draft during render when the selected paragraph changes.
   // An effect that listed workingSections would also fire on autosave applyState()
-  // and rewrite the textarea; Chrome then treats the edit as programmatic and
-  // drops native spellcheck underlines.
+  // and rewrite the textarea, wiping caret, undo history, and in-app spell marks.
   if (selectedId !== SUMMARY_VIEW_ID && selectedId !== draftSectionId) {
     const section = state.workingSections[selectedId];
     if (section) {

@@ -8,12 +8,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "node --experimental-strip-types --test lib/*.test.ts"
+    "test": "node --experimental-strip-types --test lib/*.test.ts",
+    "sync-spellcheck-dict": "node scripts/sync-spellcheck-dict.mjs"
   },
   "dependencies": {
     "docx": "^9.5.0",
     "jszip": "^3.10.1",
     "next": "^15.5.2",
+    "nspell": "^2.1.5",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "unpdf": "^1.8.1"
@@ -21,9 +23,11 @@
   "devDependencies": {
     "@types/jszip": "^3.4.0",
     "@types/node": "^22.18.0",
+    "@types/nspell": "^2.1.6",
     "@types/react": "^19.1.12",
     "@types/react-dom": "^19.1.9",
     "autoprefixer": "^10.4.21",
+    "dictionary-en": "^4.0.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.9.2"
