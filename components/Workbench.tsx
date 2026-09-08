@@ -6,7 +6,7 @@ import { EditorPane } from "@/components/EditorPane";
 import { AssistPane } from "@/components/AssistPane";
 import { SummaryOfChangePane } from "@/components/SummaryOfChangePane";
 import { IdleGuard } from "@/components/IdleGuard";
-import { ArmyMarkSlot, DraftChip, G1Mark } from "@/components/HeaderMarks";
+import { ArmyMarkSlot, G1Mark, HeaderGlyph, ICON_EXPORT, ICON_GUIDE, ICON_ROLE, ICON_SUMMARY } from "@/components/HeaderMarks";
 import { CollapsedRail } from "@/components/PaneToggle";
 import { DEFAULT_PANE_STATE, readPaneSession, writePaneSession } from "@/lib/panes";
 import {
@@ -272,17 +272,17 @@ export function Workbench({
       />
       <header className="shrink-0 bg-army-header text-army-wash px-4 py-2.5 flex items-center gap-4">
         <G1Mark />
-        <div className="min-w-0 flex-1 flex items-center gap-2.5">
-          <h1 className="text-lg font-semibold leading-tight">AR 600-85 Rewrite — Working Copy</h1>
-          <DraftChip />
+        <div className="min-w-0 flex-1">
+          <h1 className="text-lg font-semibold leading-tight">AR 600-85 Revision</h1>
+          <p className="text-xs text-army-gold">Directorate of Prevention, Resilience and Readiness</p>
         </div>
         <div className="flex items-center gap-2 text-xs">
-          <label className="flex items-center gap-2">
-            <span className="font-semibold tracking-[0.12em] uppercase text-[10px] text-army-gold">Role</span>
+          <label className="btn-header">
+            <HeaderGlyph d={ICON_ROLE} />
+            <span>Role</span>
             <select
               value={state.role}
               onChange={(event) => void changeRole(event.target.value as Role)}
-              className="rounded-lg bg-army-oliveDark text-army-cream border border-army-gold/55 min-h-8 px-2 py-1"
             >
               {(Object.keys(ROLE_LABEL) as Role[]).map((role) => (
                 <option key={role} value={role}>
@@ -291,13 +291,16 @@ export function Workbench({
               ))}
             </select>
           </label>
-          <a href="/api/export" className="btn-ghost btn-sm">
+          <a href="/api/export" className="btn-header">
+            <HeaderGlyph d={ICON_EXPORT} />
             Export Word (DRAFT)
           </a>
-          <a href="/api/export?kind=summary" className="btn-ghost btn-sm">
+          <a href="/api/export?kind=summary" className="btn-header">
+            <HeaderGlyph d={ICON_SUMMARY} />
             Export Summary (DRAFT)
           </a>
-          <a href="/guide" className="btn-ghost btn-sm">
+          <a href="/guide" className="btn-header">
+            <HeaderGlyph d={ICON_GUIDE} />
             User Guide
           </a>
         </div>

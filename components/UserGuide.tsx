@@ -25,8 +25,8 @@ export function UserGuide() {
         </li>
         <li>
           G–1 seal on the left of the header; Army emblem slot on the right (official Army file not in the
-          repo yet). A thin <strong>DRAFT / WORKING COPY</strong> chip sits in the header. Word exports stay
-          stamped DRAFT.
+          repo yet). Title is <strong>AR 600-85 Revision</strong>. Word exports stay stamped DRAFT; the
+          header has no DRAFT chip.
         </li>
         <li>
           Original regulation (read-only): AR 600–85 (4 Oct 2024, admin revs 27 Feb 2025 / 19 Feb 2026).

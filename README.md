@@ -4,7 +4,7 @@ Browser-only Next.js application for the internal Army Deputy Chief of Staff, G�
 
 This is the WP1–WP7 build: three-pane chrome with collapsible outline and Assist panes, automatic save, roles and gates, Assist reminders (glossary, Limited Use Policy (self-referral) vs legal / adverse-action hints, overlap checks), process map, cite-don’t-copy authority, checkpoints, stacked compare (original regulation above your draft), Word export, audited uploads, Editor-only working-copy structure edits, and an in-app User Guide with a First session walkthrough plus video placeholder.
 
-**Not an official publication.** Word exports (header, footer, and title page) are always marked **DRAFT / WORKING COPY**. The header shows a thin **DRAFT / WORKING COPY** chip (not a fat banner). G–1 seal on the left; Army emblem is an empty sized slot until an official `public/army-emblem.png` is supplied.
+**Not an official publication.** Word exports (header, footer, and title page) are always marked **DRAFT / WORKING COPY**. The header has no DRAFT chip or banner. G–1 seal on the left; Army emblem is an empty sized slot until official `public/us-army-logo.png` is supplied.
 
 ## Baseline
 
@@ -39,7 +39,7 @@ npm start
 
 | Area | Behavior |
 | --- | --- |
-| Chrome | Outline \| editor \| Assist/authority. Official G–1 seal at `public/g1-seal.png`. Title *AR 600-85 Rewrite — Working Copy*. Subtitle *Internal G-1 rewrite working group use only*. Outline and Assist collapse so the center editor can widen; the tab remembers that choice for the session. |
+| Chrome | Outline \| editor \| Assist/authority. Official G–1 seal at `public/g1-seal.png` (left); Army mark slot on the right until `public/us-army-logo.png` is supplied. Title *AR 600-85 Revision*. Subtitle *Directorate of Prevention, Resilience and Readiness*. Outline and Assist collapse so the center editor can widen; the tab remembers that choice for the session. |
 | Editing | Section edit with automatic save plus an Editor-only **Save** button (timeline: “Manual save”). The original regulation pane is read-only. Your draft has Undo (button and Ctrl+Z / ⌘Z) and browser spellcheck; the original regulation pane is not spellchecked. Hide outline / Hide Assist live on those side panes only — not in the center chrome. |
 | Structure | Editors only (Reviewer/Approver get 403). Add before/after, split, delete (confirm), rename title, drag-reorder including across chapters. Outline stays chapter → numbered paragraph; nested markers (4-2a, 4-2a(1)) stay in the paragraph body. Stable node ids stay put; display numbers renumber IAW AR 25-30 / DA Pam 25-40. Every add/delete/move/rename/split is audited. ACTIVE baseline seed is never written. Assist chips, Process highlight, tasks, drafts, and snapshots keep the stable id. Split leaves chips on the source; delete drops assist state for that id. |
 | Search | Queries the original regulation (read-only) only. Selecting a result scrolls that section and highlights matches in the open body (original + draft). Clear (×) removes the query, results, and highlights. |

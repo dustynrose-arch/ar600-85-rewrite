@@ -6,27 +6,29 @@ function readRepoFile(relativePath: string): string {
   return readFileSync(new URL(`../${relativePath}`, import.meta.url), "utf8");
 }
 
-test("header: G-1 left, Army slot right, thin DRAFT chip; no working-group subtitles; exports stamped", () => {
+test("header: Revision + DPRR, G-1 left, Army slot right, no DRAFT chip; exports stamped", () => {
   const css = readRepoFile("app/globals.css");
   const workbench = readRepoFile("components/Workbench.tsx");
   const guide = readRepoFile("app/guide/page.tsx");
   const marks = readRepoFile("components/HeaderMarks.tsx");
+  const editor = readRepoFile("components/EditorPane.tsx");
   const exportDocx = readRepoFile("lib/export-docx.ts");
 
   assert.match(marks, /src="\/g1-seal\.png"/);
   assert.match(marks, /data-army-mark-slot="pending"/);
-  assert.match(marks, /draft-chip/);
-  assert.match(marks, /DRAFT \/ WORKING COPY/);
   assert.match(workbench, /<G1Mark \/>/);
   assert.match(workbench, /<ArmyMarkSlot \/>/);
-  assert.match(workbench, /<DraftChip \/>/);
-  assert.match(guide, /<DraftChip \/>/);
-  assert.match(workbench, /AR 600-85 Rewrite — Working Copy/);
+  assert.match(workbench, /AR 600-85 Revision/);
+  assert.match(workbench, /Directorate of Prevention, Resilience and Readiness/);
+  assert.equal(workbench.includes("DraftChip"), false);
+  assert.equal(guide.includes("DraftChip"), false);
+  assert.equal(marks.includes("DraftChip"), false);
+  assert.equal(css.includes(".draft-chip"), false);
+  assert.equal(css.includes(".draft-banner"), false);
+  assert.equal(css.includes("repeating-linear-gradient"), false);
   assert.equal(workbench.includes("Internal G-1 rewrite working group use only"), false);
   assert.equal(workbench.includes("Original regulation (read-only):"), false);
-  assert.equal(css.includes("repeating-linear-gradient"), false);
-  assert.equal(css.includes(".draft-banner"), false);
-  assert.match(css, /\.draft-chip \{/);
+  assert.match(editor, /WORKING COPY/);
 
   assert.match(exportDocx, /DRAFT \/ WORKING COPY/);
   assert.match(exportDocx, /draftRun\("DRAFT"/);
@@ -62,14 +64,16 @@ test("button utilities are rounded rectangles, not pills or sharp corners", () =
 
 test("header Word export matches neighboring header buttons; Role stays labeled", () => {
   const workbench = readRepoFile("components/Workbench.tsx");
+  const css = readRepoFile("app/globals.css");
   assert.match(workbench, />Role</);
   assert.match(workbench, /ROLE_LABEL/);
   assert.match(workbench, /Export Word \(DRAFT\)/);
+  assert.match(css, /\.btn-header \{/);
   const exportWord = workbench.match(/href="\/api\/export"[^>]*className="([^"]+)"/);
   const exportSummary = workbench.match(/href="\/api\/export\?kind=summary"[^>]*className="([^"]+)"/);
   const guide = workbench.match(/href="\/guide"[^>]*className="([^"]+)"/);
   assert.ok(exportWord && exportSummary && guide);
   assert.equal(exportWord[1], exportSummary[1]);
   assert.equal(exportWord[1], guide[1]);
-  assert.match(exportWord[1], /btn-ghost/);
+  assert.equal(exportWord[1], "btn-header");
 });

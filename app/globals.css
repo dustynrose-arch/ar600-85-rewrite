@@ -37,18 +37,6 @@ textarea:focus-visible {
   outline-offset: 2px;
 }
 
-.draft-chip {
-  background: var(--g1-draft-bg);
-  color: var(--g1-draft-text);
-  border-radius: 8px;
-  padding: 0.2rem 0.5rem;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  box-shadow: inset 3px 0 0 var(--g1-brass);
-}
-
 .lock-banner {
   background: var(--g1-lock-bg);
   color: var(--g1-lock-text);
@@ -98,6 +86,26 @@ textarea:focus-visible {
 
   .btn-sm {
     @apply min-h-8 px-2.5 py-1 text-[11px];
+  }
+
+  .btn-header {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg min-h-8 px-2.5 py-1 text-[11px] font-semibold leading-none bg-army-gold text-army-ink;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  }
+
+  .btn-header:hover {
+    background: var(--g1-brass-deep);
+    color: var(--g1-cream);
+  }
+
+  .btn-header select {
+    background: transparent;
+    color: inherit;
+    border: 0;
+    font: inherit;
+    padding: 0;
+    min-height: 0;
+    max-width: 9.5rem;
   }
 
   .field {
