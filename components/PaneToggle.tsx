@@ -9,7 +9,7 @@ type RailProps = {
 export function CollapsedRail({ side, label, onExpand }: RailProps) {
   const border = side === "left" ? "border-r" : "border-l";
   return (
-    <div className={`shrink-0 w-11 min-h-0 flex flex-col bg-[#efe8d8] ${border} border-army-black/10`}>
+    <div className={`shrink-0 w-11 min-h-0 flex flex-col bg-[#efe8d8] ${border} border-army-black/[0.06]`}>
       <button
         type="button"
         onClick={onExpand}

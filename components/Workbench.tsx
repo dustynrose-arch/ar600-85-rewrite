@@ -6,6 +6,7 @@ import { EditorPane } from "@/components/EditorPane";
 import { AssistPane } from "@/components/AssistPane";
 import { SummaryOfChangePane } from "@/components/SummaryOfChangePane";
 import { IdleGuard } from "@/components/IdleGuard";
+import { DraftBanner } from "@/components/DraftBanner";
 import { CollapsedRail } from "@/components/PaneToggle";
 import { DEFAULT_PANE_STATE, readPaneSession, writePaneSession } from "@/lib/panes";
 import {
@@ -270,42 +271,45 @@ export function Workbench({
           applyState(await res.json());
         }}
       />
-      <header className="shrink-0 bg-army-header text-army-cream px-4 py-2.5 flex items-center gap-4">
-        <img
-          src="/g1-seal.png"
-          alt="Office of the Deputy Chief of Staff, G-1, United States Army seal"
-          className="h-12 w-12 shrink-0 rounded-full object-cover"
-        />
-        <div className="min-w-0 flex-1">
-          <h1 className="text-lg font-semibold leading-tight">AR 600-85 Rewrite — Working Copy</h1>
-          <p className="text-xs text-army-gold">Internal G-1 rewrite working group use only</p>
-          <p className="text-[11px] text-army-cream/80">Original regulation (read-only): {BASELINE_LABEL}</p>
+      <header className="shrink-0">
+        <div className="bg-army-header text-army-wash px-4 py-2.5 flex items-center gap-4">
+          <img
+            src="/g1-seal.png"
+            alt="Office of the Deputy Chief of Staff, G-1, United States Army seal"
+            className="h-12 w-12 shrink-0 rounded-full object-cover"
+          />
+          <div className="min-w-0 flex-1">
+            <h1 className="text-lg font-semibold leading-tight">AR 600-85 Rewrite — Working Copy</h1>
+            <p className="text-xs text-army-gold">Internal G-1 rewrite working group use only</p>
+            <p className="text-[11px] text-army-cream/80">Original regulation (read-only): {BASELINE_LABEL}</p>
+          </div>
+          <div className="flex items-center gap-2 text-xs">
+            <label className="flex items-center gap-2">
+              <span className="font-semibold tracking-[0.12em] uppercase text-[10px] text-army-gold">Role</span>
+              <select
+                value={state.role}
+                onChange={(event) => void changeRole(event.target.value as Role)}
+                className="rounded-lg bg-army-oliveDark text-army-cream border border-army-gold/55 min-h-8 px-2 py-1"
+              >
+                {(Object.keys(ROLE_LABEL) as Role[]).map((role) => (
+                  <option key={role} value={role}>
+                    {ROLE_LABEL[role]}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <a href="/api/export" className="btn-ghost btn-sm">
+              Export Word (DRAFT)
+            </a>
+            <a href="/api/export?kind=summary" className="btn-ghost btn-sm">
+              Export Summary (DRAFT)
+            </a>
+            <a href="/guide" className="btn-ghost btn-sm">
+              User Guide
+            </a>
+          </div>
         </div>
-        <div className="flex items-center gap-2 text-xs">
-          <label className="flex items-center gap-2">
-            <span className="font-semibold tracking-[0.12em] uppercase text-[10px] text-army-gold">Role</span>
-            <select
-              value={state.role}
-              onChange={(event) => void changeRole(event.target.value as Role)}
-              className="rounded-lg bg-army-oliveDark text-army-cream border border-army-gold/55 min-h-8 px-2 py-1"
-            >
-              {(Object.keys(ROLE_LABEL) as Role[]).map((role) => (
-                <option key={role} value={role}>
-                  {ROLE_LABEL[role]}
-                </option>
-              ))}
-            </select>
-          </label>
-          <a href="/api/export" className="btn-ghost btn-sm">
-            Export Word (DRAFT)
-          </a>
-          <a href="/api/export?kind=summary" className="btn-ghost btn-sm">
-            Export Summary (DRAFT)
-          </a>
-          <a href="/guide" className="btn-ghost btn-sm">
-            User Guide
-          </a>
-        </div>
+        <DraftBanner />
       </header>
       {state.locked ? (
         <div className="lock-banner shrink-0 text-xs px-4 py-2 flex items-center justify-between gap-3">
@@ -324,14 +328,14 @@ export function Workbench({
             </span>
           </p>
           {canUnlock(state.role) ? (
-            <button type="button" onClick={() => void unlock()} className="btn-primary btn-sm shrink-0">
+            <button type="button" onClick={() => void unlock()} className="btn-primary shrink-0">
               Unlock
             </button>
           ) : null}
         </div>
       ) : null}
       {state.wgReviewReady ? (
-        <div className="shrink-0 bg-army-olive/15 text-army-oliveDark text-xs px-4 py-1.5">
+        <div className="shrink-0 bg-army-sage/15 text-army-sage text-xs px-4 py-1.5">
           Approver marked this working copy ready for working-group review.
         </div>
       ) : null}

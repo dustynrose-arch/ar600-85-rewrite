@@ -6,39 +6,52 @@ function readRepoFile(relativePath: string): string {
   return readFileSync(new URL(`../${relativePath}`, import.meta.url), "utf8");
 }
 
-test("UI has no on-screen DRAFT / WORKING COPY chrome; exports stay stamped", () => {
+test("thin gold DRAFT / WORKING COPY line stays in the header; exports stay stamped", () => {
   const css = readRepoFile("app/globals.css");
+  const banner = readRepoFile("components/DraftBanner.tsx");
   const workbench = readRepoFile("components/Workbench.tsx");
   const guide = readRepoFile("app/guide/page.tsx");
-  const outline = readRepoFile("components/OutlinePane.tsx");
   const exportDocx = readRepoFile("lib/export-docx.ts");
 
   assert.equal(css.includes("repeating-linear-gradient"), false);
-  assert.equal(css.includes(".draft-banner"), false);
-  assert.equal(workbench.includes("DraftBanner"), false);
-  assert.equal(guide.includes("DraftBanner"), false);
-  assert.equal(workbench.includes("DRAFT / WORKING COPY"), false);
-  assert.equal(guide.includes("DRAFT / WORKING COPY"), false);
-  assert.equal(/font-bold">DRAFT</.test(outline), false);
+  assert.match(css, /--g1-draft-bg:\s*#f3e6c4/);
+  assert.match(css, /--g1-draft-text:\s*#5c4a18/);
+  assert.match(css, /\.draft-banner \{[\s\S]*var\(--g1-brass\)/);
+  assert.match(banner, /DRAFT \/ WORKING COPY/);
+  assert.match(banner, /draft-banner/);
+  assert.match(banner, /py-1/);
+  assert.match(workbench, /DraftBanner/);
+  assert.match(guide, /DraftBanner/);
+  assert.match(workbench, /<header className="shrink-0">[\s\S]*<DraftBanner \/>\s*<\/header>/);
 
   assert.match(exportDocx, /DRAFT \/ WORKING COPY/);
   assert.match(exportDocx, /draftRun\("DRAFT"/);
   assert.match(readRepoFile("app/api/export/route.ts"), /X-Draft-Stamp/);
 });
 
-test("LOCKED banner appears only for the idle lock, with a solid Unlock control", () => {
+test("LOCKED banner appears only for the idle lock, with clay/brass Unlock — not destructive rust", () => {
+  const css = readRepoFile("app/globals.css");
   const workbench = readRepoFile("components/Workbench.tsx");
+
   assert.match(workbench, /state\.locked \?/);
   assert.match(workbench, /lock-banner/);
   assert.match(workbench, /LOCKED/);
+  assert.match(workbench, /Session locked after idle\. Working copy saved\. Baseline untouched\./);
   assert.match(workbench, />\s*Unlock\s*</);
-  assert.match(workbench, /Working copy saved\. Baseline untouched/);
+  assert.match(workbench, /className="btn-primary shrink-0"/);
+
+  assert.match(css, /--g1-lock-bg:\s*#f0e2dc/);
+  assert.match(css, /--g1-lock-text:\s*#5a3228/);
+  assert.match(css, /\.lock-banner \{[\s\S]*var\(--g1-lock-text\)/);
+  assert.equal(css.includes("inset 4px 0 0 #8b2e1f"), false);
+  assert.equal(css.includes("repeating-linear-gradient"), false);
 });
 
 test("button utilities are rounded rectangles, not pills or sharp corners", () => {
   const css = readRepoFile("app/globals.css");
   assert.match(css, /\.btn \{[\s\S]*rounded-lg/);
   assert.match(css, /\.btn-primary \{[\s\S]*rounded-xl/);
+  assert.match(css, /0 1px 2px rgba\(0, 0, 0, 0\.08\)/);
   assert.equal(/\.btn[^{]*\{[^}]*rounded-full/.test(css), false);
   assert.match(css, /outline: 2px solid var\(--g1-brass\)/);
 });

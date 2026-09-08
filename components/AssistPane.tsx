@@ -88,7 +88,7 @@ const TABS: { id: Tab; label: string }[] = [
 export function AssistPane(props: Props) {
   const [tab, setTab] = useState<Tab>("assist");
   return (
-    <aside className="flex flex-col min-h-0 h-full border-l border-army-black/10 bg-[#f7f2e6]">
+    <aside className="flex flex-col min-h-0 h-full border-l border-army-black/[0.06] bg-[#f7f2e6]">
       <div className="flex items-center justify-between gap-2 px-2 py-1.5 border-b border-army-black/10">
         <p className="text-[10px] font-bold tracking-[0.16em] text-army-slate">ASSIST</p>
         <PaneToggle label="Assist" expanded onClick={props.onCollapse} />
@@ -191,7 +191,7 @@ function AssistTab({
             <span
               key={term.id}
               title={`${term.definition} Cite: ${term.cite}`}
-              className="inline-flex items-center gap-1 rounded-lg bg-army-olive/15 text-army-oliveDark px-2 py-1 text-[11px] underline decoration-army-gold decoration-2 underline-offset-2"
+              className="assist-chip underline decoration-army-gold decoration-2 underline-offset-2"
             >
               Locked term: {term.acronym ?? term.term}
             </span>
@@ -208,7 +208,7 @@ function AssistTab({
             {lupChips.map((chip) => (
               <span
                 key={chip.id}
-                className="inline-block rounded-lg bg-army-lock text-army-lockInk px-2 py-1 text-[11px] underline decoration-army-lockInk/40 decoration-2 underline-offset-2"
+                className="assist-chip underline decoration-army-lockInk/40 decoration-2 underline-offset-2"
               >
                 {chip.title}
               </span>
@@ -225,7 +225,7 @@ function AssistTab({
             {adverseChips.map((chip) => (
               <span
                 key={chip.id}
-                className="inline-block rounded-lg bg-army-lock text-army-lockInk px-2 py-1 text-[11px] underline decoration-army-lockInk/40 decoration-2 underline-offset-2"
+                className="assist-chip underline decoration-army-lockInk/40 decoration-2 underline-offset-2"
               >
                 {chip.title}
               </span>

@@ -153,7 +153,7 @@ export function OutlinePane({
   };
 
   return (
-    <aside className="flex flex-col min-h-0 h-full border-r border-army-black/10 bg-[#efe8d8]">
+    <aside className="flex flex-col min-h-0 h-full border-r border-army-black/[0.06] bg-[#efe8d8]">
       <div className="p-3 border-b border-army-black/10">
         <div className="flex items-center justify-between gap-2 mb-2">
           <p className="text-[10px] font-bold tracking-[0.16em] text-army-slate">OUTLINE</p>

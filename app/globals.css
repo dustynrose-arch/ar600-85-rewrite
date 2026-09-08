@@ -15,6 +15,8 @@
   --g1-draft-text: #5c4a18;
   --g1-lock-bg: #f0e2dc;
   --g1-lock-text: #5a3228;
+  --g1-success: #3d4a2e;
+  --g1-pane-border: rgba(26, 31, 28, 0.08);
 }
 
 html,
@@ -35,10 +37,16 @@ textarea:focus-visible {
   outline-offset: 2px;
 }
 
+.draft-banner {
+  background: var(--g1-draft-bg);
+  color: var(--g1-draft-text);
+  box-shadow: inset 4px 0 0 var(--g1-brass);
+}
+
 .lock-banner {
   background: var(--g1-lock-bg);
   color: var(--g1-lock-text);
-  box-shadow: inset 4px 0 0 #8b2e1f;
+  box-shadow: inset 4px 0 0 var(--g1-lock-text);
 }
 
 .pane-scroll {
@@ -57,7 +65,7 @@ textarea:focus-visible {
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center gap-1 rounded-lg min-h-8 px-3 py-1.5 text-[12px] font-semibold leading-none transition-colors disabled:opacity-40;
+    @apply inline-flex items-center justify-center gap-1 rounded-lg min-h-9 px-3 py-2 text-[13px] font-semibold leading-none transition-colors disabled:opacity-40;
   }
 
   .btn-primary {
@@ -88,6 +96,13 @@ textarea:focus-visible {
 
   .field {
     @apply rounded-lg border border-army-black/20 bg-army-paper px-2.5 py-1.5 text-sm text-army-ink;
+  }
+
+  .assist-chip {
+    @apply inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px];
+    background: color-mix(in srgb, var(--g1-cream) 70%, var(--g1-header) 6%);
+    color: var(--g1-ink);
+    border: 1px solid var(--g1-pane-border);
   }
 }
 

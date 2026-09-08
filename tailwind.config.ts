@@ -22,6 +22,7 @@ const config: Config = {
           draftInk: "#5c4a18",
           lock: "#f0e2dc",
           lockInk: "#5a3228",
+          sage: "#3d4a2e",
         },
       },
       fontFamily: {
