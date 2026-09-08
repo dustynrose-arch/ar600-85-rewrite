@@ -203,8 +203,9 @@ export function GuideWalkthrough() {
         <h3 className="text-lg font-bold">Step 3 — Use Assist reminders on the right</h3>
         <p className="mt-2">
           The right-hand panel is a writing helper for this regulation. It watches the paragraph you have open
-          and lists reminders when the wording needs a glossary check, a Limited Use caution, or a pointer to
-          another publication. These are gentle nudges — not automatic corrections.
+          and lists reminders when the wording needs a glossary check, Limited Use Policy (self-referral) or a
+          legal / adverse-action hint, or a pointer to another publication. These are gentle nudges — not
+          automatic corrections.
         </p>
         <p className="mt-3 font-semibold">How underlined wording appears</p>
         <ol className="list-decimal pl-6 space-y-2 mt-2">
@@ -214,8 +215,8 @@ export function GuideWalkthrough() {
           </li>
           <li>
             If Assist finds matching wording, those terms show up as <strong>underlined reminders</strong>:
-            locked glossary terms, Limited Use language, or overlap with another publication. Nothing in your
-            draft changes until you choose an action.
+            locked glossary terms, Limited Use Policy (self-referral) or legal / adverse-action hints, or overlap
+            with another publication. Nothing in your draft changes until you choose an action.
           </li>
         </ol>
         <p className="mt-3 font-semibold">What each action means</p>
@@ -245,10 +246,11 @@ export function GuideWalkthrough() {
           </li>
         </ul>
         <p className="mt-3">Reviewers can read every reminder. Only Editors can record Keep wording or Insert See cite.</p>
-        <GuideCallout kind="Legal tip" title="Limited Use">
-          When Assist highlights testing, referral, or discipline wording (especially self-identification), do
-          not treat that as open season for punishment. Follow Limited Use and the SJA, and cite AR 600-8-2 /
-          635-200 instead of rewriting those publications into 600-85.
+        <GuideCallout kind="Legal tip" title="Limited Use Policy vs legal / adverse-action hints">
+          Assist shows two kinds of legal help: <strong>Limited Use Policy (self-referral)</strong> — the AR
+          600-85 protection that only applies in qualifying self-referral cases — and{" "}
+          <strong>Legal / adverse-action hints</strong> for other rights/discipline risks. Don’t read every legal
+          chip as Limited Use.
         </GuideCallout>
         <GuideCallout kind="Glossary tip" title="Glossary">
           When Assist underlines a term, prefer the locked ASAP wording (IR versus other test bases, SUDCC

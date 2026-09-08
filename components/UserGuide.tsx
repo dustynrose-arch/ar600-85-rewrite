@@ -63,14 +63,15 @@ export function UserGuide() {
       <h2 className="text-xl font-bold mt-8">Assist — the right-hand writing helper</h2>
       <p>
         Assist watches the paragraph you have open in the center. It is a reminder list for G–1 editors, not an
-        automatic rewrite tool. When the current wording touches a locked glossary term, Limited Use
-        protections, or a topic another publication already covers, Assist lists those reminders on the right.
+        automatic rewrite tool. When the current wording touches a locked glossary term, Limited Use Policy
+        (self-referral), another legal / adverse-action hint, or a topic another publication already covers, Assist
+        lists those reminders on the right.
       </p>
       <h3 className="text-lg font-semibold mt-4">How underlined wording appears</h3>
       <p>
         Open a paragraph. If Assist finds matching wording, those terms and topics show up on the Assist tab as
-        underlined reminders (locked glossary terms, Limited Use language, or overlap with another publication).
-        They are suggestions only. Your draft does not change until you choose an action.
+        underlined reminders (locked glossary terms, Limited Use Policy or legal / adverse-action hints, or overlap
+        with another publication). They are suggestions only. Your draft does not change until you choose an action.
       </p>
       <h3 className="text-lg font-semibold mt-4">What each action means</h3>
       <ul className="list-disc pl-6 space-y-1">
@@ -84,7 +85,7 @@ export function UserGuide() {
         </li>
       </ul>
       <p>
-        Glossary and Limited Use reminders are informational: they tell you which locked terms or legal topics
+        Glossary reminders and legal chips are informational: they tell you which locked terms or legal topics
         are in this paragraph. Only Editors can record Keep wording or Insert See cite.
       </p>
       <h3 className="text-lg font-semibold mt-4">When to use Glossary, Process, and authority references</h3>
@@ -105,12 +106,22 @@ export function UserGuide() {
         </li>
       </ul>
 
-      <h2 className="text-xl font-bold mt-8">Legal tip — Limited Use</h2>
+      <h2 className="text-xl font-bold mt-8">Legal help — two kinds</h2>
       <p>
-        Limited Use reminders appear when a paragraph touches self-referral protections, protected evidence, or
-        characterization. The rule is cite-don’t-copy: keep the official definition in paragraphs 10–11 through
-        10–13, and point separation and flagging actions to AR 600–8–2, AR 635–200, AR 135–175, AR 135–178, and
-        AR 600–8–24. Limited Use is not a shield for later misconduct or for refusing a lawful order to test.
+        Assist shows two kinds of legal help: <strong>Limited Use Policy (self-referral)</strong> — the AR 600-85
+        protection that only applies in qualifying self-referral cases — and{" "}
+        <strong>Legal / adverse-action hints</strong> for other rights/discipline risks. Don’t read every legal chip
+        as Limited Use.
+      </p>
+      <p>
+        <strong>Limited Use Policy (self-referral)</strong> is the AR 600–85 protection for qualifying self-referral
+        cases. The rule is cite-don’t-copy: keep the official definition in paragraphs 10–11 through 10–13, and point
+        separation and flagging actions to AR 600–8–2, AR 635–200, AR 135–175, AR 135–178, and AR 600–8–24. Limited
+        Use is not a shield for later misconduct or for refusing a lawful order to test.
+      </p>
+      <p>
+        <strong>Legal / adverse-action hint</strong> covers testing-basis blur, process-skip, Art. 31 / coercion
+        tone, civilian EAP–TDP mix-up, and any other non–Limited Use legal assists.
       </p>
 
       <h2 className="text-xl font-bold mt-8">Glossary tip — locked terms</h2>
@@ -150,8 +161,9 @@ export function UserGuide() {
           surviving neighbor.
         </li>
         <li>
-          <strong>Split</strong> — insert an empty sibling after the selected paragraph. Glossary, Limited Use,
-          and Process highlight stay on the source id until you move text into the new paragraph.
+          <strong>Split</strong> — insert an empty sibling after the selected paragraph. Glossary, legal chips
+          (Limited Use Policy or adverse-action), and Process highlight stay on the source id until you move text
+          into the new paragraph.
         </li>
         <li>
           <strong>Drag ::</strong> — reorder in the same chapter or drop on another chapter. Both parents

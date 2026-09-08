@@ -2,7 +2,7 @@
 
 Browser-only Next.js application for the internal Army Deputy Chief of Staff, G–1 rewrite working group. Editors maintain a **working copy** of AR 600–85 against a **read-only embedded baseline**. The baseline is never mutated.
 
-This is the WP1–WP7 build: three-pane chrome with collapsible outline and Assist panes, automatic save, roles and gates, Assist reminders (glossary, Limited Use, overlap checks), process map, cite-don’t-copy authority, checkpoints, stacked compare (original regulation above your draft), Word export, audited uploads, Editor-only working-copy structure edits, and an in-app User Guide with a First session walkthrough plus video placeholder.
+This is the WP1–WP7 build: three-pane chrome with collapsible outline and Assist panes, automatic save, roles and gates, Assist reminders (glossary, Limited Use Policy (self-referral) vs legal / adverse-action hints, overlap checks), process map, cite-don’t-copy authority, checkpoints, stacked compare (original regulation above your draft), Word export, audited uploads, Editor-only working-copy structure edits, and an in-app User Guide with a First session walkthrough plus video placeholder.
 
 **Not an official publication.** The gold-and-black banner, Word header/footer, and title page are always marked **DRAFT / WORKING COPY**.
 
@@ -50,7 +50,7 @@ npm start
 | Idle | Warn at 14 minutes. At 15 minutes: save current section and lock. |
 | Export | Word `.docx` always DRAFT-stamped (header, footer, title-page disclaimer citing AR 25-30 / DA Pam 25-40). Full working-copy export includes the Summary of Change table. Dedicated Summary export uses the title *Summary of Change (DRAFT — working copy; not authenticated under AR 25-30 / DA Pam 25-40)* with columns Action \| Location \| Original (ACTIVE) \| Revised (your draft). |
 | Upload / compare | Editors and Approvers upload `.docx`, `.pdf`, or `.pptx` (25 MB). Old `.doc` / `.ppt` are rejected with a toast. Activity log stores who, when, filename, size, and SHA-256. Compare lists suggestion-only Match / Miss / Unclear rows against your draft (source + page/slide → location → draft excerpt → document excerpt → verdict). Nothing is auto-written into your draft or the original regulation. |
-| Assist | Glossary locked-term reminders; Limited Use / adverse-action reminders + AR 600-8-2 / 635-200 / 135-175 / 135-178 cites; 22 overlap checks (Keep wording \| Insert See cite). Chips and Process-step highlight bind to the working-copy stable id only — never display numbers and never the ACTIVE baseline. |
+| Assist | Glossary locked-term reminders; legal chips split as **Limited Use Policy (self-referral)** vs **Legal / adverse-action hint** (testing bases, process path, rights / Art. 31, civilian path) + AR 600-8-2 / 635-200 / 135-175 / 135-178 cites; 22 overlap checks (Keep wording \| Insert See cite). Chips and Process-step highlight bind to the working-copy stable id only — never display numbers and never the ACTIVE baseline. |
 | Process | ID → rehab map with branch labels. |
 | Authority | Cite-don’t-copy hot list and sister publications. |
 | Guide | In-app User Guide at `/guide`: First session walkthrough (anchors: outline, working-copy, assist, process, diff-export, roles), Assist help written for G–1 editors, and a video slot (`public/guide/tutorial.mp4` when present; otherwise “Tutorial video coming soon”). |
