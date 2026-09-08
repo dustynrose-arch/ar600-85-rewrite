@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 type Props = {
   sectionId: string;
@@ -15,7 +15,16 @@ export function DraftEditor({ sectionId, value, editable, saveState, onChange, o
   const ref = useRef<HTMLTextAreaElement>(null);
   const historyRef = useRef<string[]>([]);
   const lastInputAt = useRef(0);
+  const seedRef = useRef({ sectionId, text: value });
   const [canUndo, setCanUndo] = useState(false);
+
+  // Freeze defaultValue for this paragraph. Passing the live draft back as
+  // defaultValue makes React rewrite textarea.defaultValue on every keystroke
+  // and autosave; Chrome then treats the field as programmatically edited and
+  // never paints native spellcheck underlines.
+  if (seedRef.current.sectionId !== sectionId) {
+    seedRef.current = { sectionId, text: value };
+  }
 
   useEffect(() => {
     historyRef.current = [];
@@ -23,10 +32,14 @@ export function DraftEditor({ sectionId, value, editable, saveState, onChange, o
     setCanUndo(false);
   }, [sectionId]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = ref.current;
-    if (el && el.value !== value) el.value = value;
-  }, [value, sectionId]);
+    if (!el) return;
+    el.lang = "en-US";
+    el.setAttribute("lang", "en-US");
+    el.setAttribute("spellcheck", "true");
+    el.spellcheck = true;
+  }, [sectionId, editable]);
 
   function currentValue(): string {
     return ref.current?.value ?? value;
@@ -52,7 +65,7 @@ export function DraftEditor({ sectionId, value, editable, saveState, onChange, o
   }
 
   return (
-    <div className="min-h-0 flex flex-col flex-1">
+    <div className="min-h-0 flex flex-col flex-1" lang="en-US" spellCheck={true}>
       <div className="px-4 pt-2 flex items-center justify-between gap-2">
         <p className="text-[10px] font-bold tracking-[0.16em] text-army-oliveDark">YOUR DRAFT</p>
         {editable ? (
@@ -83,7 +96,7 @@ export function DraftEditor({ sectionId, value, editable, saveState, onChange, o
         ref={ref}
         id="draft-editor"
         name="draft-editor"
-        defaultValue={value}
+        defaultValue={seedRef.current.text}
         readOnly={!editable}
         spellCheck={true}
         lang="en-US"

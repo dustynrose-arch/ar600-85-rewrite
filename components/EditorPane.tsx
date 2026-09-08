@@ -72,6 +72,7 @@ export function EditorPane({
           </div>
         </div>
         <DraftEditor
+          key={working.id}
           sectionId={working.id}
           value={draft}
           editable={editable}

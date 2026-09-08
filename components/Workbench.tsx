@@ -79,6 +79,7 @@ export function Workbench({
     initialState.workingOutline?.[0]?.sectionIds[0] ?? baseline.chapters[0]?.sections[0]?.id ?? "1-1",
   );
   const [draft, setDraft] = useState(initialState.workingSections[selectedId]?.body ?? "");
+  const [draftSectionId, setDraftSectionId] = useState(selectedId);
   const [saveState, setSaveState] = useState<"saved" | "saving" | "dirty" | "blocked">("saved");
   const [query, setQuery] = useState("");
   const [hits, setHits] = useState<SearchHit[]>([]);
@@ -94,6 +95,20 @@ export function Workbench({
     initialState.workingOutline?.[0]?.sectionIds[0] ?? baseline.chapters[0]?.sections[0]?.id ?? "1-1",
   );
   const saveTimer = useRef<number | null>(null);
+
+  // Snap the visible draft during render when the selected paragraph changes.
+  // An effect that listed workingSections would also fire on autosave applyState()
+  // and rewrite the textarea; Chrome then treats the edit as programmatic and
+  // drops native spellcheck underlines.
+  if (selectedId !== SUMMARY_VIEW_ID && selectedId !== draftSectionId) {
+    const section = state.workingSections[selectedId];
+    if (section) {
+      setDraftSectionId(selectedId);
+      setDraft(section.body);
+      setSaveState(state.role === "editor" && !state.locked ? "saved" : "blocked");
+    }
+  }
+
   const viewingSummary = selectedId === SUMMARY_VIEW_ID;
   const editorSectionId = viewingSummary ? lastSectionId : selectedId;
 
@@ -123,9 +138,15 @@ export function Workbench({
       return;
     }
     setLastSectionId(selectedId);
-    setDraft(state.workingSections[selectedId]?.body ?? "");
-    setSaveState(state.role === "editor" && !state.locked ? "saved" : "blocked");
-  }, [selectedId, state.workingSections, state.workingOutline, state.role, state.locked]);
+  }, [selectedId, state.workingSections, state.workingOutline]);
+
+  useEffect(() => {
+    if (state.role !== "editor" || state.locked) {
+      setSaveState("blocked");
+      return;
+    }
+    setSaveState((prev) => (prev === "blocked" ? "saved" : prev));
+  }, [state.role, state.locked]);
 
   useEffect(() => {
     void fetch("/api/sergeant")
