@@ -8,13 +8,24 @@ export function GuideVideo({ src = GUIDE_VIDEO_SRC }: { src?: string }) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch(src, { method: "HEAD" })
-      .then((res) => {
-        if (!cancelled && res.ok) setAvailable(true);
-      })
-      .catch(() => {
+
+    async function probe() {
+      try {
+        const head = await fetch(src, { method: "HEAD" });
+        if (cancelled) return;
+        if (head.ok) {
+          setAvailable(true);
+          return;
+        }
+        if (head.status !== 405) return;
+        const ranged = await fetch(src, { method: "GET", headers: { Range: "bytes=0-0" } });
+        if (!cancelled && ranged.ok) setAvailable(true);
+      } catch {
         /* stay on placeholder */
-      });
+      }
+    }
+
+    void probe();
     return () => {
       cancelled = true;
     };

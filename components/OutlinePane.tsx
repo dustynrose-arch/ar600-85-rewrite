@@ -41,7 +41,7 @@ export function OutlinePane({
         <input
           value={query}
           onChange={(event) => onQuery(event.target.value)}
-          placeholder="Search locked baseline…"
+          placeholder="Search AR 600-85"
           className="w-full border border-army-black/20 bg-army-paper px-2 py-1.5 text-sm"
         />
         {searching ? <p className="text-[11px] text-army-slate mt-1">Searching…</p> : null}
