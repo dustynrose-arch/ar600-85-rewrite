@@ -29,15 +29,17 @@ export function G1Mark({ className = "h-12 w-12 shrink-0 rounded-full object-cov
   );
 }
 
-/** Empty sized slot until Dustyn’s official Army file is in public/us-army-logo.png. */
+/** Empty labeled slot — no Army file in public/; do not invent a seal. */
 export function ArmyMarkSlot() {
   return (
     <div
-      className="h-12 w-12 shrink-0 rounded-full border border-army-cream/30 bg-army-oliveDark/50"
+      className="h-12 w-12 shrink-0 rounded-full border border-dashed border-army-cream/40 bg-army-oliveDark/40 flex items-center justify-center"
       role="img"
-      aria-label="United States Army emblem. Official asset pending."
+      aria-label="United States Army emblem placeholder. Official asset pending."
       title="Army emblem slot — official file at public/us-army-logo.png when supplied"
       data-army-mark-slot="pending"
-    />
+    >
+      <span className="text-[8px] font-semibold tracking-[0.12em] uppercase text-army-cream/70">Army</span>
+    </div>
   );
 }
