@@ -1,30 +1,29 @@
 # AR 600-85 Rewrite — Working Copy
 
-Browser-only Next.js application for the internal Army Deputy Chief of Staff, G–1 rewrite working group. Editors maintain a **working copy** of AR 600–85 against a **read-only embedded baseline**. The baseline is never mutated.
+Browser-only Next.js application for the internal Army Deputy Chief of Staff, G–1 rewrite working group. Editors maintain a **working copy** of AR 600–85 against a **read-only embedded baseline**. The baseline is never mutated. Drafts save on the server (`data/runtime/`), not in `localStorage`.
 
-This is the WP1–WP7 build: three-pane chrome with collapsible outline and Assist panes, automatic save, roles and gates, Assist reminders (glossary, Limited Use, overlap checks), process map, cite-don’t-copy authority, checkpoints, stacked compare (original regulation above your draft), Word export, audited uploads, and an in-app User Guide with a First session walkthrough plus video placeholder.
+This is the accepted WP1–WP5 working-copy editor, plus later WP6/WP7 working-group additions already on this repo: collapsible panes, User Guide walkthrough, Summary of Change, and document compare.
 
-**Not an official publication.** The gold-and-black banner, Word header/footer, and title page are always marked **DRAFT / WORKING COPY**.
+**Not an official publication.** The gold-and-black banner always reads:
 
-## Baseline
+`DRAFT / WORKING COPY — NOT AN OFFICIAL ARMY PUBLICATION`
 
-ACTIVE AR 600-85 (4 Oct 2024, admin revs 27 Feb 2025 / 19 Feb 2026)
+Word header, footer, and title page stay DRAFT-stamped.
 
-Seeded structure: Chapters 1–18 and Appendices A–G at paragraph level (about 298 sections), plus glossary terms and the identification-to-rehabilitation process map. Official paragraph numbers and titles are preserved. Body text is official-style structured working-copy language for search and rewrite—not a substitute for the authenticated PDF on Army Publishing Directorate.
-
-## Requirements
-
-- Node.js 20+ (22 is fine)
-- npm
-
-## Run locally
+## Clone and run (Windows or any desktop)
 
 ```bash
+git clone https://github.com/dustynrose-arch/ar600-85-rewrite.git
+cd ar600-85-rewrite
 npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). Next.js uses port **3000** by default. If that port is busy, the CLI will offer the next free port (3001, …).
+Open [http://localhost:43185](http://localhost:43185).
+
+- Node.js 20+ (22 is fine) and npm
+- Port **43185** is pinned in `npm run dev` and `npm start` so it does not collide with a default Next.js 3000
+- No cloud login. No Google Fonts CDN. System fonts (Segoe UI / Georgia) so locked-down government browsers still render
 
 Production-style:
 
@@ -33,26 +32,46 @@ npm run build
 npm start
 ```
 
-`npm start` also serves on port **3000**.
+`npm start` also serves on **http://localhost:43185**.
+
+Checks:
+
+```bash
+npm test
+npm run smoke
+```
+
+With the app already running (`npm run dev` or `npm start`):
+
+```bash
+npm run smoke:http
+```
+
+## Baseline
+
+ACTIVE AR 600-85 (4 Oct 2024, admin revs 27 Feb 2025 / 19 Feb 2026)
+
+Seeded structure: Chapters 1–18 and Appendices A–G at paragraph level, plus glossary terms and the identification-to-rehabilitation process map. Official paragraph numbers and titles are preserved. Body text is official-style structured working-copy language for search and rewrite—not a substitute for the authenticated PDF on Army Publishing Directorate.
+
+G–1 seal: `public/g1-seal.png` (always shown with the DRAFT banner).
 
 ## What the app does
 
 | Area | Behavior |
 | --- | --- |
-| Chrome | Outline \| editor \| Assist/authority. Official G–1 seal at `public/g1-seal.png`, always paired with the DRAFT / WORKING COPY banner. Title *AR 600-85 Rewrite — Working Copy*. Subtitle *Internal G-1 rewrite working group use only*. Outline and Assist collapse so the center editor can widen; the tab remembers that choice for the session. |
-| Editing | Section edit with automatic save plus an Editor-only **Save** button (timeline: “Manual save”). The original regulation pane is read-only. Your draft has Undo (button and Ctrl+Z / ⌘Z) and browser spellcheck; the original regulation pane is not spellchecked. Hide outline / Hide Assist live on those side panes only — not in the center chrome. |
+| Chrome | Outline \| working-copy editor \| Assist / authority / Process. Title *AR 600-85 Rewrite — Working Copy*. Subtitle *Internal G-1 rewrite working group use only*. |
+| Editing | Section edit with server autosave plus an Editor **Save** button. The original regulation pane is read-only and is never mutated. |
 | Search | Queries the original regulation (read-only) only. |
-| Versions | Named snapshots. Compare original regulation (above) vs your draft (below), or vs a checkpoint. **List the changes** builds bullets from those diffs. |
-| Summary of Change | Outline front-matter plus Assist **Summary** tab. Auto-built Revises / Adds / Rescinds rows from original regulation (read-only) versus your draft, with APD cites (`para 1–1`, `para 1–4a(1)`). Dedicated Word export stays marked DRAFT. Moved paragraphs are a follow-up (they currently appear as Rescinds + Adds). |
+| Versions | Named snapshots. Compare original regulation (above) vs your draft (below). **List the changes** / Summarize builds bullets from those diffs. |
 | Tasks | Editors create and complete tasks. |
-| Roles | Editor (edit / tasks / snapshots). Reviewer (read-only). Approver (WG-review marks; can unlock). |
+| Roles | Editor (edit / tasks / snapshots). Reviewer (read-only). Approver (ready-for-WG-review marks; can unlock). |
 | Idle | Warn at 14 minutes. At 15 minutes: save current section and lock. |
-| Export | Word `.docx` always DRAFT-stamped (header, footer, title-page disclaimer citing AR 25-30 / DA Pam 25-40). Full working-copy export includes the Summary of Change table. Dedicated Summary export uses the title *Summary of Change (DRAFT — working copy; not authenticated under AR 25-30 / DA Pam 25-40)* with columns Action \| Location \| Original (ACTIVE) \| Revised (your draft). |
-| Upload / compare | Editors and Approvers upload `.docx`, `.pdf`, or `.pptx` (25 MB). Old `.doc` / `.ppt` are rejected with a toast. Activity log stores who, when, filename, size, and SHA-256. Compare lists suggestion-only Match / Miss / Unclear rows against your draft (source + page/slide → location → draft excerpt → document excerpt → verdict). Nothing is auto-written into your draft or the original regulation. |
-| Assist | Glossary locked-term reminders; Limited Use reminders + AR 600-8-2 / 635-200 / 135-175 / 135-178 cites; 22 overlap checks (Keep wording \| Insert See cite). |
+| Export | Word `.docx` always DRAFT-stamped (header, footer, title-page disclaimer citing AR 25-30 / DA Pam 25-40). |
+| Upload | PDF/DOCX/PPTX, 25 MB cap, filename + size + SHA-256 audit. |
+| Assist | Cheech glossary lock chips; Justice Limited Use chips + AR 600-8-2 / 635-200 / 135-175 / 135-178 steers; Sergeant 22 overlap checks (Keep wording \| Insert See cite). |
 | Process | ID → rehab map with branch labels. |
-| Authority | Cite-don’t-copy hot list and sister publications. |
-| Guide | In-app User Guide at `/guide`: First session walkthrough (anchors: outline, working-copy, assist, process, diff-export, roles), Assist help written for G–1 editors, and a video slot (`public/guide/tutorial.mp4` when present; otherwise “Tutorial video coming soon”). |
+| Guide | In-app User Guide at `/guide` with Justice / Cheech / Sergeant blurbs and a First session walkthrough. |
+| Spellcheck | Browser spellcheck on the draft editor only. Revision timeline in Assist. |
 
 Working-copy state lives in `data/runtime/` (created at first run, not committed). Uploads go to `data/uploads/`.
 
@@ -62,6 +81,6 @@ Working-copy state lives in `data/runtime/` (created at first run, not committed
 app/            App Router pages and API routes
 components/     Three-pane chrome and Assist tabs
 lib/            Store, diff, export, roles, seed data
-public/         Official G-1 seal (never shown without the DRAFT banner); optional guide video at public/guide/
-scripts/        Baseline seed generator
+public/         G-1 seal; optional guide video at public/guide/
+scripts/        Seed checks and smoke
 ```

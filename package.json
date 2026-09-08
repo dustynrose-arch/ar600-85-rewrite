@@ -4,11 +4,13 @@
   "private": true,
   "description": "Internal G-1 working-copy editor for the AR 600-85 rewrite (WP1–WP7).",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 43185",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 43185",
     "lint": "next lint",
-    "test": "node --experimental-strip-types --test lib/*.test.ts"
+    "test": "node --experimental-strip-types --test lib/*.test.ts",
+    "smoke": "node scripts/smoke.mjs",
+    "smoke:http": "node scripts/smoke.mjs --http"
   },
   "dependencies": {
     "docx": "^9.5.0",

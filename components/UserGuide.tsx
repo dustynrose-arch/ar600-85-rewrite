@@ -98,26 +98,27 @@ export function UserGuide() {
         </li>
       </ul>
 
-      <h2 className="text-xl font-bold mt-8">Legal tip — Limited Use</h2>
+      <h2 className="text-xl font-bold mt-8">Justice (Limited Use)</h2>
       <p>
-        Limited Use reminders appear when a paragraph touches self-referral protections, protected evidence, or
-        characterization. The rule is cite-don’t-copy: keep the official definition in paragraphs 10–11 through
-        10–13, and point separation and flagging actions to AR 600–8–2, AR 635–200, AR 135–175, AR 135–178, and
-        AR 600–8–24. Limited Use is not a shield for later misconduct or for refusing a lawful order to test.
+        Justice is the working-group legal reviewer. Limited Use chips appear when a paragraph touches
+        self-referral protections, protected evidence, or characterization. Justice’s rule is cite-don’t-copy:
+        keep the canonical definition in paragraphs 10–11 through 10–13, and steer separation and flagging
+        actions to AR 600–8–2, AR 635–200, AR 135–175, AR 135–178, and AR 600–8–24. Limited Use is not a
+        shield for later misconduct or for refusing a lawful order to test.
       </p>
 
-      <h2 className="text-xl font-bold mt-8">Glossary tip — locked terms</h2>
+      <h2 className="text-xl font-bold mt-8">Cheech (glossary lock)</h2>
       <p>
-        Glossary reminders flag defined terms (ASAP, ADAPT, Limited Use Policy, UDL, MRO, DAMIS, smart testing,
-        and others). Do not invent a second definition in a commander’s guide or component chapter. Lock the term
-        and cite the glossary or the controlling paragraph.
+        Cheech is the terminology lead. Glossary lock chips flag defined terms (ASAP, ADAPT, Limited Use Policy,
+        UDL, MRO, DAMIS, smart testing, and others). Do not invent a second definition in a commander’s guide
+        or component chapter. Lock the term and cite the glossary / canonical paragraph.
       </p>
 
-      <h2 className="text-xl font-bold mt-8">Doctrine tip — overlap checks</h2>
+      <h2 className="text-xl font-bold mt-8">Sergeant (redundancy)</h2>
       <p>
-        Assist runs 22 overlap checks across your draft. For each topic, choose <em>Keep wording</em> or{" "}
-        <em>Insert See cite</em>. Inserting a See cite appends the topic’s citation to the current paragraph and
-        records the decision.
+        Sergeant runs 22 redundancy lanes across the working copy. For each lane, choose <em>Keep wording</em> or{" "}
+        <em>Insert See cite</em>. Inserting a See cite appends the lane’s citation to the current paragraph and
+        records the decision on the server.
       </p>
 
       <h2 className="text-xl font-bold mt-8">Export and upload</h2>

@@ -140,10 +140,10 @@ function AssistTab({
         </p>
       </section>
       <section>
-        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-goldDark">GLOSSARY TIP — LOCKED TERMS</h3>
+        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-goldDark">CHEECH — GLOSSARY LOCK</h3>
         <p className="text-xs text-army-slate mt-1">
-          Locked terms keep one official meaning. Underlined wording below is in this paragraph — do not write a
-          second definition in a commander’s guide or component chapter.
+          Cheech flags locked terms so they keep one official meaning. Underlined wording below is in this
+          paragraph — do not write a second definition in a commander’s guide or component chapter.
         </p>
         <div className="flex flex-wrap gap-1.5 mt-2">
           {cheech.length === 0 ? <span className="text-xs text-army-slate">No locked terms in this paragraph.</span> : null}
@@ -159,10 +159,10 @@ function AssistTab({
         </div>
       </section>
       <section>
-        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-rust">LEGAL TIP — LIMITED USE</h3>
+        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-rust">JUSTICE — LIMITED USE</h3>
         <p className="text-xs text-army-slate mt-1">
-          Cite the sister publication; do not copy its procedures here. Point flagging and separation actions to
-          those regulations. Do not expand protected evidence.
+          Justice’s rule is cite-don’t-copy. Point flagging and separation actions to the sister publication; do
+          not copy its procedures here. Do not expand protected evidence.
         </p>
         {justice ? (
           <div className="mt-2 space-y-1.5">
@@ -182,7 +182,7 @@ function AssistTab({
         )}
       </section>
       <section>
-        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">DOCTRINE TIP — OVERLAP CHECKS</h3>
+        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">SERGEANT — OVERLAP CHECKS</h3>
         <p className="text-xs text-army-slate mt-1">
           {findings.length} overlap topics are available. Keep the current wording, or insert a short “See …”
           pointer to the controlling paragraph.
@@ -228,7 +228,7 @@ function AssistTab({
         </ul>
       </section>
       <Link href="/guide" className="inline-block text-xs underline text-army-goldDark">
-        Open User Guide (walkthrough + video)
+        Open User Guide (Justice / Cheech blurbs)
       </Link>
     </div>
   );
