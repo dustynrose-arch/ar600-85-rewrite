@@ -277,8 +277,8 @@ export function GuideWalkthrough() {
             frozen copy of your draft.
           </li>
           <li>
-            Use <strong>Compare side by side</strong> to see your draft next to the original regulation
-            (read-only) — or next to a checkpoint.
+            Use <strong>Compare (original above, your draft below)</strong> to see the original regulation
+            (read-only) stacked above your draft — or next to a checkpoint.
           </li>
           <li>
             <strong>List the changes</strong> shows the real line changes (a simple comparison — not a legal

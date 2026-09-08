@@ -418,7 +418,7 @@ function VersionsTab({
           className="border border-army-black/20 px-2 py-1 text-xs bg-white"
           onClick={async () => setHunks(await onDiff(against))}
         >
-          Compare side by side
+          Compare (original above, your draft below)
         </button>
         <button
           type="button"
@@ -445,11 +445,11 @@ function VersionsTab({
           </div>
           <div className="grid grid-cols-2 gap-2 mt-1 text-[11px]">
             <div>
-              <p className="text-army-rust font-bold">Comparison</p>
+              <p className="text-army-rust font-bold">Original regulation</p>
               <p className="whitespace-pre-wrap">{hunk.baseline}</p>
             </div>
             <div>
-              <p className="text-army-oliveDark font-bold">Working copy</p>
+              <p className="text-army-oliveDark font-bold">Your draft</p>
               <p className="whitespace-pre-wrap">{hunk.current}</p>
             </div>
           </div>

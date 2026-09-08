@@ -2,7 +2,7 @@
 
 Browser-only Next.js application for the internal Army Deputy Chief of Staff, G–1 rewrite working group. Editors maintain a **working copy** of AR 600–85 against a **read-only embedded baseline**. The baseline is never mutated.
 
-This is the WP1–WP7 build: three-pane chrome with collapsible outline and Assist panes, automatic save, roles and gates, Assist reminders (glossary, Limited Use, overlap checks), process map, cite-don’t-copy authority, checkpoints, side-by-side compare, Word export, audited uploads, and an in-app User Guide with a First session walkthrough plus video placeholder.
+This is the WP1–WP7 build: three-pane chrome with collapsible outline and Assist panes, automatic save, roles and gates, Assist reminders (glossary, Limited Use, overlap checks), process map, cite-don’t-copy authority, checkpoints, stacked compare (original regulation above your draft), Word export, audited uploads, and an in-app User Guide with a First session walkthrough plus video placeholder.
 
 **Not an official publication.** The gold-and-black banner, Word header/footer, and title page are always marked **DRAFT / WORKING COPY**.
 
@@ -42,7 +42,7 @@ npm start
 | Chrome | Outline \| editor \| Assist/authority. Official G–1 seal at `public/g1-seal.png`, always paired with the DRAFT / WORKING COPY banner. Title *AR 600-85 Rewrite — Working Copy*. Subtitle *Internal G-1 rewrite working group use only*. Outline and Assist collapse so the center editor can widen; the tab remembers that choice for the session. |
 | Editing | Section edit with automatic save. The original regulation pane is read-only. |
 | Search | Queries the original regulation (read-only) only. |
-| Versions | Named snapshots. Side-by-side compare vs the original regulation or a checkpoint. **List the changes** builds bullets from those diffs. |
+| Versions | Named snapshots. Compare original regulation (above) vs your draft (below), or vs a checkpoint. **List the changes** builds bullets from those diffs. |
 | Summary of Change | Outline front-matter plus Assist **Summary** tab. Auto-built Revises / Adds / Rescinds rows from original regulation (read-only) versus your draft, with APD cites (`para 1–1`, `para 1–4a(1)`). Dedicated Word export stays marked DRAFT. Moved paragraphs are a follow-up (they currently appear as Rescinds + Adds). |
 | Tasks | Editors create and complete tasks. |
 | Roles | Editor (edit / tasks / snapshots). Reviewer (read-only). Approver (WG-review marks; can unlock). |
