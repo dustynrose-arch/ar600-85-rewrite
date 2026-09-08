@@ -6,6 +6,7 @@ import { EditorPane } from "@/components/EditorPane";
 import { AssistPane } from "@/components/AssistPane";
 import { SummaryOfChangePane } from "@/components/SummaryOfChangePane";
 import { IdleGuard } from "@/components/IdleGuard";
+import { ArmyMarkSlot, G1Mark } from "@/components/HeaderMarks";
 import { CollapsedRail } from "@/components/PaneToggle";
 import { DEFAULT_PANE_STATE, readPaneSession, writePaneSession } from "@/lib/panes";
 import {
@@ -271,11 +272,7 @@ export function Workbench({
         }}
       />
       <header className="shrink-0 bg-army-header text-army-wash px-4 py-2.5 flex items-center gap-4">
-        <img
-          src="/g1-seal.png"
-          alt="Office of the Deputy Chief of Staff, G-1, United States Army seal"
-          className="h-12 w-12 shrink-0 rounded-full object-cover"
-        />
+        <G1Mark />
         <div className="min-w-0 flex-1">
           <h1 className="text-lg font-semibold leading-tight">AR 600-85 Rewrite — Working Copy</h1>
           <p className="text-xs text-army-gold">Internal G-1 rewrite working group use only</p>
@@ -306,6 +303,7 @@ export function Workbench({
             User Guide
           </a>
         </div>
+        <ArmyMarkSlot />
       </header>
       {state.locked ? (
         <div className="lock-banner shrink-0 text-xs px-4 py-2 flex items-center justify-between gap-3">

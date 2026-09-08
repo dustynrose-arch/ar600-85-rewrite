@@ -6,14 +6,21 @@ function readRepoFile(relativePath: string): string {
   return readFileSync(new URL(`../${relativePath}`, import.meta.url), "utf8");
 }
 
-test("G-1 seal stays; no on-screen DRAFT chrome; exports stay stamped", () => {
+test("G-1 seal left, Army slot right, no on-screen DRAFT chrome; exports stay stamped", () => {
   const css = readRepoFile("app/globals.css");
   const workbench = readRepoFile("components/Workbench.tsx");
   const guide = readRepoFile("app/guide/page.tsx");
+  const marks = readRepoFile("components/HeaderMarks.tsx");
   const exportDocx = readRepoFile("lib/export-docx.ts");
 
-  assert.match(workbench, /src="\/g1-seal\.png"/);
-  assert.match(guide, /src="\/g1-seal\.png"/);
+  assert.match(marks, /src="\/g1-seal\.png"/);
+  assert.match(marks, /data-army-mark-slot="pending"/);
+  assert.match(workbench, /<G1Mark \/>/);
+  assert.match(workbench, /<ArmyMarkSlot \/>/);
+  assert.match(guide, /<G1Mark \/>/);
+  assert.match(guide, /<ArmyMarkSlot \/>/);
+  assert.match(workbench, /Internal G-1 rewrite working group use only/);
+  assert.match(workbench, /Original regulation \(read-only\): \{BASELINE_LABEL\}/);
   assert.equal(css.includes("repeating-linear-gradient"), false);
   assert.equal(css.includes(".draft-banner"), false);
   assert.equal(workbench.includes("DraftBanner"), false);
