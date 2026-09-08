@@ -446,21 +446,22 @@ SPECIAL_BODIES: dict[str, str] = {
 CHAPTER_CONTEXT = {cid: title for cid, _label, title in CHAPTERS}
 
 
+def para_skeleton() -> str:
+    """Lettered/numbered markers for reference. No invented policy prose."""
+    return "a.\nb.\n  (1)\n  (2)\n  (3)\nc."
+
+
+def with_reference_markers(text: str) -> str:
+    stripped = text.strip()
+    if stripped.startswith("a.") or stripped.startswith("a "):
+        return stripped
+    return f"a. {stripped}\n\nb.\n  (1)\n  (2)\n  (3)\nc."
+
+
 def body_for(chapter: str, number: str, title: str) -> str:
     if number in SPECIAL_BODIES:
-        return SPECIAL_BODIES[number]
-    chapter_title = CHAPTER_CONTEXT.get(chapter, "this chapter")
-    return (
-        f"Working-copy baseline text for {number}, {title}. This paragraph sits in {chapter_title} of "
-        f"ACTIVE AR 600–85 (4 October 2024; administrative revisions 27 February 2025 and 19 February 2026). "
-        f"Editors will refine official-style policy language here without mutating the locked baseline. "
-        f"Preserve hierarchy, cross-references, and defined terms. Where sister publications already govern "
-        f"the action (for example AR 600–8–2, AR 635–200, AR 135–175, AR 135–178, AR 600–8–24, DA Pam 600–85, "
-        f"or 42 CFR Part 2), cite those sources rather than copying their text. Commanders, ASAP managers, "
-        f"deterrence leaders, medical review officers, and legal advisors apply this paragraph with the rest "
-        f"of the regulation. Search terms: {title.lower()}, ASAP, deterrence, prevention, treatment, "
-        f"Limited Use Policy, confidentiality, urinalysis, ADAPT, DAMIS, FTDTL."
-    )
+        return with_reference_markers(SPECIAL_BODIES[number])
+    return para_skeleton()
 
 
 def write_png(path: Path) -> None:

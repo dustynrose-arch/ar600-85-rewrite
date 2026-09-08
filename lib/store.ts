@@ -72,6 +72,23 @@ function emptyState(): WorkspaceState {
   };
 }
 
+function isSeedStub(body: string): boolean {
+  return /^\s*Working-copy baseline text for/i.test(body);
+}
+
+function stripReferenceMarkers(body: string): string {
+  return body
+    .replace(/^\s*a\.\s*/u, "")
+    .replace(/\n\nb\.\n {2}\(1\)\n {2}\(2\)\n {2}\(3\)\nc\.\s*$/u, "")
+    .trim();
+}
+
+function needsSeedRefresh(workingBody: string, baselineBody: string): boolean {
+  if (isSeedStub(workingBody)) return true;
+  if (/^\s*a\./u.test(workingBody)) return false;
+  return stripReferenceMarkers(baselineBody) === workingBody.trim();
+}
+
 function ensureStore(): WorkspaceState {
   if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
   if (!existsSync(STORE_PATH)) {
@@ -81,11 +98,23 @@ function ensureStore(): WorkspaceState {
   }
   const parsed = JSON.parse(readFileSync(STORE_PATH, "utf8")) as WorkspaceState;
   const baseline = sectionMap();
+  let changed = false;
   for (const section of Object.values(baseline)) {
     if (!parsed.workingSections[section.id]) {
       parsed.workingSections[section.id] = { ...section, updatedAt: now(), updatedBy: "editor" };
+      changed = true;
+      continue;
+    }
+    if (needsSeedRefresh(parsed.workingSections[section.id].body, section.body)) {
+      parsed.workingSections[section.id] = {
+        ...parsed.workingSections[section.id],
+        body: section.body,
+        updatedAt: now(),
+      };
+      changed = true;
     }
   }
+  if (changed) persist(parsed);
   return parsed;
 }
 
