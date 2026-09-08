@@ -6,6 +6,8 @@ import { OutlinePane } from "@/components/OutlinePane";
 import { EditorPane } from "@/components/EditorPane";
 import { AssistPane } from "@/components/AssistPane";
 import { IdleGuard } from "@/components/IdleGuard";
+import { CollapsedRail } from "@/components/PaneToggle";
+import { DEFAULT_PANE_STATE, readPaneSession, writePaneSession } from "@/lib/panes";
 import { canUnlock, ROLE_LABEL } from "@/lib/roles";
 import {
   BASELINE_LABEL,
@@ -68,7 +70,22 @@ export function Workbench({
   const [findings, setFindings] = useState<Finding[]>([]);
   const [compareBody, setCompareBody] = useState<string | undefined>();
   const [compareLabel, setCompareLabel] = useState<string | undefined>();
+  const [leftCollapsed, setLeftCollapsed] = useState(DEFAULT_PANE_STATE.leftCollapsed);
+  const [rightCollapsed, setRightCollapsed] = useState(DEFAULT_PANE_STATE.rightCollapsed);
+  const [panesReady, setPanesReady] = useState(false);
   const saveTimer = useRef<number | null>(null);
+
+  useEffect(() => {
+    const stored = readPaneSession();
+    setLeftCollapsed(stored.leftCollapsed);
+    setRightCollapsed(stored.rightCollapsed);
+    setPanesReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!panesReady) return;
+    writePaneSession({ leftCollapsed, rightCollapsed });
+  }, [panesReady, leftCollapsed, rightCollapsed]);
 
   const working = state.workingSections[selectedId];
   const baselineSection = state.baselineSections[selectedId] ?? working;
@@ -229,42 +246,59 @@ export function Workbench({
           Approver marked this working copy ready for working-group review.
         </div>
       ) : null}
-      <div className="flex-1 min-h-0 grid grid-cols-[280px_minmax(0,1fr)_340px]">
-        <OutlinePane
-          baseline={baseline}
-          selectedId={selectedId}
-          onSelect={setSelectedId}
-          query={query}
-          onQuery={setQuery}
-          hits={hits}
-          searching={searching}
-          changedIds={changedIds}
-          markedIds={markedIds}
-        />
-        <EditorPane
-          role={state.role}
-          locked={state.locked}
-          baseline={baselineSection}
-          working={working}
-          draft={draft}
-          saveState={saveState}
-          onChange={onChange}
-          compareBody={compareBody}
-          compareLabel={compareLabel}
-        />
-        <AssistPane
-          role={state.role}
-          locked={state.locked}
-          sectionId={selectedId}
-          working={working}
-          tasks={state.tasks}
-          snapshots={state.snapshots}
-          timeline={state.timeline}
-          uploads={state.uploads}
-          marks={state.wgReviewMarks}
-          wgReady={state.wgReviewReady}
-          findings={findings}
-          onSelect={setSelectedId}
+      <div className="flex-1 min-h-0 flex">
+        {leftCollapsed ? (
+          <CollapsedRail side="left" label="Show outline" onExpand={() => setLeftCollapsed(false)} />
+        ) : (
+          <div className="w-[280px] max-w-[42%] shrink-0 min-w-0 min-h-0 flex flex-col">
+            <OutlinePane
+              baseline={baseline}
+              selectedId={selectedId}
+              onSelect={setSelectedId}
+              query={query}
+              onQuery={setQuery}
+              hits={hits}
+              searching={searching}
+              changedIds={changedIds}
+              markedIds={markedIds}
+              onCollapse={() => setLeftCollapsed(true)}
+            />
+          </div>
+        )}
+        <div className="flex-1 min-w-0 min-h-0 flex flex-col">
+          <EditorPane
+            role={state.role}
+            locked={state.locked}
+            baseline={baselineSection}
+            working={working}
+            draft={draft}
+            saveState={saveState}
+            onChange={onChange}
+            compareBody={compareBody}
+            compareLabel={compareLabel}
+            leftCollapsed={leftCollapsed}
+            rightCollapsed={rightCollapsed}
+            onToggleLeft={() => setLeftCollapsed((value) => !value)}
+            onToggleRight={() => setRightCollapsed((value) => !value)}
+          />
+        </div>
+        {rightCollapsed ? (
+          <CollapsedRail side="right" label="Show Assist" onExpand={() => setRightCollapsed(false)} />
+        ) : (
+          <div className="w-[340px] max-w-[46%] shrink-0 min-w-0 min-h-0 flex flex-col">
+            <AssistPane
+              role={state.role}
+              locked={state.locked}
+              sectionId={selectedId}
+              working={working}
+              tasks={state.tasks}
+              snapshots={state.snapshots}
+              timeline={state.timeline}
+              uploads={state.uploads}
+              marks={state.wgReviewMarks}
+              wgReady={state.wgReviewReady}
+              findings={findings}
+              onSelect={setSelectedId}
           onCreateTask={async (title, notes) => {
             const res = await fetch("/api/tasks", {
               method: "POST",
@@ -295,7 +329,7 @@ export function Workbench({
             const first = data.hunks[0];
             if (first) {
               setCompareBody(first.baseline);
-              setCompareLabel(against === "baseline" ? "Locked baseline" : "Snapshot");
+              setCompareLabel(against === "baseline" ? "Locked baseline" : "Saved checkpoint");
             }
             return data.hunks;
           }}
@@ -338,7 +372,10 @@ export function Workbench({
             const data = await res.json();
             if (res.ok) applyState(data);
           }}
-        />
+              onCollapse={() => setRightCollapsed(true)}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

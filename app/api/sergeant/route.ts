@@ -25,6 +25,6 @@ export async function POST(request: Request) {
       findings: runSergeant(state.workingSections, state.sergeant),
     });
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Sergeant failed" }, { status: 400 });
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Overlap check failed" }, { status: 400 });
   }
 }

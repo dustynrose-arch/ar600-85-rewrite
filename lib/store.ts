@@ -48,7 +48,7 @@ function emptyState(): WorkspaceState {
       {
         id: randomUUID(),
         title: "Reconcile Limited Use definition across 10–12 and B–10",
-        notes: "Justice: keep one canonical definition; commander guide should cite.",
+        notes: "Legal: keep one official definition; commander guide should cite.",
         sectionId: "10-12",
         createdAt: now(),
         createdBy: "editor",
@@ -234,7 +234,7 @@ export function markWgReview(sectionId: string | "all" | "clear", role: Role): W
 
 export function setSergeantDecision(laneId: string, decision: SergeantLaneState["decision"], citeTo: string | undefined, role: Role): WorkspaceState {
   const state = ensureStore();
-  if (role !== "editor") throw new Error("Only Editors may record Sergeant decisions.");
+  if (role !== "editor") throw new Error("Only Editors may record overlap decisions.");
   const row = state.sergeant.find((item) => item.laneId === laneId);
   if (!row) throw new Error("Unknown lane.");
   row.decision = decision;
@@ -255,7 +255,7 @@ export function setSergeantDecision(laneId: string, decision: SergeantLaneState[
   pushEvent(state, {
     actor: role,
     kind: "sergeant",
-    summary: `Sergeant lane ${laneId}: ${decision === "see-cite" ? "Insert See cite" : "Keep wording"}.`,
+    summary: `Overlap check ${laneId}: ${decision === "see-cite" ? "Insert See cite" : "Keep wording"}.`,
   });
   return persist(state);
 }
@@ -267,7 +267,7 @@ export function recordUpload(meta: Omit<UploadAudit, "id" | "uploadedAt">): Work
   pushEvent(state, {
     actor: meta.uploadedBy,
     kind: "upload",
-    summary: `Uploaded ${meta.filename} (${meta.sizeBytes} bytes, SHA-256 ${meta.sha256.slice(0, 12)}…).`,
+    summary: `Uploaded ${meta.filename} (${meta.sizeBytes} bytes, file ID ${meta.sha256.slice(0, 12)}…).`,
   });
   return persist(state);
 }

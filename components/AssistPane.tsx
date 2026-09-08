@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { PaneToggle } from "@/components/PaneToggle";
 import { CITE_HOT_LIST, SISTER_PUBS } from "@/lib/seed/sister-pubs";
 import { GLOSSARY_TERMS } from "@/lib/seed/glossary";
 import { PROCESS_MAP } from "@/lib/seed/process-map";
@@ -50,6 +51,7 @@ type Props = {
   onSergeant: (laneId: string, decision: "keep" | "see-cite", citeTo?: string) => void;
   onUpload: (file: File) => Promise<void>;
   onWgMark: (sectionId: string | "all" | "clear") => void;
+  onCollapse: () => void;
 };
 
 const TABS: { id: Tab; label: string }[] = [
@@ -65,20 +67,23 @@ const TABS: { id: Tab; label: string }[] = [
 export function AssistPane(props: Props) {
   const [tab, setTab] = useState<Tab>("assist");
   return (
-    <aside className="flex flex-col min-h-0 border-l border-army-black/15 bg-[#f7f2e6]">
-      <div className="flex flex-wrap gap-1 p-2 border-b border-army-black/10">
-        {TABS.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => setTab(item.id)}
-            className={`px-2 py-1 text-[11px] font-semibold ${
-              tab === item.id ? "bg-army-olive text-army-cream" : "bg-white text-army-ink border border-army-black/10"
-            }`}
-          >
-            {item.label}
-          </button>
-        ))}
+    <aside className="flex flex-col min-h-0 h-full border-l border-army-black/15 bg-[#f7f2e6]">
+      <div className="flex items-start justify-between gap-2 p-2 border-b border-army-black/10">
+        <div className="flex flex-wrap gap-1 min-w-0">
+          {TABS.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setTab(item.id)}
+              className={`px-2 py-1 text-[11px] font-semibold ${
+                tab === item.id ? "bg-army-olive text-army-cream" : "bg-white text-army-ink border border-army-black/10"
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+        <PaneToggle label="Assist" expanded onClick={props.onCollapse} />
       </div>
       <div className="pane-scroll overflow-y-auto flex-1 min-h-0 p-3 text-sm">
         {tab === "assist" ? <AssistTab {...props} /> : null}
@@ -117,9 +122,18 @@ function AssistTab({
   return (
     <div className="space-y-4">
       <section>
-        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-goldDark">CHEECH — GLOSSARY LOCK</h3>
+        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">WHAT THIS PANEL DOES</h3>
         <p className="text-xs text-army-slate mt-1">
-          Locked terms must keep their canonical definition. Cheech flags rewrite drift.
+          Assist watches the paragraph open in the center. When it finds locked glossary wording, Limited Use
+          language, or overlap with another publication, it lists those reminders here. Nothing in your draft
+          changes unless you choose an action below.
+        </p>
+      </section>
+      <section>
+        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-goldDark">GLOSSARY TIP — LOCKED TERMS</h3>
+        <p className="text-xs text-army-slate mt-1">
+          Locked terms keep one official meaning. Underlined wording below is in this paragraph — do not write a
+          second definition in a commander’s guide or component chapter.
         </p>
         <div className="flex flex-wrap gap-1.5 mt-2">
           {cheech.length === 0 ? <span className="text-xs text-army-slate">No locked terms in this paragraph.</span> : null}
@@ -127,25 +141,28 @@ function AssistTab({
             <span
               key={term.id}
               title={`${term.definition} Cite: ${term.cite}`}
-              className="inline-flex items-center gap-1 bg-army-olive text-army-cream px-2 py-0.5 text-[11px]"
+              className="inline-flex items-center gap-1 bg-army-olive text-army-cream px-2 py-0.5 text-[11px] underline decoration-army-gold decoration-2 underline-offset-2"
             >
-              LOCK {term.acronym ?? term.term}
+              Locked term: {term.acronym ?? term.term}
             </span>
           ))}
         </div>
       </section>
       <section>
-        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-rust">JUSTICE — LIMITED USE</h3>
+        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-rust">LEGAL TIP — LIMITED USE</h3>
         <p className="text-xs text-army-slate mt-1">
-          Cite-don’t-copy. Steer flags and separations to sister pubs; do not expand protected evidence.
+          Cite the sister publication; do not copy its procedures here. Point flagging and separation actions to
+          those regulations. Do not expand protected evidence.
         </p>
         {justice ? (
           <div className="mt-2 space-y-1.5">
-            <span className="inline-block bg-army-rust text-white px-2 py-0.5 text-[11px]">Limited Use in play</span>
+            <span className="inline-block bg-army-rust text-white px-2 py-0.5 text-[11px] underline decoration-white decoration-2 underline-offset-2">
+              Limited Use wording is in this paragraph
+            </span>
             <div className="flex flex-wrap gap-1">
               {["AR 600-8-2", "AR 635-200", "AR 135-175", "AR 135-178"].map((pub) => (
                 <span key={pub} className="bg-white border border-army-rust/40 px-2 py-0.5 text-[11px]">
-                  STEER {pub}
+                  Cite {pub}
                 </span>
               ))}
             </div>
@@ -155,8 +172,11 @@ function AssistTab({
         )}
       </section>
       <section>
-        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">SERGEANT — 22 REDUNDANCY LANES</h3>
-        <p className="text-xs text-army-slate mt-1">Keep wording or insert a See cite. {findings.length} lanes loaded.</p>
+        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">DOCTRINE TIP — OVERLAP CHECKS</h3>
+        <p className="text-xs text-army-slate mt-1">
+          {findings.length} overlap topics are available. Keep the current wording, or insert a short “See …”
+          pointer to the controlling paragraph.
+        </p>
         <ul className="mt-2 space-y-2">
           {(laneHits.length ? laneHits : findings.slice(0, 6)).map((finding) => (
             <li key={finding.laneId} className="border border-army-black/10 bg-white p-2">
@@ -164,7 +184,7 @@ function AssistTab({
               <p className="text-[11px] text-army-slate">{finding.rationale}</p>
               <p className="text-[11px] mt-1">
                 Primary {finding.primaryCite}
-                {finding.hits.length ? ` · hits ${finding.hits.map((hit) => hit.number).join(", ")}` : ""}
+                {finding.hits.length ? ` · appears in ${finding.hits.map((hit) => hit.number).join(", ")}` : ""}
               </p>
               <div className="flex gap-2 mt-2">
                 <button
@@ -316,7 +336,7 @@ function TasksTab({ role, tasks, sectionId, onCreateTask, onCompleteTask }: Prop
             <div className="font-semibold text-[12px]">{task.title}</div>
             <p className="text-[11px] text-army-slate">{task.notes}</p>
             <p className="text-[11px] mt-1">
-              {task.sectionId ?? "unscoped"} · {task.completedAt ? "complete" : "open"}
+              {task.sectionId ?? "no section"} · {task.completedAt ? "complete" : "open"}
             </p>
             {!task.completedAt ? (
               <button
@@ -349,12 +369,12 @@ function VersionsTab({
 
   return (
     <div className="space-y-3">
-      <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">SNAPSHOTS & DIFF</h3>
+      <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">CHECKPOINTS & COMPARE</h3>
       <div className="flex gap-2">
         <input
           value={label}
           onChange={(event) => setLabel(event.target.value)}
-          placeholder="Snapshot label"
+          placeholder="Checkpoint name"
           disabled={role !== "editor"}
           className="flex-1 border border-army-black/15 px-2 py-1 text-sm"
         />
@@ -391,14 +411,14 @@ function VersionsTab({
           className="border border-army-black/20 px-2 py-1 text-xs bg-white"
           onClick={async () => setHunks(await onDiff(against))}
         >
-          Side-by-side diff
+          Compare side by side
         </button>
         <button
           type="button"
           className="border border-army-black/20 px-2 py-1 text-xs bg-white"
           onClick={async () => setBullets(await onSummarize(against))}
         >
-          Summarize from diffs
+          List the changes
         </button>
       </div>
       {bullets.length ? (
@@ -460,7 +480,7 @@ function UploadTab({ uploads, onUpload, onWgMark, role, wgReady, sectionId }: Pr
   return (
     <div className="space-y-3">
       <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">SOURCE UPLOAD (25 MB)</h3>
-      <p className="text-xs text-army-slate">PDF or DOCX. Size and SHA-256 are written to the audit log.</p>
+      <p className="text-xs text-army-slate">PDF or Word file. File name, size, and a unique file ID are written to the activity log.</p>
       <input
         type="file"
         accept=".pdf,.doc,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -481,7 +501,7 @@ function UploadTab({ uploads, onUpload, onWgMark, role, wgReady, sectionId }: Pr
           <li key={row.id} className="bg-white border border-army-black/10 p-2 text-[11px]">
             <div className="font-semibold">{row.filename}</div>
             <div>
-              {(row.sizeBytes / 1024).toFixed(1)} KB · SHA-256 {row.sha256}
+              {(row.sizeBytes / 1024).toFixed(1)} KB · File ID {row.sha256}
             </div>
             <div>
               {new Date(row.uploadedAt).toLocaleString()} · {row.uploadedBy}

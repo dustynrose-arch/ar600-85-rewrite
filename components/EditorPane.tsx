@@ -1,5 +1,6 @@
 "use client";
 
+import { PaneToggle } from "@/components/PaneToggle";
 import type { Role, Section, WorkingSection } from "@/lib/types";
 
 type Props = {
@@ -12,6 +13,10 @@ type Props = {
   onChange: (value: string) => void;
   compareBody?: string;
   compareLabel?: string;
+  leftCollapsed: boolean;
+  rightCollapsed: boolean;
+  onToggleLeft: () => void;
+  onToggleRight: () => void;
 };
 
 export function EditorPane({
@@ -24,28 +29,36 @@ export function EditorPane({
   onChange,
   compareBody,
   compareLabel,
+  leftCollapsed,
+  rightCollapsed,
+  onToggleLeft,
+  onToggleRight,
 }: Props) {
   const editable = role === "editor" && !locked;
   const status =
     saveState === "saving"
-      ? "Saving to server…"
+      ? "Saving…"
       : saveState === "dirty"
         ? "Unsaved changes"
         : saveState === "blocked"
           ? "Read-only (role or lock)"
-          : "Saved on server";
+          : "Saved";
 
   return (
-    <section className="flex flex-col min-h-0 bg-army-paper">
+    <section className="flex flex-col min-h-0 h-full bg-army-paper">
       <header className="px-4 py-3 border-b border-army-black/10 flex items-start justify-between gap-3">
-        <div>
+        <div className="min-w-0">
           <p className="text-[10px] font-bold tracking-[0.18em] text-army-goldDark">WORKING COPY</p>
           <h2 className="font-doc text-xl font-semibold">
             {working.number}. {working.title}
           </h2>
           <p className="text-[11px] text-army-slate">
-            Last server save {new Date(working.updatedAt).toLocaleString()} · {status}
+            Last saved {new Date(working.updatedAt).toLocaleString()} · {status}
           </p>
+        </div>
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          <PaneToggle label="outline" expanded={!leftCollapsed} onClick={onToggleLeft} />
+          <PaneToggle label="Assist" expanded={!rightCollapsed} onClick={onToggleRight} />
         </div>
       </header>
       <div className="grid grid-rows-2 min-h-0 flex-1">

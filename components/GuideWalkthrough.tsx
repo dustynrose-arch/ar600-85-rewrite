@@ -8,19 +8,17 @@ const thClass = "border border-army-black/15 bg-army-olive text-army-cream px-3 
 const tdClass = "border border-army-black/15 bg-army-paper px-3 py-1.5 align-top";
 
 function GuideCallout({
-  who,
+  kind,
   title,
   children,
 }: {
-  who: "Justice" | "Cheech" | "Sergeant";
+  kind: "Legal tip" | "Glossary tip" | "Doctrine tip";
   title: string;
   children: ReactNode;
 }) {
   return (
     <aside className="mt-4 border-l-4 border-army-gold bg-white px-3 py-2 font-ui text-sm text-army-ink">
-      <p className="text-[10px] font-bold tracking-[0.16em] text-army-goldDark">
-        {who.toUpperCase()} · WP6
-      </p>
+      <p className="text-[10px] font-bold tracking-[0.16em] text-army-goldDark">{kind.toUpperCase()}</p>
       <p className="mt-0.5 font-semibold">{title}</p>
       <div className="mt-1 text-army-slate leading-relaxed">{children}</div>
     </aside>
@@ -106,25 +104,25 @@ export function GuideWalkthrough() {
             <td className={tdClass}>
               <strong>Left</strong>
             </td>
-            <td className={tdClass}>Outline — pick a chapter or section</td>
+            <td className={tdClass}>Outline — pick a chapter or section. Hide it to widen the editor.</td>
           </tr>
           <tr>
             <td className={tdClass}>
               <strong>Center</strong>
             </td>
-            <td className={tdClass}>Your working copy (and Baseline / Diff)</td>
+            <td className={tdClass}>Your working copy (and the locked baseline for reference)</td>
           </tr>
           <tr>
             <td className={tdClass}>
               <strong>Right</strong>
             </td>
-            <td className={tdClass}>Helpful refs — Assist chips, glossary, Process map</td>
+            <td className={tdClass}>Assist — helpful reminders, glossary, Process map, and authority cites</td>
           </tr>
           <tr>
             <td className={tdClass}>
               <strong>Top</strong>
             </td>
-            <td className={tdClass}>Save status, your role, Guide, Word export</td>
+            <td className={tdClass}>Save status, your role, Guide, Word export, G–1 seal, DRAFT banner</td>
           </tr>
         </tbody>
       </table>
@@ -141,8 +139,8 @@ export function GuideWalkthrough() {
             It opens in the <strong>center</strong>.
           </li>
           <li>
-            Want to hunt by words? Use the outline search, or press <strong>Ctrl+K</strong> (Mac:{" "}
-            <strong>⌘K</strong>). Search looks at the official baseline text, then jumps you there.
+            Want to hunt by words? Use the outline search. Search looks at the official baseline text, then
+            jumps you there.
           </li>
         </ol>
         <p className="mt-3 font-semibold">Tips</p>
@@ -153,6 +151,11 @@ export function GuideWalkthrough() {
           <li>
             A <strong>WG</strong> mark means an Approver said it’s ready for working-group review.
           </li>
+          <li>
+            Need more room to write? Click <strong>Hide outline</strong> or <strong>Hide Assist</strong>. The
+            center pane grows. Bring a side back with <strong>Show outline</strong> / <strong>Show Assist</strong>{" "}
+            or the thin strip on that side.
+          </li>
         </ul>
       </article>
 
@@ -162,64 +165,84 @@ export function GuideWalkthrough() {
         <h3 className="text-lg font-bold">Step 2 — Edit your draft (not the baseline)</h3>
         <ol className="list-decimal pl-6 space-y-1 mt-2">
           <li>
-            Stay on the <strong>Working copy</strong> tab in the center.
+            Stay on the <strong>Working copy</strong> in the center (the lower box).
           </li>
           <li>
-            Type your changes. Watch the top bar — it should say <strong>Saved</strong> when the server has
-            them.
+            Type your changes. Watch the top of the center pane — it should say <strong>Saved</strong> when your
+            edits have been stored.
           </li>
           <li>
-            Leave the <strong>Baseline</strong> tab alone. That’s the frozen official text for reference only.
+            Leave the <strong>Locked baseline</strong> box alone. That’s the frozen official text for reference
+            only.
           </li>
         </ol>
         <p className="mt-3">You’re always drafting. The gold banner at the top is there on purpose.</p>
-        <GuideCallout who="Sergeant" title="Baseline vs working copy">
-          Left/search is the ACTIVE AR 600-85 (read-only). Only edit the working copy.
+        <GuideCallout kind="Doctrine tip" title="Baseline vs working copy">
+          The left outline and search show the ACTIVE AR 600-85 (read-only). Only edit the working copy in the
+          center.
         </GuideCallout>
       </article>
 
       <hr className="mt-8 border-army-black/15" />
 
       <article id="assist" className="scroll-mt-4 mt-8">
-        <h3 className="text-lg font-bold">Step 3 — When yellow/red underlines show up (Assist)</h3>
-        <p className="mt-2">Those marks are gentle nudges — not auto-corrections.</p>
+        <h3 className="text-lg font-bold">Step 3 — Use Assist reminders on the right</h3>
+        <p className="mt-2">
+          The right-hand panel is a writing helper for this regulation. It watches the paragraph you have open
+          and lists reminders when the wording needs a glossary check, a Limited Use caution, or a pointer to
+          another publication. These are gentle nudges — not automatic corrections.
+        </p>
+        <p className="mt-3 font-semibold">How underlined wording appears</p>
         <ol className="list-decimal pl-6 space-y-2 mt-2">
+          <li>Open a paragraph in the center.</li>
           <li>
             Open the <strong>Assist</strong> tab on the <strong>right</strong>.
           </li>
-          <li>Read the chip. It might be about glossary wording, Limited Use risk, overlap with another pub, or a spelling.</li>
           <li>
-            If you’re an <strong>Editor</strong>, pick what fits:
-            <ul className="list-disc pl-6 space-y-1 mt-2">
-              <li>
-                <strong>Use locked term</strong> — swap to the preferred ASAP wording
-              </li>
-              <li>
-                <strong>Keep wording</strong> — dismiss this chip
-              </li>
-              <li>
-                <strong>Insert See cite</strong> — drop in a short “See …” pointer when offered
-              </li>
-            </ul>
-          </li>
-          <li>
-            Need cites or the flow map instead? Switch to <strong>Authority</strong>, <strong>Glossary</strong>,
-            or <strong>Process</strong>.
+            If Assist finds matching wording, those terms show up as <strong>underlined reminders</strong>:
+            locked glossary terms, Limited Use language, or overlap with another publication. Nothing in your
+            draft changes until you choose an action.
           </li>
         </ol>
-        <p className="mt-3">Nothing rewrites your text unless you choose it.</p>
-        <GuideCallout who="Justice" title="Limited Use">
-          When Assist chips fire on testing/referral/discipline (especially self-ID), don’t treat that as open
-          season for punishment. Follow Limited Use / SJA and cite AR 600-8-2 / 635-200 instead of rewriting
-          those pubs into 600-85.
+        <p className="mt-3 font-semibold">What each action means</p>
+        <ul className="list-disc pl-6 space-y-1 mt-1">
+          <li>
+            <strong>Keep wording</strong> — you reviewed the overlap reminder and are leaving the current
+            sentence as written.
+          </li>
+          <li>
+            <strong>Insert See cite</strong> — add a short “See …” pointer to the controlling paragraph or sister
+            publication instead of copying that other text into AR 600-85.
+          </li>
+        </ul>
+        <p className="mt-3 font-semibold">When to use the other right-hand tabs</p>
+        <ul className="list-disc pl-6 space-y-1 mt-1">
+          <li>
+            <strong>Glossary reminders</strong> (on Assist) — you used a defined term (ASAP, ADAPT, Limited Use
+            Policy, SUDCC, and others). Keep one official meaning.
+          </li>
+          <li>
+            <strong>Authority</strong> — the topic belongs in a sister publication (flags, separations, officer
+            actions). Cite that publication; do not paste its procedures here.
+          </li>
+          <li>
+            <strong>Process</strong> — you are writing identification → referral → screening → treatment →
+            outcome language and want the flow to stay one system.
+          </li>
+        </ul>
+        <p className="mt-3">Reviewers can read every reminder. Only Editors can record Keep wording or Insert See cite.</p>
+        <GuideCallout kind="Legal tip" title="Limited Use">
+          When Assist highlights testing, referral, or discipline wording (especially self-identification), do
+          not treat that as open season for punishment. Follow Limited Use and the SJA, and cite AR 600-8-2 /
+          635-200 instead of rewriting those publications into 600-85.
         </GuideCallout>
-        <GuideCallout who="Cheech" title="Glossary">
-          When Assist underlines a term, prefer locked ASAP wording (IR vs other test bases, SUDCC vs ADAPT,
-          illicit use vs prescription misuse). Chips never auto-rewrite.
+        <GuideCallout kind="Glossary tip" title="Glossary">
+          When Assist underlines a term, prefer the locked ASAP wording (IR versus other test bases, SUDCC
+          versus ADAPT, illicit use versus prescription misuse). Reminders never rewrite the paragraph for you.
         </GuideCallout>
-        <GuideCallout who="Sergeant" title="Sister pubs">
-          When Assist flags sister-pub text, prefer See AR X (flags → AR 600-8-2, separations → AR 635-200, etc.)
-          — keep short language only if ASAP context needs it.
+        <GuideCallout kind="Doctrine tip" title="Sister publications">
+          When Assist flags wording that belongs in another publication, prefer “See AR …” (flags → AR 600-8-2,
+          separations → AR 635-200, and so on). Keep short language only if the ASAP context needs it.
         </GuideCallout>
       </article>
 
@@ -235,12 +258,12 @@ export function GuideWalkthrough() {
             Click through the path: how a Soldier is identified → referral → SUDCC → treatment → return to duty
             or separation.
           </li>
-          <li>Open the callouts when your draft touches Limited Use, alcohol incidents, or civilian TDP/EAP.</li>
+          <li>Open the notes when your draft touches Limited Use, alcohol incidents, or civilian TDP/EAP.</li>
         </ol>
         <p className="mt-3">Use it when you’re unsure what “right-shaped” policy language should cover.</p>
-        <GuideCallout who="Cheech" title="Process">
-          Use the Process tab for ID → Referral → Screen → Treat → Outcome (and the civilian TDP+EAP branch) so
-          those sections stay one system.
+        <GuideCallout kind="Glossary tip" title="Process">
+          Use the Process tab for identification → referral → screen → treat → outcome (and the civilian TDP and
+          EAP branch) so those sections stay one system.
         </GuideCallout>
       </article>
 
@@ -250,21 +273,23 @@ export function GuideWalkthrough() {
         <h3 className="text-lg font-bold">Step 5 — Compare, checkpoint, export</h3>
         <ol className="list-decimal pl-6 space-y-1 mt-2">
           <li>
-            <strong>Save snapshot</strong> (under the editor) when you want a frozen checkpoint.
+            Open <strong>Versions</strong> on the right and <strong>save a checkpoint</strong> when you want a
+            frozen copy of the working draft.
           </li>
           <li>
-            Open <strong>Diff</strong> to see your draft next to the official baseline — or next to a snapshot.
+            Use <strong>Compare side by side</strong> to see your draft next to the official baseline — or next
+            to a checkpoint.
           </li>
           <li>
-            <strong>Summarize</strong> lists the real line changes (simple local diff — not AI, not a legal
+            <strong>List the changes</strong> shows the real line changes (a simple comparison — not a legal
             review).
           </li>
           <li>
-            Click <strong>Word export</strong> up top when you need a <code>.docx</code>. It stays clearly
-            marked <strong>DRAFT</strong> for internal use only.
+            Click <strong>Word export</strong> up top when you need a Word file. It stays clearly marked{" "}
+            <strong>DRAFT</strong> for internal use only.
           </li>
         </ol>
-        <GuideCallout who="Justice" title="DRAFT export">
+        <GuideCallout kind="Legal tip" title="DRAFT export">
           Every Word export keeps DRAFT / WORKING COPY — normal for APD submit.
         </GuideCallout>
       </article>
@@ -286,7 +311,7 @@ export function GuideWalkthrough() {
               <td className={tdClass}>
                 <strong>Editor</strong>
               </td>
-              <td className={tdClass}>Write the draft, tasks, timeline, uploads, Assist actions, snapshots</td>
+              <td className={tdClass}>Write the draft, tasks, activity notes, uploads, Assist actions, checkpoints</td>
             </tr>
             <tr>
               <td className={tdClass}>
@@ -315,8 +340,8 @@ export function GuideWalkthrough() {
 
       <h3 className="text-lg font-bold mt-8">Tiny tour (one breath)</h3>
       <p className="mt-2">
-        Left = find it. Center = write it. Right = check it. Top = export it. Baseline never changes. Exports
-        stay DRAFT.
+        Left = find it. Center = write it. Right = check it. Top = export it. Hide the sides when you need a
+        wider editor. Baseline never changes. Exports stay DRAFT.
       </p>
     </section>
   );

@@ -1,5 +1,6 @@
 "use client";
 
+import { PaneToggle } from "@/components/PaneToggle";
 import type { BaselineDocument, SearchHit } from "@/lib/types";
 
 type Props = {
@@ -12,6 +13,7 @@ type Props = {
   searching: boolean;
   changedIds: Set<string>;
   markedIds: Set<string>;
+  onCollapse: () => void;
 };
 
 export function OutlinePane({
@@ -24,10 +26,15 @@ export function OutlinePane({
   searching,
   changedIds,
   markedIds,
+  onCollapse,
 }: Props) {
   return (
-    <aside className="flex flex-col min-h-0 border-r border-army-black/15 bg-[#efe8d8]">
+    <aside className="flex flex-col min-h-0 h-full border-r border-army-black/15 bg-[#efe8d8]">
       <div className="p-3 border-b border-army-black/10">
+        <div className="flex items-center justify-between gap-2 mb-2">
+          <p className="text-[10px] font-bold tracking-[0.16em] text-army-slate">OUTLINE</p>
+          <PaneToggle label="outline" expanded onClick={onCollapse} />
+        </div>
         <label className="text-[10px] font-bold tracking-[0.16em] text-army-slate block mb-1">
           SEARCH BASELINE
         </label>
@@ -43,7 +50,7 @@ export function OutlinePane({
         {query.trim() ? (
           <ul className="p-2 space-y-2">
             {hits.length === 0 && !searching ? (
-              <li className="text-xs text-army-slate px-1">No baseline hits.</li>
+              <li className="text-xs text-army-slate px-1">No matching sections.</li>
             ) : null}
             {hits.map((hit) => (
               <li key={hit.sectionId}>
