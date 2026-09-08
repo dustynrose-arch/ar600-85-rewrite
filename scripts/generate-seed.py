@@ -2,11 +2,13 @@
 """Generate baseline document seed. Does not overwrite an existing official G-1 seal.
 
 Official APD paragraph bodies are stored in lib/seed/baseline-document.json.
-Re-running this script keeps those bodies and never writes stub lead-ins.
+Re-running this script keeps those bodies, formats a./b./(1)/(a) like the published
+regulation, and never writes stub lead-ins or empty marker fillers.
 """
 from __future__ import annotations
 
 import json
+import re
 import struct
 import zlib
 from pathlib import Path
@@ -457,10 +459,39 @@ _STUB_LEADINS = (
     "Baseline placeholder",
 )
 
+_MARKER_ONLY = re.compile(
+    r"^(?:[a-z]\.\s*|\(\d+\)\s*|\([a-z]\)\s*|\([ivx]+\)\s*|\s+)+$",
+    re.IGNORECASE,
+)
+
 
 def is_stub_body(body: str) -> bool:
     stripped = (body or "").strip()
-    return any(stripped.startswith(prefix) for prefix in _STUB_LEADINS)
+    if any(stripped.startswith(prefix) for prefix in _STUB_LEADINS):
+        return True
+    if not stripped:
+        return True
+    return bool(_MARKER_ONLY.match(stripped)) and len(re.sub(r"[\s.()\da-z]", "", stripped, flags=re.I)) == 0
+
+
+def format_apd_structure(body: str) -> str:
+    """Published APD hierarchy: a./b. at left, (1) indented, (a) further, (i) further."""
+    if not body:
+        return body
+    lines = []
+    for raw in body.splitlines():
+        s = raw.strip()
+        if not s:
+            continue
+        if re.match(r"^\([ivxlcdm]+\)\s", s, re.I):
+            lines.append("      " + s)
+        elif re.match(r"^\([a-z]\)\s", s):
+            lines.append("    " + s)
+        elif re.match(r"^\(\d+\)\s", s):
+            lines.append("  " + s)
+        else:
+            lines.append(s)
+    return "\n".join(lines)
 
 
 def load_existing_bodies(dest: Path) -> dict[str, str]:
@@ -472,15 +503,15 @@ def load_existing_bodies(dest: Path) -> dict[str, str]:
         for section in chapter.get("sections", []):
             body = section.get("body") or ""
             if body and not is_stub_body(body):
-                keep[section["id"]] = body
+                keep[section["id"]] = format_apd_structure(body)
     return keep
 
 
 def body_for(number: str, keep: dict[str, str]) -> str:
     if number in keep:
-        return keep[number]
+        return format_apd_structure(keep[number])
     if number in SPECIAL_BODIES:
-        return SPECIAL_BODIES[number]
+        return format_apd_structure(SPECIAL_BODIES[number])
     return ""
 
 

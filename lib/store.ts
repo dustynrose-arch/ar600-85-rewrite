@@ -76,17 +76,33 @@ function isSeedStub(body: string): boolean {
   return /^\s*Working-copy baseline text for/i.test(body);
 }
 
-function stripReferenceMarkers(body: string): string {
-  return body
-    .replace(/^\s*a\.\s*/u, "")
-    .replace(/\n\nb\.\n {2}\(1\)\n {2}\(2\)\n {2}\(3\)\nc\.\s*$/u, "")
+function isMarkerOnlySeed(body: string): boolean {
+  const stripped = body
+    .replace(/^[ \t]*[a-z]\.\s*/gim, "")
+    .replace(/^[ \t]*\([0-9]+\)\s*/gim, "")
+    .replace(/^[ \t]*\([a-z]\)\s*/gim, "")
+    .replace(/^[ \t]*\([ivxlcdm]+\)\s*/gim, "")
+    .replace(/\s+/g, " ")
     .trim();
+  return stripped.length < 20;
+}
+
+function collapseStructure(body: string): string {
+  return body.replace(/^[ \t]+/gm, "").replace(/\r/g, "").trim();
+}
+
+function isWrappedSkeleton(body: string): boolean {
+  return /\n\nb\.\n {2}\(1\)\n {2}\(2\)\n {2}\(3\)\nc\.\s*$/u.test(body);
 }
 
 function needsSeedRefresh(workingBody: string, baselineBody: string): boolean {
-  if (isSeedStub(workingBody)) return true;
-  if (/^\s*a\./u.test(workingBody)) return false;
-  return stripReferenceMarkers(baselineBody) === workingBody.trim();
+  if (isSeedStub(workingBody) || isMarkerOnlySeed(workingBody) || isWrappedSkeleton(workingBody)) {
+    return true;
+  }
+  if (collapseStructure(workingBody) === collapseStructure(baselineBody)) {
+    return workingBody !== baselineBody;
+  }
+  return false;
 }
 
 function ensureStore(): WorkspaceState {
