@@ -6,6 +6,14 @@ import { CrossmatchRows } from "@/components/CrossmatchRows";
 import { PaneToggle } from "@/components/PaneToggle";
 import { Toast } from "@/components/Toast";
 import { processHighlightIds, sectionByStableId, viewAssistChips } from "@/lib/assist-bind";
+import {
+  ADVERSE_ACTION_CATEGORY,
+  LEGAL_CHIP_BODY,
+  LEGAL_CITE_PUBS,
+  LIMITED_USE_CATEGORY,
+  chipsInCategory,
+  legalChipsFromWorkingText,
+} from "@/lib/legal-chips";
 import { CITE_HOT_LIST, SISTER_PUBS } from "@/lib/seed/sister-pubs";
 import { GLOSSARY_TERMS } from "@/lib/seed/glossary";
 import { PROCESS_MAP } from "@/lib/seed/process-map";
@@ -149,7 +157,12 @@ function AssistTab({
     [working, assistBindings, draftBody],
   );
   const cheech = GLOSSARY_TERMS.filter((term) => chips.glossaryTermIds.includes(term.id));
-  const justice = chips.limitedUse;
+  const legalChips = useMemo(
+    () => legalChipsFromWorkingText(working.title, draftBody ?? working.body, chips.limitedUse),
+    [working, draftBody, chips.limitedUse],
+  );
+  const lupChips = chipsInCategory(legalChips, LIMITED_USE_CATEGORY);
+  const adverseChips = chipsInCategory(legalChips, ADVERSE_ACTION_CATEGORY);
   const laneHits = findings.filter((finding) => finding.hits.some((hit) => hit.sectionId === sectionId));
   const openStable = (id: string) => {
     const live = sectionByStableId(sections ?? { [working.id]: working }, id);
@@ -162,8 +175,8 @@ function AssistTab({
         <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">WHAT THIS PANEL DOES</h3>
         <p className="text-xs text-army-slate mt-1">
           Assist watches the paragraph open in the center. When it finds locked glossary wording, Limited Use
-          language, or overlap with another publication, it lists those reminders here. Nothing in your draft
-          changes unless you choose an action below.
+          Policy (self-referral), other legal / adverse-action hints, or overlap with another publication, it
+          lists those reminders here. Nothing in your draft changes unless you choose an action below.
         </p>
       </section>
       <section>
@@ -186,28 +199,51 @@ function AssistTab({
         </div>
       </section>
       <section>
-        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-rust">LEGAL TIP — LIMITED USE</h3>
-        <p className="text-xs text-army-slate mt-1">
-          Cite the sister publication; do not copy its procedures here. Point flagging and separation actions to
-          those regulations. Do not expand protected evidence.
-        </p>
-        {justice ? (
+        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-rust">
+          LIMITED USE POLICY (SELF-REFERRAL)
+        </h3>
+        <p className="text-xs text-army-slate mt-1">{LEGAL_CHIP_BODY}</p>
+        {lupChips.length ? (
           <div className="mt-2 space-y-1.5">
-            <span className="inline-block bg-army-rust text-white px-2 py-0.5 text-[11px] underline decoration-white decoration-2 underline-offset-2">
-              Limited Use wording is in this paragraph
-            </span>
-            <div className="flex flex-wrap gap-1">
-              {["AR 600-8-2", "AR 635-200", "AR 135-175", "AR 135-178"].map((pub) => (
-                <span key={pub} className="bg-white border border-army-rust/40 px-2 py-0.5 text-[11px]">
-                  Cite {pub}
-                </span>
-              ))}
-            </div>
+            {lupChips.map((chip) => (
+              <span
+                key={chip.id}
+                className="inline-block bg-army-rust text-white px-2 py-0.5 text-[11px] underline decoration-white decoration-2 underline-offset-2"
+              >
+                {chip.title}
+              </span>
+            ))}
           </div>
         ) : (
-          <p className="text-xs mt-2">No Limited Use language in the current paragraph.</p>
+          <p className="text-xs mt-2">No Limited Use Policy (self-referral) language in the current paragraph.</p>
         )}
       </section>
+      <section>
+        <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-rust">LEGAL / ADVERSE-ACTION HINT</h3>
+        {adverseChips.length ? (
+          <div className="mt-2 space-y-1.5">
+            {adverseChips.map((chip) => (
+              <span
+                key={chip.id}
+                className="inline-block bg-army-rust text-white px-2 py-0.5 text-[11px] underline decoration-white decoration-2 underline-offset-2"
+              >
+                {chip.title}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <p className="text-xs mt-2">No legal / adverse-action hints in the current paragraph.</p>
+        )}
+      </section>
+      {chips.limitedUse ? (
+        <div className="flex flex-wrap gap-1">
+          {LEGAL_CITE_PUBS.map((pub) => (
+            <span key={pub} className="bg-white border border-army-rust/40 px-2 py-0.5 text-[11px]">
+              Cite {pub}
+            </span>
+          ))}
+        </div>
+      ) : null}
       <section>
         <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">DOCTRINE TIP — OVERLAP CHECKS</h3>
         <p className="text-xs text-army-slate mt-1">
