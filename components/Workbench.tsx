@@ -5,9 +5,16 @@ import { DraftBanner } from "@/components/DraftBanner";
 import { OutlinePane } from "@/components/OutlinePane";
 import { EditorPane } from "@/components/EditorPane";
 import { AssistPane } from "@/components/AssistPane";
+import { SummaryOfChangePane } from "@/components/SummaryOfChangePane";
 import { IdleGuard } from "@/components/IdleGuard";
 import { CollapsedRail } from "@/components/PaneToggle";
 import { DEFAULT_PANE_STATE, readPaneSession, writePaneSession } from "@/lib/panes";
+import {
+  buildSummaryOfChange,
+  overlayDraftSection,
+  SUMMARY_VIEW_ID,
+  type ChangeAction,
+} from "@/lib/summary-of-change";
 import { canUnlock, ROLE_LABEL } from "@/lib/roles";
 import {
   BASELINE_LABEL,
@@ -73,7 +80,11 @@ export function Workbench({
   const [leftCollapsed, setLeftCollapsed] = useState(DEFAULT_PANE_STATE.leftCollapsed);
   const [rightCollapsed, setRightCollapsed] = useState(DEFAULT_PANE_STATE.rightCollapsed);
   const [panesReady, setPanesReady] = useState(false);
+  const [summaryFilter, setSummaryFilter] = useState<ChangeAction | "all">("all");
+  const [lastSectionId, setLastSectionId] = useState(baseline.chapters[0]?.sections[0]?.id ?? "1-1");
   const saveTimer = useRef<number | null>(null);
+  const viewingSummary = selectedId === SUMMARY_VIEW_ID;
+  const editorSectionId = viewingSummary ? lastSectionId : selectedId;
 
   useEffect(() => {
     const stored = readPaneSession();
@@ -87,10 +98,12 @@ export function Workbench({
     writePaneSession({ leftCollapsed, rightCollapsed });
   }, [panesReady, leftCollapsed, rightCollapsed]);
 
-  const working = state.workingSections[selectedId];
-  const baselineSection = state.baselineSections[selectedId] ?? working;
+  const working = state.workingSections[editorSectionId];
+  const baselineSection = state.baselineSections[editorSectionId] ?? working;
 
   useEffect(() => {
+    if (selectedId === SUMMARY_VIEW_ID) return;
+    setLastSectionId(selectedId);
     setDraft(state.workingSections[selectedId]?.body ?? "");
     setSaveState(state.role === "editor" && !state.locked ? "saved" : "blocked");
   }, [selectedId, state.workingSections, state.role, state.locked]);
@@ -149,7 +162,7 @@ export function Workbench({
     setSaveState("dirty");
     if (saveTimer.current) window.clearTimeout(saveTimer.current);
     saveTimer.current = window.setTimeout(() => {
-      void persistDraft(selectedId, value, state.role);
+      void persistDraft(editorSectionId, value, state.role);
     }, 800);
   };
 
@@ -182,6 +195,16 @@ export function Workbench({
 
   const markedIds = useMemo(() => new Set(state.wgReviewMarks.map((mark) => mark.sectionId)), [state.wgReviewMarks]);
 
+  const outlineOrder = useMemo(
+    () => baseline.chapters.flatMap((chapter) => chapter.sections),
+    [baseline],
+  );
+
+  const summary = useMemo(() => {
+    const overlayed = overlayDraftSection(state.workingSections, editorSectionId, draft);
+    return buildSummaryOfChange(state.baselineSections, overlayed, outlineOrder);
+  }, [state.workingSections, state.baselineSections, editorSectionId, draft, outlineOrder]);
+
   if (!working) return null;
 
   return (
@@ -189,7 +212,7 @@ export function Workbench({
       <IdleGuard
         role={state.role}
         locked={state.locked}
-        sectionId={selectedId}
+        sectionId={editorSectionId}
         draftBody={draft}
         onLocked={async () => {
           const res = await fetch("/api/state");
@@ -224,6 +247,9 @@ export function Workbench({
           </label>
           <a href="/api/export" className="bg-army-gold text-army-black px-2 py-1 font-semibold">
             Export Word (DRAFT)
+          </a>
+          <a href="/api/export?kind=summary" className="border border-army-gold px-2 py-1">
+            Export Summary (DRAFT)
           </a>
           <a href="/guide" className="border border-army-gold/50 px-2 py-1">
             User Guide
@@ -261,26 +287,41 @@ export function Workbench({
               searching={searching}
               changedIds={changedIds}
               markedIds={markedIds}
+              changeCount={summary.counts.total}
               onCollapse={() => setLeftCollapsed(true)}
             />
           </div>
         )}
         <div className="flex-1 min-w-0 min-h-0 flex flex-col">
-          <EditorPane
-            role={state.role}
-            locked={state.locked}
-            baseline={baselineSection}
-            working={working}
-            draft={draft}
-            saveState={saveState}
-            onChange={onChange}
-            compareBody={compareBody}
-            compareLabel={compareLabel}
-            leftCollapsed={leftCollapsed}
-            rightCollapsed={rightCollapsed}
-            onToggleLeft={() => setLeftCollapsed((value) => !value)}
-            onToggleRight={() => setRightCollapsed((value) => !value)}
-          />
+          {viewingSummary ? (
+            <SummaryOfChangePane
+              summary={summary}
+              dirty={saveState === "dirty" || saveState === "saving"}
+              filter={summaryFilter}
+              onFilter={setSummaryFilter}
+              onOpenSection={setSelectedId}
+              leftCollapsed={leftCollapsed}
+              rightCollapsed={rightCollapsed}
+              onToggleLeft={() => setLeftCollapsed((value) => !value)}
+              onToggleRight={() => setRightCollapsed((value) => !value)}
+            />
+          ) : (
+            <EditorPane
+              role={state.role}
+              locked={state.locked}
+              baseline={baselineSection}
+              working={working}
+              draft={draft}
+              saveState={saveState}
+              onChange={onChange}
+              compareBody={compareBody}
+              compareLabel={compareLabel}
+              leftCollapsed={leftCollapsed}
+              rightCollapsed={rightCollapsed}
+              onToggleLeft={() => setLeftCollapsed((value) => !value)}
+              onToggleRight={() => setRightCollapsed((value) => !value)}
+            />
+          )}
         </div>
         {rightCollapsed ? (
           <CollapsedRail side="right" label="Show Assist" onExpand={() => setRightCollapsed(false)} />
@@ -289,8 +330,10 @@ export function Workbench({
             <AssistPane
               role={state.role}
               locked={state.locked}
-              sectionId={selectedId}
+              sectionId={editorSectionId}
               working={working}
+              summary={summary}
+              onOpenSummary={() => setSelectedId(SUMMARY_VIEW_ID)}
               tasks={state.tasks}
               snapshots={state.snapshots}
               timeline={state.timeline}
@@ -303,7 +346,7 @@ export function Workbench({
             const res = await fetch("/api/tasks", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ action: "create", title, notes, sectionId: selectedId, role: state.role }),
+              body: JSON.stringify({ action: "create", title, notes, sectionId: editorSectionId, role: state.role }),
             });
             applyState(await res.json());
           }}
