@@ -67,7 +67,7 @@ export function IdleGuard({ role, locked, sectionId, draftBody, onLocked }: Prop
         <h2 className="text-xl font-bold mt-1">Session idle for 14 minutes</h2>
         <p className="mt-2 text-sm text-army-slate">
           The working copy will save and lock in {remaining} second{remaining === 1 ? "" : "s"} unless you continue
-          editing. Baseline text is never modified.
+          editing. The original regulation is never modified.
         </p>
         <button
           type="button"

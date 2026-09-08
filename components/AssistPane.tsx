@@ -404,7 +404,7 @@ function VersionsTab({
           onChange={(event) => setAgainst(event.target.value)}
           className="block w-full mt-1 border border-army-black/15 px-2 py-1 text-sm"
         >
-          <option value="baseline">Locked baseline</option>
+          <option value="baseline">Original regulation (read-only)</option>
           {snapshots.map((snapshot) => (
             <option key={snapshot.id} value={snapshot.id}>
               {snapshot.label} ({new Date(snapshot.createdAt).toLocaleString()})
@@ -543,9 +543,13 @@ function UploadTab({ uploads, onUpload, onWgMark, role, wgReady, sectionId }: Pr
     <div className="space-y-3">
       <h3 className="text-[11px] font-bold tracking-[0.16em] text-army-oliveDark">SOURCE UPLOAD (25 MB)</h3>
       <p className="text-xs text-army-slate">PDF or Word file. File name, size, and a unique file ID are written to the activity log.</p>
+      {role === "reviewer" ? (
+        <p className="text-xs text-army-rust">Reviewers cannot upload files. Switch to Editor or Approver.</p>
+      ) : null}
       <input
         type="file"
         accept=".pdf,.doc,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        disabled={role === "reviewer"}
         onChange={async (event) => {
           const file = event.target.files?.[0];
           if (!file) return;

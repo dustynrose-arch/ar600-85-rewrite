@@ -64,7 +64,7 @@ export function EditorPane({
       <div className="grid grid-rows-2 min-h-0 flex-1">
         <div className="min-h-0 border-b border-army-black/10 flex flex-col">
           <p className="px-4 pt-2 text-[10px] font-bold tracking-[0.16em] text-army-slate">
-            LOCKED BASELINE — READ ONLY
+            ORIGINAL REGULATION — READ ONLY
           </p>
           <div className="pane-scroll overflow-y-auto px-4 py-2 font-doc text-[13px] leading-relaxed text-army-ink/90 whitespace-pre-wrap">
             {compareBody != null ? (

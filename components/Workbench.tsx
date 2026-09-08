@@ -228,7 +228,7 @@ export function Workbench({
         <div className="min-w-0 flex-1">
           <h1 className="text-lg font-semibold leading-tight">AR 600-85 Rewrite — Working Copy</h1>
           <p className="text-xs text-army-gold">Internal G-1 rewrite working group use only</p>
-          <p className="text-[11px] text-army-cream/80">{BASELINE_LABEL}</p>
+          <p className="text-[11px] text-army-cream/80">Original regulation (read-only): {BASELINE_LABEL}</p>
         </div>
         <div className="flex items-center gap-2 text-xs">
           <label className="flex items-center gap-1">
@@ -259,7 +259,7 @@ export function Workbench({
       <DraftBanner />
       {state.locked ? (
         <div className="shrink-0 bg-army-rust text-white text-xs px-4 py-1.5 flex items-center justify-between">
-          <span>LOCKED{state.lockReason ? ` — ${state.lockReason}` : ""}. Working copy was saved. Baseline is untouched.</span>
+          <span>LOCKED{state.lockReason ? ` — ${state.lockReason}` : ""}. Your draft was saved. The original regulation is unchanged.</span>
           {canUnlock(state.role) ? (
             <button type="button" onClick={() => void unlock()} className="underline">
               Unlock
@@ -372,7 +372,7 @@ export function Workbench({
             const first = data.hunks[0];
             if (first) {
               setCompareBody(first.baseline);
-              setCompareLabel(against === "baseline" ? "Locked baseline" : "Saved checkpoint");
+              setCompareLabel(against === "baseline" ? "Original regulation (read-only)" : "Saved checkpoint");
             }
             return data.hunks;
           }}

@@ -27,7 +27,7 @@ import type { WorkspaceState } from "./types";
 type DocChild = Paragraph | Table;
 
 const DISCLAIMER =
-  "DRAFT / WORKING COPY — Not an official Army publication. This document is an internal Deputy Chief of Staff, G–1 rewrite working-copy for working-group use only. It has not been authenticated under AR 25–30 (Army Publishing Program) or processed under DA Pam 25–40 (Army Publishing Program Procedures). Do not cite, implement, or distribute outside the G–1 rewrite working group. The locked baseline remains ACTIVE AR 600–85 (4 October 2024, administrative revisions 27 February 2025 and 19 February 2026).";
+  "DRAFT / WORKING COPY — Not an official Army publication. This document is an internal Deputy Chief of Staff, G–1 rewrite working-copy for working-group use only. It has not been authenticated under AR 25–30 (Army Publishing Program) or processed under DA Pam 25–40 (Army Publishing Program Procedures). Do not cite, implement, or distribute outside the G–1 rewrite working group. The original regulation remains ACTIVE AR 600–85 (4 October 2024, administrative revisions 27 February 2025 and 19 February 2026).";
 
 function draftRun(text: string, opts: { bold?: boolean; size?: number; italics?: boolean } = {}) {
   return new TextRun({

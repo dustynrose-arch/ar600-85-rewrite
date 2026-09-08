@@ -39,7 +39,7 @@ export function OutlinePane({
           <PaneToggle label="outline" expanded onClick={onCollapse} />
         </div>
         <label className="text-[10px] font-bold tracking-[0.16em] text-army-slate block mb-1">
-          SEARCH BASELINE
+          SEARCH ORIGINAL REGULATION
         </label>
         <input
           value={query}
