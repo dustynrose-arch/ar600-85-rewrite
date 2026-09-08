@@ -6,7 +6,7 @@ function readRepoFile(relativePath: string): string {
   return readFileSync(new URL(`../${relativePath}`, import.meta.url), "utf8");
 }
 
-test("G-1 seal left, Army slot right, no on-screen DRAFT chrome; exports stay stamped", () => {
+test("header: G-1 left, Army slot right, thin DRAFT chip; no working-group subtitles; exports stamped", () => {
   const css = readRepoFile("app/globals.css");
   const workbench = readRepoFile("components/Workbench.tsx");
   const guide = readRepoFile("app/guide/page.tsx");
@@ -15,18 +15,18 @@ test("G-1 seal left, Army slot right, no on-screen DRAFT chrome; exports stay st
 
   assert.match(marks, /src="\/g1-seal\.png"/);
   assert.match(marks, /data-army-mark-slot="pending"/);
+  assert.match(marks, /draft-chip/);
+  assert.match(marks, /DRAFT \/ WORKING COPY/);
   assert.match(workbench, /<G1Mark \/>/);
   assert.match(workbench, /<ArmyMarkSlot \/>/);
-  assert.match(guide, /<G1Mark \/>/);
-  assert.match(guide, /<ArmyMarkSlot \/>/);
-  assert.match(workbench, /Internal G-1 rewrite working group use only/);
-  assert.match(workbench, /Original regulation \(read-only\): \{BASELINE_LABEL\}/);
+  assert.match(workbench, /<DraftChip \/>/);
+  assert.match(guide, /<DraftChip \/>/);
+  assert.match(workbench, /AR 600-85 Rewrite — Working Copy/);
+  assert.equal(workbench.includes("Internal G-1 rewrite working group use only"), false);
+  assert.equal(workbench.includes("Original regulation (read-only):"), false);
   assert.equal(css.includes("repeating-linear-gradient"), false);
   assert.equal(css.includes(".draft-banner"), false);
-  assert.equal(workbench.includes("DraftBanner"), false);
-  assert.equal(guide.includes("DraftBanner"), false);
-  assert.equal(workbench.includes("DRAFT / WORKING COPY"), false);
-  assert.equal(guide.includes("DRAFT / WORKING COPY"), false);
+  assert.match(css, /\.draft-chip \{/);
 
   assert.match(exportDocx, /DRAFT \/ WORKING COPY/);
   assert.match(exportDocx, /draftRun\("DRAFT"/);

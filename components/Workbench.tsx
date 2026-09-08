@@ -6,7 +6,7 @@ import { EditorPane } from "@/components/EditorPane";
 import { AssistPane } from "@/components/AssistPane";
 import { SummaryOfChangePane } from "@/components/SummaryOfChangePane";
 import { IdleGuard } from "@/components/IdleGuard";
-import { ArmyMarkSlot, G1Mark } from "@/components/HeaderMarks";
+import { ArmyMarkSlot, DraftChip, G1Mark } from "@/components/HeaderMarks";
 import { CollapsedRail } from "@/components/PaneToggle";
 import { DEFAULT_PANE_STATE, readPaneSession, writePaneSession } from "@/lib/panes";
 import {
@@ -17,7 +17,6 @@ import {
 } from "@/lib/summary-of-change";
 import { canUnlock, ROLE_LABEL } from "@/lib/roles";
 import {
-  BASELINE_LABEL,
   type BaselineDocument,
   type DiffHunk,
   type Role,
@@ -273,10 +272,9 @@ export function Workbench({
       />
       <header className="shrink-0 bg-army-header text-army-wash px-4 py-2.5 flex items-center gap-4">
         <G1Mark />
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 flex items-center gap-2.5">
           <h1 className="text-lg font-semibold leading-tight">AR 600-85 Rewrite — Working Copy</h1>
-          <p className="text-xs text-army-gold">Internal G-1 rewrite working group use only</p>
-          <p className="text-[11px] text-army-cream/80">Original regulation (read-only): {BASELINE_LABEL}</p>
+          <DraftChip />
         </div>
         <div className="flex items-center gap-2 text-xs">
           <label className="flex items-center gap-2">

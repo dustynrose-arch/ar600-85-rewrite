@@ -60,7 +60,8 @@ export function GuideWalkthrough() {
       </p>
       <p className="mt-3">
         Everything you write here is a <strong>draft</strong>. It is not Army policy until officially
-        published. Word exports stay marked DRAFT; the workspace has no DRAFT banner or chip.
+        published. A thin <strong>DRAFT / WORKING COPY</strong> chip stays in the header. Word exports stay
+        marked DRAFT.
       </p>
 
       <nav className="mt-4" aria-label="First session walkthrough anchors">

@@ -8,6 +8,15 @@ export function G1Mark({ className = "h-12 w-12 shrink-0 rounded-full object-cov
   );
 }
 
+/** Thin header chip — not a fat banner. */
+export function DraftChip() {
+  return (
+    <span className="draft-chip shrink-0" role="status" aria-label="Draft working copy">
+      DRAFT / WORKING COPY
+    </span>
+  );
+}
+
 /** Empty sized slot — repo has no approved Army emblem; do not invent one. */
 export function ArmyMarkSlot() {
   return (

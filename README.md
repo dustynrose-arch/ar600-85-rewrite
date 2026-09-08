@@ -4,7 +4,7 @@ Browser-only Next.js application for the internal Army Deputy Chief of Staff, G�
 
 This is the WP1–WP7 build: three-pane chrome with collapsible outline and Assist panes, automatic save, roles and gates, Assist reminders (glossary, Limited Use Policy (self-referral) vs legal / adverse-action hints, overlap checks), process map, cite-don’t-copy authority, checkpoints, stacked compare (original regulation above your draft), Word export, audited uploads, Editor-only working-copy structure edits, and an in-app User Guide with a First session walkthrough plus video placeholder.
 
-**Not an official publication.** Word exports (header, footer, and title page) are always marked **DRAFT / WORKING COPY**. The on-screen workspace has no DRAFT banner or chip. Header: G–1 seal on the left; Army emblem is an empty sized slot until an official `public/army-emblem.png` is supplied (no invented seal).
+**Not an official publication.** Word exports (header, footer, and title page) are always marked **DRAFT / WORKING COPY**. The header shows a thin **DRAFT / WORKING COPY** chip (not a fat banner). G–1 seal on the left; Army emblem is an empty sized slot until an official `public/army-emblem.png` is supplied.
 
 ## Baseline
 
