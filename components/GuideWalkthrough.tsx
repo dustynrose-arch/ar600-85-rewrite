@@ -152,9 +152,10 @@ export function GuideWalkthrough() {
             A <strong>WG</strong> mark means an Approver said it’s ready for working-group review.
           </li>
           <li>
-            Need more room to write? Click <strong>Hide outline</strong> or <strong>Hide Assist</strong>. The
-            center pane grows. Bring a side back with <strong>Show outline</strong> / <strong>Show Assist</strong>{" "}
-            or the thin strip on that side.
+            Need more room to write? Click <strong>Hide outline</strong> on the left pane or{" "}
+            <strong>Hide Assist</strong> on the right pane. The center pane has no hide buttons. Bring a side
+            back with <strong>Show outline</strong> / <strong>Show Assist</strong> or the thin strip on that
+            side.
           </li>
         </ul>
       </article>
@@ -167,7 +168,8 @@ export function GuideWalkthrough() {
           <li>
             Stay on <strong>your draft</strong> in the center (the lower box). Type a misspelled word if
             you want to confirm the red underline — spellcheck is on for your draft only. Use{" "}
-            <strong>Undo</strong> (or Ctrl+Z / ⌘Z) if you need to take a draft edit back.
+            <strong>Undo</strong> (or Ctrl+Z / ⌘Z) if you need to take a draft edit back. Press{" "}
+            <strong>Save</strong> when you want a manual save in the activity list; autosave still runs.
           </li>
           <li>
             Type your changes. Watch the top of the center pane — it should say <strong>Saved</strong> when your

@@ -6,10 +6,12 @@ type Props = {
   sectionId: string;
   value: string;
   editable: boolean;
+  saveState: "saved" | "saving" | "dirty" | "blocked";
   onChange: (value: string) => void;
+  onSave: (value: string) => void;
 };
 
-export function DraftEditor({ sectionId, value, editable, onChange }: Props) {
+export function DraftEditor({ sectionId, value, editable, saveState, onChange, onSave }: Props) {
   const ref = useRef<HTMLTextAreaElement>(null);
   const historyRef = useRef<string[]>([]);
   const lastInputAt = useRef(0);
@@ -25,6 +27,10 @@ export function DraftEditor({ sectionId, value, editable, onChange }: Props) {
     const el = ref.current;
     if (el && el.value !== value) el.value = value;
   }, [value, sectionId]);
+
+  function currentValue(): string {
+    return ref.current?.value ?? value;
+  }
 
   function pushHistory(previous: string) {
     const now = Date.now();
@@ -50,15 +56,26 @@ export function DraftEditor({ sectionId, value, editable, onChange }: Props) {
       <div className="px-4 pt-2 flex items-center justify-between gap-2">
         <p className="text-[10px] font-bold tracking-[0.16em] text-army-oliveDark">YOUR DRAFT</p>
         {editable ? (
-          <button
-            type="button"
-            onClick={undo}
-            disabled={!canUndo}
-            className="text-[11px] px-2 py-0.5 border border-army-black/20 bg-white disabled:opacity-40"
-            title="Undo last change in your draft (Ctrl+Z / ⌘Z). Does not change the original regulation."
-          >
-            Undo
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={undo}
+              disabled={!canUndo}
+              className="text-[11px] px-2 py-0.5 border border-army-black/20 bg-white disabled:opacity-40"
+              title="Undo last change in your draft (Ctrl+Z / ⌘Z). Does not change the original regulation."
+            >
+              Undo
+            </button>
+            <button
+              type="button"
+              onClick={() => onSave(currentValue())}
+              disabled={saveState === "saving"}
+              className="text-[11px] px-2 py-0.5 bg-army-olive text-army-cream disabled:opacity-40"
+              title="Save your draft now. Autosave still runs. Does not change the original regulation."
+            >
+              Save
+            </button>
+          </div>
         ) : null}
       </div>
       <textarea

@@ -40,7 +40,7 @@ npm start
 | Area | Behavior |
 | --- | --- |
 | Chrome | Outline \| editor \| Assist/authority. Official G–1 seal at `public/g1-seal.png`, always paired with the DRAFT / WORKING COPY banner. Title *AR 600-85 Rewrite — Working Copy*. Subtitle *Internal G-1 rewrite working group use only*. Outline and Assist collapse so the center editor can widen; the tab remembers that choice for the session. |
-| Editing | Section edit with automatic save. The original regulation pane is read-only. Your draft has Undo (button and Ctrl+Z / ⌘Z) and browser spellcheck; the original regulation pane is not spellchecked. |
+| Editing | Section edit with automatic save plus an Editor-only **Save** button (timeline: “Manual save”). The original regulation pane is read-only. Your draft has Undo (button and Ctrl+Z / ⌘Z) and browser spellcheck; the original regulation pane is not spellchecked. Hide outline / Hide Assist live on those side panes only — not in the center chrome. |
 | Search | Queries the original regulation (read-only) only. |
 | Versions | Named snapshots. Compare original regulation (above) vs your draft (below), or vs a checkpoint. **List the changes** builds bullets from those diffs. |
 | Summary of Change | Outline front-matter plus Assist **Summary** tab. Auto-built Revises / Adds / Rescinds rows from original regulation (read-only) versus your draft, with APD cites (`para 1–1`, `para 1–4a(1)`). Dedicated Word export stays marked DRAFT. Moved paragraphs are a follow-up (they currently appear as Rescinds + Adds). |

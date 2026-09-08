@@ -1,5 +1,7 @@
 export type Role = "editor" | "reviewer" | "approver";
 
+export type SaveSource = "autosave" | "manual";
+
 export type Section = {
   id: string;
   number: string;

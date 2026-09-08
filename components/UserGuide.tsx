@@ -18,18 +18,19 @@ export function UserGuide() {
       <ul className="list-disc pl-6 space-y-1">
         <li>Three panes: outline on the left, your draft in the center, and Assist on the right.</li>
         <li>
-          Use <strong>Hide outline</strong> and <strong>Hide Assist</strong> to widen the center editor. Use{" "}
-          <strong>Show outline</strong> or <strong>Show Assist</strong> — or the thin side strips — to bring a
-          pane back. The workspace remembers those choices until you close the browser tab.
+          Use <strong>Hide outline</strong> on the left pane and <strong>Hide Assist</strong> on the right pane
+          to widen the center editor. Use <strong>Show outline</strong> or <strong>Show Assist</strong> — or
+          the thin side strips — to bring a pane back. The center editor does not have hide buttons. The
+          workspace remembers those choices until you close the browser tab.
         </li>
         <li>The gold-and-black DRAFT banner stays on, next to the G–1 seal.</li>
         <li>
           Original regulation (read-only): AR 600–85 (4 Oct 2024, admin revs 27 Feb 2025 / 19 Feb 2026).
         </li>
         <li>
-          Your edits save automatically. This computer does not keep a separate copy. Editors can Undo in
-          your draft (button or Ctrl+Z / ⌘Z). The original regulation pane does not undo and is not
-          spellchecked.
+          Your edits save automatically. Editors can also press <strong>Save</strong> next to your draft
+          (that writes a “Manual save” line in the activity list). Editors can Undo in your draft (button or
+          Ctrl+Z / ⌘Z). The original regulation pane does not undo and is not spellchecked.
         </li>
         <li>Search looks only at the original regulation (read-only).</li>
         <li>Idle warning at 14 minutes; at 15 minutes the current section is saved and the workspace locks.</li>
@@ -38,9 +39,9 @@ export function UserGuide() {
       <h2 className="text-xl font-bold mt-8">Roles and gates</h2>
       <ul className="list-disc pl-6 space-y-1">
         <li>
-          <strong>Editor</strong> — edit your draft, undo draft typing, create and complete tasks, save
-          checkpoints, record overlap decisions, and upload files to compare against your draft. May unlock
-          after an idle lock.
+          <strong>Editor</strong> — edit your draft, Save or Undo draft typing, create and complete tasks,
+          save checkpoints, record overlap decisions, and upload files to compare against your draft. May
+          unlock after an idle lock.
         </li>
         <li>
           <strong>Reviewer</strong> — read-only. May inspect comparisons, the activity list, and authority

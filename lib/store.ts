@@ -6,6 +6,7 @@ import { REDUNDANCY_LANES } from "./seed/redundancy-lanes";
 import type {
   CrossmatchRow,
   Role,
+  SaveSource,
   SergeantLaneState,
   Snapshot,
   Task,
@@ -167,7 +168,13 @@ export function setRole(role: Role): WorkspaceState {
   return persist(state);
 }
 
-export function saveSection(sectionId: string, body: string, title: string | undefined, role: Role): WorkspaceState {
+export function saveSection(
+  sectionId: string,
+  body: string,
+  title: string | undefined,
+  role: Role,
+  source: SaveSource = "autosave",
+): WorkspaceState {
   const state = ensureStore();
   if (state.locked) throw new Error("Workspace is locked. Unlock before editing.");
   if (role !== "editor") throw new Error("Only Editors may change working-copy text.");
@@ -180,10 +187,13 @@ export function saveSection(sectionId: string, body: string, title: string | und
     updatedAt: now(),
     updatedBy: role,
   };
+  const manual = source === "manual";
   pushEvent(state, {
     actor: role,
-    kind: "edit",
-    summary: `Autosaved ${current.number} ${current.title}.`,
+    kind: manual ? "manual-save" : "edit",
+    summary: manual
+      ? `Manual save of ${current.number} ${current.title}.`
+      : `Autosaved ${current.number} ${current.title}.`,
     sectionId,
   });
   return persist(state);
