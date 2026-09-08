@@ -132,7 +132,10 @@ function looksLikeSisterCopy(text: string): boolean {
 }
 
 function hasCorrectSisterCite(text: string): boolean {
-  return /\bsee\s+AR\s*600[\-–]8[\-–]2\b/i.test(text) || /\bsee\s+AR\s*635[\-–]200\b/i.test(text);
+  return (
+    /\b(?:see|refer to)\s+AR\s*600[\-–]8[\-–]2\b/i.test(text) ||
+    /\b(?:see|refer to)\s+AR\s*635[\-–]200\b/i.test(text)
+  );
 }
 
 function sisterTopic(text: string): boolean {

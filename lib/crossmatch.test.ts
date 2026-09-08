@@ -76,6 +76,13 @@ test("Match when upload correctly says See AR for a sister publication", () => {
   assert.equal(row!.verdict, "match");
 });
 
+test("Match when upload uses official refer-to sister cite wording", () => {
+  const rows = run("At para 10–6, for flagging refer to AR 600–8–2. Do not paste flag codes into this regulation.");
+  const row = rows.find((item) => item.locationCite === "para 10–6");
+  assert.ok(row);
+  assert.equal(row!.verdict, "match");
+});
+
 test("Miss when upload requires a rule not in the draft at that para", () => {
   const rows = run(
     "Per para 4–5a(1), commanders will confiscate privately owned vehicles after any positive result.",
