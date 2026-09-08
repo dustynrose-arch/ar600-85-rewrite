@@ -34,9 +34,10 @@ export function UserGuide() {
         </li>
         <li>Search looks only at the original regulation (read-only).</li>
         <li>
-          Editors reshape the <strong>working-copy</strong> outline from the left pane: Add before / after /
-          child, Split, Delete (confirm), Rename, and drag to reorder. Display numbers renumber inside the parent
-          (chapter→para). Assist chips and the Process-step highlight stay on each paragraph’s stable id — never
+          Editors reshape the <strong>working-copy</strong> outline from the left pane: Add before / after,
+          Split, Delete (confirm), Rename, and drag to reorder. Display numbers renumber inside the parent
+          (chapter→para). Nested subparagraphs (4–2a, 4–2a(1)) stay in the paragraph text box. Assist chips
+          and the Process-step highlight stay on each paragraph’s stable id — never
           the display number, and never the original regulation. Reviewers and Approvers cannot change
           structure.
         </li>
@@ -136,10 +137,9 @@ export function UserGuide() {
       </p>
       <ul className="list-disc pl-6 space-y-1">
         <li>
-          <strong>Add before / after</strong> — insert a titled paragraph next to the selection.
-        </li>
-        <li>
-          <strong>Add child</strong> — insert under the chapter (last child), or from a chapter heading.
+          <strong>Add before / after</strong> — insert a titled paragraph next to the selection. The outline
+          stays chapter → numbered paragraph; nested markers such as 4–2a or 4–2a(1) belong in the paragraph
+          text box.
         </li>
         <li>
           <strong>Rename</strong> — change the working-copy title. Summary of Change flags it as Revises.
