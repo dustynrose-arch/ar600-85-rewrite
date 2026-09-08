@@ -75,9 +75,9 @@ export function GuideWalkthrough() {
                     event.preventDefault();
                     openAnchor(anchor.id);
                   }}
-                  className={`inline-flex border px-2.5 py-1.5 text-left text-[12px] font-semibold no-underline ${
+                  className={`inline-flex rounded-lg border px-2.5 py-1.5 text-left text-[12px] font-semibold no-underline ${
                     selected
-                      ? "border-army-gold bg-army-gold text-army-black"
+                      ? "border-army-gold bg-army-gold text-army-ink"
                       : "border-army-black/15 bg-white text-army-ink hover:border-army-gold/60"
                   }`}
                 >
@@ -122,7 +122,7 @@ export function GuideWalkthrough() {
             <td className={tdClass}>
               <strong>Top</strong>
             </td>
-            <td className={tdClass}>Save status, your role, Guide, Word export, G–1 seal, DRAFT banner</td>
+            <td className={tdClass}>Save status, your role, Guide, Word export, G–1 seal</td>
           </tr>
         </tbody>
       </table>

@@ -95,7 +95,7 @@ export function DraftEditor({
               type="button"
               onClick={undo}
               disabled={!canUndo}
-              className="text-[11px] px-2 py-0.5 border border-army-black/20 bg-white disabled:opacity-40"
+              className="btn-secondary btn-sm disabled:opacity-40"
               title="Undo last change in your draft (Ctrl+Z / ⌘Z). Does not change the original regulation."
             >
               Undo
@@ -104,7 +104,7 @@ export function DraftEditor({
               type="button"
               onClick={() => onSave(currentValue())}
               disabled={saveState === "saving"}
-              className="text-[11px] px-2 py-0.5 bg-army-olive text-army-cream disabled:opacity-40"
+              className="btn-primary btn-sm disabled:opacity-40"
               title="Save your draft now. Autosave still runs. Does not change the original regulation."
             >
               Save
@@ -112,7 +112,7 @@ export function DraftEditor({
           </div>
         ) : null}
       </div>
-      <div className="search-highlight-wrap relative flex-1 min-h-0 h-full m-3 border border-army-black/15 bg-white">
+      <div className="search-highlight-wrap relative flex-1 min-h-0 h-full m-3 rounded-lg border border-army-black/15 bg-white">
         <div
           ref={backdropRef}
           aria-hidden

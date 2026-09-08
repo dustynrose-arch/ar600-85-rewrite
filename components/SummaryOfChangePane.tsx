@@ -31,7 +31,7 @@ function ActionBadge({ action }: { action: ChangeAction }) {
           ? "bg-army-slate/15 text-army-slate"
           : "bg-army-rust/15 text-army-rust";
   return (
-    <span className={`inline-block px-1.5 py-0.5 text-[10px] font-bold tracking-wide uppercase ${tone}`}>
+    <span className={`inline-block rounded-lg px-1.5 py-0.5 text-[10px] font-bold tracking-wide uppercase ${tone}`}>
       {actionLabel(action)}
     </span>
   );
@@ -61,7 +61,7 @@ export function SummaryOfChangePane({
         <div className="flex flex-wrap items-center justify-end gap-2">
           <a
             href="/api/export?kind=summary"
-            className="bg-army-gold text-army-black px-2 py-1 text-xs font-semibold"
+            className="btn-primary btn-sm"
           >
             Export Summary (DRAFT)
           </a>
@@ -71,7 +71,7 @@ export function SummaryOfChangePane({
         <button
           type="button"
           onClick={() => onFilter("all")}
-          className={`px-2 py-1 border ${filter === "all" ? "bg-army-olive text-army-cream" : "bg-white"}`}
+          className={`btn-sm ${filter === "all" ? "btn-primary" : "btn-secondary"}`}
         >
           All {summary.counts.total}
         </button>
@@ -80,7 +80,7 @@ export function SummaryOfChangePane({
             key={action}
             type="button"
             onClick={() => onFilter(action)}
-            className={`px-2 py-1 border ${filter === action ? "bg-army-olive text-army-cream" : "bg-white"}`}
+            className={`btn-sm ${filter === action ? "btn-primary" : "btn-secondary"}`}
           >
             {actionLabel(action)} {summary.counts[action]}
           </button>
@@ -120,7 +120,7 @@ export function SummaryOfChangePane({
                     <button
                       type="button"
                       onClick={() => onOpenSection(row.sectionId)}
-                      className="underline text-army-goldDark text-left"
+                      className="btn-secondary btn-sm text-left"
                     >
                       {row.cite}
                     </button>

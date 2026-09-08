@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { DraftBanner } from "@/components/DraftBanner";
 import { OutlinePane } from "@/components/OutlinePane";
 import { EditorPane } from "@/components/EditorPane";
 import { AssistPane } from "@/components/AssistPane";
@@ -271,7 +270,7 @@ export function Workbench({
           applyState(await res.json());
         }}
       />
-      <header className="shrink-0 bg-army-black text-army-cream px-4 py-2 flex items-center gap-4">
+      <header className="shrink-0 bg-army-header text-army-cream px-4 py-2.5 flex items-center gap-4">
         <img
           src="/g1-seal.png"
           alt="Office of the Deputy Chief of Staff, G-1, United States Army seal"
@@ -283,12 +282,12 @@ export function Workbench({
           <p className="text-[11px] text-army-cream/80">Original regulation (read-only): {BASELINE_LABEL}</p>
         </div>
         <div className="flex items-center gap-2 text-xs">
-          <label className="flex items-center gap-1">
-            Role
+          <label className="flex items-center gap-2">
+            <span className="font-semibold tracking-[0.12em] uppercase text-[10px] text-army-gold">Role</span>
             <select
               value={state.role}
               onChange={(event) => void changeRole(event.target.value as Role)}
-              className="bg-army-ink text-army-cream border border-army-gold/40 px-1 py-0.5"
+              className="rounded-lg bg-army-oliveDark text-army-cream border border-army-gold/55 min-h-8 px-2 py-1"
             >
               {(Object.keys(ROLE_LABEL) as Role[]).map((role) => (
                 <option key={role} value={role}>
@@ -297,30 +296,42 @@ export function Workbench({
               ))}
             </select>
           </label>
-          <a href="/api/export" className="bg-army-gold text-army-black px-2 py-1 font-semibold">
+          <a href="/api/export" className="btn-ghost btn-sm">
             Export Word (DRAFT)
           </a>
-          <a href="/api/export?kind=summary" className="border border-army-gold px-2 py-1">
+          <a href="/api/export?kind=summary" className="btn-ghost btn-sm">
             Export Summary (DRAFT)
           </a>
-          <a href="/guide" className="border border-army-gold/50 px-2 py-1">
+          <a href="/guide" className="btn-ghost btn-sm">
             User Guide
           </a>
         </div>
       </header>
-      <DraftBanner />
       {state.locked ? (
-        <div className="shrink-0 bg-army-rust text-white text-xs px-4 py-1.5 flex items-center justify-between">
-          <span>LOCKED{state.lockReason ? ` — ${state.lockReason}` : ""}. Your draft was saved. The original regulation is unchanged.</span>
+        <div className="lock-banner shrink-0 text-xs px-4 py-2 flex items-center justify-between gap-3">
+          <p className="flex items-center gap-2 min-w-0">
+            <svg className="h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path
+                fillRule="evenodd"
+                d="M10 2a4 4 0 00-4 4v2H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2V10a2 2 0 00-2-2h-1V6a4 4 0 00-4-4zm2 6V6a2 2 0 10-4 0v2h4z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <span>
+              <span className="font-semibold tracking-[0.16em]">LOCKED</span>
+              {" — "}
+              Session locked after idle. Working copy saved. Baseline untouched.
+            </span>
+          </p>
           {canUnlock(state.role) ? (
-            <button type="button" onClick={() => void unlock()} className="underline">
+            <button type="button" onClick={() => void unlock()} className="btn-primary btn-sm shrink-0">
               Unlock
             </button>
           ) : null}
         </div>
       ) : null}
       {state.wgReviewReady ? (
-        <div className="shrink-0 bg-army-olive text-army-cream text-xs px-4 py-1">
+        <div className="shrink-0 bg-army-olive/15 text-army-oliveDark text-xs px-4 py-1.5">
           Approver marked this working copy ready for working-group review.
         </div>
       ) : null}
@@ -366,7 +377,7 @@ export function Workbench({
             />
           </div>
         )}
-        <div className="flex-1 min-w-0 min-h-0 flex flex-col">
+        <div className="flex-1 min-w-0 min-h-0 flex flex-col shadow-[0_1px_10px_rgba(31,47,36,0.08)] relative z-[1]">
           {viewingSummary ? (
             <SummaryOfChangePane
               summary={summary}

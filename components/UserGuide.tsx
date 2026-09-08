@@ -23,7 +23,7 @@ export function UserGuide() {
           the thin side strips — to bring a pane back. The center editor does not have hide buttons. The
           workspace remembers those choices until you close the browser tab.
         </li>
-        <li>The gold-and-black DRAFT banner stays on, next to the G–1 seal.</li>
+        <li>G–1 seal in the header. Word exports are stamped DRAFT; the workspace itself has no DRAFT banner.</li>
         <li>
           Original regulation (read-only): AR 600–85 (4 Oct 2024, admin revs 27 Feb 2025 / 19 Feb 2026).
         </li>

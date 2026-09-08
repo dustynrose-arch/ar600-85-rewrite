@@ -88,7 +88,7 @@ const TABS: { id: Tab; label: string }[] = [
 export function AssistPane(props: Props) {
   const [tab, setTab] = useState<Tab>("assist");
   return (
-    <aside className="flex flex-col min-h-0 h-full border-l border-army-black/15 bg-[#f7f2e6]">
+    <aside className="flex flex-col min-h-0 h-full border-l border-army-black/10 bg-[#f7f2e6]">
       <div className="flex items-center justify-between gap-2 px-2 py-1.5 border-b border-army-black/10">
         <p className="text-[10px] font-bold tracking-[0.16em] text-army-slate">ASSIST</p>
         <PaneToggle label="Assist" expanded onClick={props.onCollapse} />
@@ -99,8 +99,8 @@ export function AssistPane(props: Props) {
             key={item.id}
             type="button"
             onClick={() => setTab(item.id)}
-            className={`px-2 py-1 text-[11px] font-semibold ${
-              tab === item.id ? "bg-army-olive text-army-cream" : "bg-white text-army-ink border border-army-black/10"
+            className={`btn-sm rounded-lg ${
+              tab === item.id ? "btn-primary" : "btn-secondary"
             }`}
           >
             {item.label}
@@ -191,7 +191,7 @@ function AssistTab({
             <span
               key={term.id}
               title={`${term.definition} Cite: ${term.cite}`}
-              className="inline-flex items-center gap-1 bg-army-olive text-army-cream px-2 py-0.5 text-[11px] underline decoration-army-gold decoration-2 underline-offset-2"
+              className="inline-flex items-center gap-1 rounded-lg bg-army-olive/15 text-army-oliveDark px-2 py-1 text-[11px] underline decoration-army-gold decoration-2 underline-offset-2"
             >
               Locked term: {term.acronym ?? term.term}
             </span>
@@ -208,7 +208,7 @@ function AssistTab({
             {lupChips.map((chip) => (
               <span
                 key={chip.id}
-                className="inline-block bg-army-rust text-white px-2 py-0.5 text-[11px] underline decoration-white decoration-2 underline-offset-2"
+                className="inline-block rounded-lg bg-army-lock text-army-lockInk px-2 py-1 text-[11px] underline decoration-army-lockInk/40 decoration-2 underline-offset-2"
               >
                 {chip.title}
               </span>
@@ -225,7 +225,7 @@ function AssistTab({
             {adverseChips.map((chip) => (
               <span
                 key={chip.id}
-                className="inline-block bg-army-rust text-white px-2 py-0.5 text-[11px] underline decoration-white decoration-2 underline-offset-2"
+                className="inline-block rounded-lg bg-army-lock text-army-lockInk px-2 py-1 text-[11px] underline decoration-army-lockInk/40 decoration-2 underline-offset-2"
               >
                 {chip.title}
               </span>
@@ -238,7 +238,7 @@ function AssistTab({
       {chips.limitedUse ? (
         <div className="flex flex-wrap gap-1">
           {LEGAL_CITE_PUBS.map((pub) => (
-            <span key={pub} className="bg-white border border-army-rust/40 px-2 py-0.5 text-[11px]">
+            <span key={pub} className="rounded-lg bg-white border border-army-lockInk/25 text-army-lockInk px-2 py-1 text-[11px]">
               Cite {pub}
             </span>
           ))}
@@ -266,8 +266,8 @@ function AssistTab({
                   type="button"
                   disabled={role !== "editor"}
                   onClick={() => onSergeant(finding.laneId, "keep")}
-                  className={`text-[11px] px-2 py-1 border ${
-                    finding.decision?.decision === "keep" ? "bg-army-olive text-white" : "bg-army-cream"
+                  className={`btn-sm ${
+                    finding.decision?.decision === "keep" ? "btn-primary" : "btn-secondary"
                   }`}
                 >
                   Keep wording
@@ -276,8 +276,8 @@ function AssistTab({
                   type="button"
                   disabled={role !== "editor"}
                   onClick={() => onSergeant(finding.laneId, "see-cite", sectionId)}
-                  className={`text-[11px] px-2 py-1 border ${
-                    finding.decision?.decision === "see-cite" ? "bg-army-gold" : "bg-army-cream"
+                  className={`btn-sm ${
+                    finding.decision?.decision === "see-cite" ? "btn-primary" : "btn-secondary"
                   }`}
                 >
                   Insert See cite
@@ -286,7 +286,7 @@ function AssistTab({
               {finding.hits[0] ? (
                 <button
                   type="button"
-                  className="text-[11px] underline mt-1"
+                  className="btn-secondary btn-sm mt-1"
                   onClick={() => openStable(finding.primaryCite)}
                 >
                   Open primary cite
@@ -296,7 +296,7 @@ function AssistTab({
           ))}
         </ul>
       </section>
-      <Link href="/guide" className="inline-block text-xs underline text-army-goldDark">
+      <Link href="/guide" className="btn-secondary btn-sm">
         Open User Guide (walkthrough + video)
       </Link>
     </div>
@@ -339,7 +339,7 @@ function AuthorityTab({
       </section>
       <button
         type="button"
-        className="text-xs underline"
+        className="btn-secondary btn-sm"
         onClick={() => onSelect("A-1")}
       >
         Open appendix A references
@@ -388,7 +388,7 @@ function ProcessTab({
               </div>
               <p className="text-[11px] mt-1">{node.detail}</p>
               {bound ? (
-                <button type="button" className="text-[11px] underline mt-1" onClick={() => onSelect(bound.id)}>
+                <button type="button" className="btn-secondary btn-sm mt-1" onClick={() => onSelect(bound.id)}>
                   Open {bound.number} {bound.title}
                 </button>
               ) : (
@@ -432,19 +432,19 @@ function TasksTab({ role, tasks, sectionId, onCreateTask, onCompleteTask, sectio
           onChange={(event) => setTitle(event.target.value)}
           placeholder="Task title"
           disabled={role !== "editor"}
-          className="w-full border border-army-black/15 px-2 py-1 text-sm"
+          className="field w-full"
         />
         <textarea
           value={notes}
           onChange={(event) => setNotes(event.target.value)}
           placeholder="Notes"
           disabled={role !== "editor"}
-          className="w-full border border-army-black/15 px-2 py-1 text-sm h-16"
+          className="field w-full h-16"
         />
         <button
           type="submit"
           disabled={role !== "editor"}
-          className="bg-army-olive text-army-cream px-3 py-1 text-xs font-semibold disabled:opacity-50"
+          className="btn-primary btn-sm disabled:opacity-50"
         >
           Create task on {working.number}
         </button>
@@ -465,7 +465,7 @@ function TasksTab({ role, tasks, sectionId, onCreateTask, onCompleteTask, sectio
                 type="button"
                 disabled={role !== "editor"}
                 onClick={() => onCompleteTask(task.id)}
-                className="mt-1 text-[11px] underline disabled:no-underline"
+                className="btn-secondary btn-sm mt-1 disabled:opacity-40"
               >
                 Complete
               </button>
@@ -499,7 +499,7 @@ function VersionsTab({
           onChange={(event) => setLabel(event.target.value)}
           placeholder="Checkpoint name"
           disabled={role !== "editor"}
-          className="flex-1 border border-army-black/15 px-2 py-1 text-sm"
+          className="field flex-1"
         />
         <button
           type="button"
@@ -508,7 +508,7 @@ function VersionsTab({
             onSnapshot(label);
             setLabel("");
           }}
-          className="bg-army-olive text-army-cream px-2 py-1 text-xs font-semibold disabled:opacity-50"
+          className="btn-primary btn-sm disabled:opacity-50"
         >
           Save
         </button>
@@ -518,7 +518,7 @@ function VersionsTab({
         <select
           value={against}
           onChange={(event) => setAgainst(event.target.value)}
-          className="block w-full mt-1 border border-army-black/15 px-2 py-1 text-sm"
+          className="field block w-full mt-1"
         >
           <option value="baseline">Original regulation (read-only)</option>
           {snapshots.map((snapshot) => (
@@ -531,20 +531,20 @@ function VersionsTab({
       <div className="flex gap-2">
         <button
           type="button"
-          className="border border-army-black/20 px-2 py-1 text-xs bg-white"
+          className="btn-secondary btn-sm"
           onClick={async () => setHunks(await onDiff(against))}
         >
           Compare (original above, your draft below)
         </button>
         <button
           type="button"
-          className="border border-army-black/20 px-2 py-1 text-xs bg-white"
+          className="btn-secondary btn-sm"
           onClick={async () => setBullets(await onSummarize(against))}
         >
           List the changes
         </button>
       </div>
-      <button type="button" className="text-xs underline text-army-goldDark" onClick={onOpenSummary}>
+      <button type="button" className="btn-secondary btn-sm" onClick={onOpenSummary}>
         Open Summary of Change (deltas only)
       </button>
       {bullets.length ? (
@@ -595,11 +595,11 @@ function SummaryTab({
         <button
           type="button"
           onClick={onOpenSummary}
-          className="bg-army-olive text-army-cream px-2 py-1 text-xs font-semibold"
+          className="btn-primary btn-sm"
         >
           Open full list
         </button>
-        <a href="/api/export?kind=summary" className="border border-army-black/20 px-2 py-1 text-xs bg-white">
+        <a href="/api/export?kind=summary" className="btn-secondary btn-sm">
           Export Summary (DRAFT)
         </a>
       </div>
@@ -609,14 +609,14 @@ function SummaryTab({
             <div className="font-semibold text-[12px]">
               {actionLabel(row.action)} · {row.cite}
             </div>
-            <button type="button" className="text-[11px] underline mt-1" onClick={() => onSelect(row.sectionId)}>
+            <button type="button" className="btn-secondary btn-sm mt-1" onClick={() => onSelect(row.sectionId)}>
               Open {row.sectionNumber} {row.sectionTitle}
             </button>
           </li>
         ))}
       </ul>
       {summary.rows.length > 20 ? (
-        <button type="button" className="text-xs underline" onClick={onOpenSummary}>
+        <button type="button" className="btn-secondary btn-sm" onClick={onOpenSummary}>
           Show all {summary.rows.length} rows
         </button>
       ) : null}
@@ -646,7 +646,7 @@ function TimelineTab({
           </div>
           <p className="text-[12px] mt-0.5">{event.summary}</p>
           {event.sectionId ? (
-            <button type="button" className="text-[11px] underline" onClick={() => onSelect(event.sectionId!)}>
+            <button type="button" className="btn-secondary btn-sm" onClick={() => onSelect(event.sectionId!)}>
               Open {sections?.[event.sectionId]?.number ?? event.sectionId}
             </button>
           ) : null}
@@ -719,7 +719,7 @@ function UploadTab({ uploads, onUpload, onRecompare, onWgMark, role, wgReady, se
               <button
                 type="button"
                 disabled={busy}
-                className="underline mt-2"
+                className="btn-secondary btn-sm mt-2"
                 onClick={async () => {
                   setBusy(true);
                   setError(null);
@@ -746,7 +746,7 @@ function UploadTab({ uploads, onUpload, onRecompare, onWgMark, role, wgReady, se
             type="button"
             disabled={role !== "approver"}
             onClick={() => onWgMark(sectionId)}
-            className="text-xs px-2 py-1 bg-army-gold disabled:opacity-50"
+            className="btn-primary btn-sm disabled:opacity-50"
           >
             Mark this paragraph
           </button>
@@ -754,7 +754,7 @@ function UploadTab({ uploads, onUpload, onRecompare, onWgMark, role, wgReady, se
             type="button"
             disabled={role !== "approver"}
             onClick={() => onWgMark("all")}
-            className="text-xs px-2 py-1 bg-army-olive text-white disabled:opacity-50"
+            className="btn-secondary btn-sm disabled:opacity-50"
           >
             Mark ready for WG review
           </button>
@@ -762,7 +762,7 @@ function UploadTab({ uploads, onUpload, onRecompare, onWgMark, role, wgReady, se
             type="button"
             disabled={role !== "approver"}
             onClick={() => onWgMark("clear")}
-            className="text-xs px-2 py-1 border disabled:opacity-50"
+            className="btn-secondary btn-sm disabled:opacity-50"
           >
             Clear marks
           </button>

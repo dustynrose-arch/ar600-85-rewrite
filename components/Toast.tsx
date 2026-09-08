@@ -17,7 +17,7 @@ export function Toast({ message, onDismiss }: Props) {
     <div
       role="status"
       aria-live="polite"
-      className="fixed bottom-4 right-4 z-50 max-w-sm bg-army-rust text-white px-4 py-3 shadow-lg text-sm"
+      className="fixed bottom-4 right-4 z-50 max-w-sm rounded-xl bg-army-lock text-army-lockInk px-4 py-3 shadow-lg text-sm border border-army-lockInk/20"
     >
       <p className="font-semibold">Upload rejected</p>
       <p className="mt-1">{message}</p>
