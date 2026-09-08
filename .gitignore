@@ -8,3 +8,4 @@ data/runtime
 data/uploads
 .env
 .env.local
+tsconfig.tsbuildinfo
