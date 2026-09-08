@@ -674,6 +674,7 @@ function UploadTab({ uploads, onUpload, onRecompare, onWgMark, role, wgReady, se
         type="file"
         accept={UPLOAD_ACCEPT}
         disabled={role === "reviewer" || busy}
+        className="field w-full"
         onChange={async (event) => {
           const input = event.target;
           const file = input.files?.[0];

@@ -65,10 +65,12 @@ test("button utilities are rounded rectangles, not pills or sharp corners", () =
 test("header Word export matches neighboring header buttons; Role stays labeled", () => {
   const workbench = readRepoFile("components/Workbench.tsx");
   const css = readRepoFile("app/globals.css");
+  const guidePage = readRepoFile("app/guide/page.tsx");
   assert.match(workbench, />Role</);
   assert.match(workbench, /ROLE_LABEL/);
   assert.match(workbench, /Export Word \(DRAFT\)/);
   assert.match(css, /\.btn-header \{/);
+  assert.match(workbench, /label className="btn-header"/);
   const exportWord = workbench.match(/href="\/api\/export"[^>]*className="([^"]+)"/);
   const exportSummary = workbench.match(/href="\/api\/export\?kind=summary"[^>]*className="([^"]+)"/);
   const guide = workbench.match(/href="\/guide"[^>]*className="([^"]+)"/);
@@ -76,4 +78,6 @@ test("header Word export matches neighboring header buttons; Role stays labeled"
   assert.equal(exportWord[1], exportSummary[1]);
   assert.equal(exportWord[1], guide[1]);
   assert.equal(exportWord[1], "btn-header");
+  assert.match(guidePage, /className="btn-header"/);
+  assert.equal(workbench.includes("btn-ghost"), false);
 });

@@ -47,7 +47,7 @@ export function PaneToggle({ label, expanded, onClick }: ToggleProps) {
       aria-expanded={expanded}
       aria-label={text}
       title={text}
-      className="shrink-0 border border-army-black/15 bg-white rounded-lg px-2 py-1 text-[11px] font-semibold text-army-ink hover:bg-army-gold/25"
+      className="shrink-0 btn-secondary btn-sm"
     >
       {text}
     </button>
