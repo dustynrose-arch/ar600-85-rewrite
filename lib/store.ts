@@ -63,7 +63,7 @@ function emptyState(): WorkspaceState {
         at: now(),
         actor: "editor",
         kind: "seed",
-        summary: "Working copy initialized from ACTIVE AR 600-85 baseline (baseline remains read-only).",
+        summary: "Your draft was initialized from ACTIVE AR 600-85. The original regulation remains read-only.",
       },
     ],
     uploads: [],
