@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import {
   bindingFromWorking,
@@ -19,6 +19,7 @@ import {
 } from "./outline";
 import { ForbiddenError } from "./roles";
 import { REDUNDANCY_LANES } from "./seed/redundancy-lanes";
+import { ensureDataDir, storePaths, wipeUploadsDir } from "./store-paths";
 import type {
   CrossmatchRow,
   Role,
@@ -32,11 +33,11 @@ import type {
   WgReviewMark,
   WorkingOutlineChapter,
   WorkingSection,
+  WorkspaceMode,
   WorkspaceState,
 } from "./types";
 
-const DATA_DIR = path.join(process.cwd(), "data", "runtime");
-const STORE_PATH = path.join(DATA_DIR, "workspace.json");
+export { storePaths } from "./store-paths";
 
 function now(): string {
   return new Date().toISOString();
@@ -54,8 +55,12 @@ function seedWorkingSections(): Record<string, WorkingSection> {
   return seeded;
 }
 
-function emptyState(): WorkspaceState {
+function emptyState(mode: WorkspaceMode): WorkspaceState {
   const workingSections = seedWorkingSections();
+  const seedSummary =
+    mode === "training"
+      ? "Training copy initialized from ACTIVE AR 600-85. Practice here — live workspace is unchanged."
+      : "Your draft was initialized from ACTIVE AR 600-85. The original regulation remains read-only.";
   return {
     role: "editor",
     locked: false,
@@ -86,7 +91,7 @@ function emptyState(): WorkspaceState {
         at: now(),
         actor: "editor",
         kind: "seed",
-        summary: "Your draft was initialized from ACTIVE AR 600-85. The original regulation remains read-only.",
+        summary: seedSummary,
       },
     ],
     uploads: [],
@@ -128,14 +133,15 @@ function needsSeedRefresh(workingBody: string, baselineBody: string): boolean {
   return false;
 }
 
-function ensureStore(): WorkspaceState {
-  if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
-  if (!existsSync(STORE_PATH)) {
-    const initial = emptyState();
-    writeFileSync(STORE_PATH, JSON.stringify(initial, null, 2));
+function ensureStore(mode: WorkspaceMode): WorkspaceState {
+  const { storePath } = storePaths(mode);
+  ensureDataDir(mode);
+  if (!existsSync(storePath)) {
+    const initial = emptyState(mode);
+    writeFileSync(storePath, JSON.stringify(initial, null, 2));
     return initial;
   }
-  const parsed = JSON.parse(readFileSync(STORE_PATH, "utf8")) as WorkspaceState;
+  const parsed = JSON.parse(readFileSync(storePath, "utf8")) as WorkspaceState;
   for (const upload of parsed.uploads ?? []) {
     if (!upload.findings) upload.findings = [];
   }
@@ -168,7 +174,7 @@ function ensureStore(): WorkspaceState {
     parsed.assistBindings = seedAssistBindings(parsed.workingSections);
     changed = true;
   }
-  if (changed) persist(parsed);
+  if (changed) persist(parsed, mode);
   return parsed;
 }
 
@@ -192,9 +198,10 @@ function chapterLabel(state: WorkspaceState, chapterId: string): string {
   return `Chapter ${index + 1}`;
 }
 
-function persist(state: WorkspaceState): WorkspaceState {
-  if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
-  writeFileSync(STORE_PATH, JSON.stringify(state, null, 2));
+function persist(state: WorkspaceState, mode: WorkspaceMode): WorkspaceState {
+  const { storePath } = storePaths(mode);
+  ensureDataDir(mode);
+  writeFileSync(storePath, JSON.stringify(state, null, 2));
   return state;
 }
 
@@ -204,21 +211,21 @@ function pushEvent(state: WorkspaceState, event: Omit<TimelineEvent, "id" | "at"
   state.lastActivityAt = now();
 }
 
-export function readState(): WorkspaceState {
-  return ensureStore();
+export function readState(mode: WorkspaceMode): WorkspaceState {
+  return ensureStore(mode);
 }
 
-export function touchActivity(): WorkspaceState {
-  const state = ensureStore();
+export function touchActivity(mode: WorkspaceMode): WorkspaceState {
+  const state = ensureStore(mode);
   state.lastActivityAt = now();
-  return persist(state);
+  return persist(state, mode);
 }
 
-export function setRole(role: Role): WorkspaceState {
-  const state = ensureStore();
+export function setRole(role: Role, mode: WorkspaceMode): WorkspaceState {
+  const state = ensureStore(mode);
   state.role = role;
   pushEvent(state, { actor: role, kind: "role", summary: `Active role set to ${role}.` });
-  return persist(state);
+  return persist(state, mode);
 }
 
 export function saveSection(
@@ -226,9 +233,10 @@ export function saveSection(
   body: string,
   title: string | undefined,
   role: Role,
+  mode: WorkspaceMode,
   source: SaveSource = "autosave",
 ): WorkspaceState {
-  const state = ensureStore();
+  const state = ensureStore(mode);
   if (state.locked) throw new Error("Workspace is locked. Unlock before editing.");
   if (role !== "editor") throw new Error("Only Editors may change working-copy text.");
   const current = state.workingSections[sectionId];
@@ -251,11 +259,11 @@ export function saveSection(
       : `Autosaved ${current.number} ${current.title}.`,
     sectionId,
   });
-  return persist(state);
+  return persist(state, mode);
 }
 
-export function createTask(input: { title: string; notes?: string; sectionId?: string | null }, role: Role): WorkspaceState {
-  const state = ensureStore();
+export function createTask(input: { title: string; notes?: string; sectionId?: string | null }, role: Role, mode: WorkspaceMode): WorkspaceState {
+  const state = ensureStore(mode);
   if (role !== "editor") throw new Error("Only Editors may create tasks.");
   const task: Task = {
     id: randomUUID(),
@@ -269,22 +277,22 @@ export function createTask(input: { title: string; notes?: string; sectionId?: s
   };
   state.tasks.unshift(task);
   pushEvent(state, { actor: role, kind: "task-create", summary: `Created task: ${task.title}`, sectionId: task.sectionId ?? undefined });
-  return persist(state);
+  return persist(state, mode);
 }
 
-export function completeTask(taskId: string, role: Role): WorkspaceState {
-  const state = ensureStore();
+export function completeTask(taskId: string, role: Role, mode: WorkspaceMode): WorkspaceState {
+  const state = ensureStore(mode);
   if (role !== "editor") throw new Error("Only Editors may complete tasks.");
   const task = state.tasks.find((item) => item.id === taskId);
   if (!task) throw new Error("Task not found.");
   task.completedAt = now();
   task.completedBy = role;
   pushEvent(state, { actor: role, kind: "task-complete", summary: `Completed task: ${task.title}`, sectionId: task.sectionId ?? undefined });
-  return persist(state);
+  return persist(state, mode);
 }
 
-export function createSnapshot(label: string, role: Role): WorkspaceState {
-  const state = ensureStore();
+export function createSnapshot(label: string, role: Role, mode: WorkspaceMode): WorkspaceState {
+  const state = ensureStore(mode);
   if (role !== "editor") throw new Error("Only Editors may create snapshots.");
   const snapshot: Snapshot = {
     id: randomUUID(),
@@ -296,37 +304,37 @@ export function createSnapshot(label: string, role: Role): WorkspaceState {
   };
   state.snapshots.unshift(snapshot);
   pushEvent(state, { actor: role, kind: "snapshot", summary: `Saved snapshot “${snapshot.label}”.` });
-  return persist(state);
+  return persist(state, mode);
 }
 
-export function lockWorkspace(reason: string, role: Role): WorkspaceState {
-  const state = ensureStore();
+export function lockWorkspace(reason: string, role: Role, mode: WorkspaceMode): WorkspaceState {
+  const state = ensureStore(mode);
   state.locked = true;
   state.lockedAt = now();
   state.lockReason = reason;
   pushEvent(state, { actor: role, kind: "lock", summary: `Workspace locked: ${reason}` });
-  return persist(state);
+  return persist(state, mode);
 }
 
-export function unlockWorkspace(role: Role): WorkspaceState {
-  const state = ensureStore();
+export function unlockWorkspace(role: Role, mode: WorkspaceMode): WorkspaceState {
+  const state = ensureStore(mode);
   if (role !== "editor" && role !== "approver") throw new Error("Only Editors or Approvers may unlock.");
   state.locked = false;
   state.lockedAt = null;
   state.lockReason = null;
   pushEvent(state, { actor: role, kind: "unlock", summary: "Workspace unlocked." });
-  return persist(state);
+  return persist(state, mode);
 }
 
-export function markWgReview(sectionId: string | "all" | "clear", role: Role): WorkspaceState {
-  const state = ensureStore();
+export function markWgReview(sectionId: string | "all" | "clear", role: Role, mode: WorkspaceMode): WorkspaceState {
+  const state = ensureStore(mode);
   if (role !== "approver") throw new Error("Only Approvers may mark ready for working-group review.");
   if (sectionId === "clear") {
     state.wgReviewMarks = [];
     state.wgReviewReady = false;
     state.wgReviewReadyAt = null;
     pushEvent(state, { actor: role, kind: "wg-clear", summary: "Cleared ready-for-WG-review marks." });
-    return persist(state);
+    return persist(state, mode);
   }
   if (sectionId === "all") {
     state.wgReviewReady = true;
@@ -337,18 +345,18 @@ export function markWgReview(sectionId: string | "all" | "clear", role: Role): W
       markedBy: role,
     }));
     pushEvent(state, { actor: role, kind: "wg-ready", summary: "Approver marked the working copy ready for WG review." });
-    return persist(state);
+    return persist(state, mode);
   }
   const existing = state.wgReviewMarks.find((mark) => mark.sectionId === sectionId);
   if (!existing) {
     state.wgReviewMarks.push({ sectionId, markedAt: now(), markedBy: role });
   }
   pushEvent(state, { actor: role, kind: "wg-mark", summary: `Approver marked ${sectionId} ready for WG review.`, sectionId });
-  return persist(state);
+  return persist(state, mode);
 }
 
-export function setSergeantDecision(laneId: string, decision: SergeantLaneState["decision"], citeTo: string | undefined, role: Role): WorkspaceState {
-  const state = ensureStore();
+export function setSergeantDecision(laneId: string, decision: SergeantLaneState["decision"], citeTo: string | undefined, role: Role, mode: WorkspaceMode): WorkspaceState {
+  const state = ensureStore(mode);
   if (role !== "editor") throw new Error("Only Editors may record overlap decisions.");
   const row = state.sergeant.find((item) => item.laneId === laneId);
   if (!row) throw new Error("Unknown lane.");
@@ -373,11 +381,11 @@ export function setSergeantDecision(laneId: string, decision: SergeantLaneState[
     kind: "sergeant",
     summary: `Overlap check ${laneId}: ${decision === "see-cite" ? "Insert See cite" : "Keep wording"}.`,
   });
-  return persist(state);
+  return persist(state, mode);
 }
 
-export function recordUpload(meta: Omit<UploadAudit, "id" | "uploadedAt">): WorkspaceState {
-  const state = ensureStore();
+export function recordUpload(meta: Omit<UploadAudit, "id" | "uploadedAt">, mode: WorkspaceMode): WorkspaceState {
+  const state = ensureStore(mode);
   const row: UploadAudit = {
     ...meta,
     id: randomUUID(),
@@ -397,11 +405,11 @@ export function recordUpload(meta: Omit<UploadAudit, "id" | "uploadedAt">): Work
     kind: "upload",
     summary: `Uploaded ${meta.filename} (${meta.sizeBytes} bytes, file ID ${meta.sha256.slice(0, 12)}…). Compare to your draft: ${counts.match} match, ${counts.miss} miss, ${counts.unclear} unclear. Suggestions only — your draft and the original regulation were not changed.`,
   });
-  return persist(state);
+  return persist(state, mode);
 }
 
-export function updateUploadFindings(uploadId: string, findings: CrossmatchRow[], role: Role): WorkspaceState {
-  const state = ensureStore();
+export function updateUploadFindings(uploadId: string, findings: CrossmatchRow[], role: Role, mode: WorkspaceMode): WorkspaceState {
+  const state = ensureStore(mode);
   if (role !== "editor" && role !== "approver") {
     throw new Error("Only Editors or Approvers may compare uploads to your draft.");
   }
@@ -413,11 +421,11 @@ export function updateUploadFindings(uploadId: string, findings: CrossmatchRow[]
     kind: "crossmatch",
     summary: `Compared ${row.filename} to your draft (${findings.length} suggestion rows). Nothing in your draft or the original regulation was changed.`,
   });
-  return persist(state);
+  return persist(state, mode);
 }
 
-export function uploadDiskPath(storedAs: string): string {
-  return path.join(process.cwd(), "data", "uploads", storedAs);
+export function uploadDiskPath(storedAs: string, mode: WorkspaceMode): string {
+  return path.join(storePaths(mode).uploadsDir, storedAs);
 }
 
 export function sha256(buffer: Buffer): string {
@@ -427,8 +435,9 @@ export function sha256(buffer: Buffer): string {
 export function addWorkingSection(
   input: { targetId: string; position: StructurePosition; title?: string },
   role: Role,
+  mode: WorkspaceMode,
 ): WorkspaceState {
-  const state = ensureStore();
+  const state = ensureStore(mode);
   assertCanEditStructure(state, role);
   const title = (input.title ?? "New paragraph").trim() || "New paragraph";
   const id = `wc-${randomUUID()}`;
@@ -452,11 +461,11 @@ export function addWorkingSection(
     summary: `Added paragraph “${title}” (${id}) as ${created.number} under ${parent ? chapterLabel(state, parent.id) : parentHint ?? "the working copy"}.`,
     sectionId: id,
   });
-  return persist(state);
+  return persist(state, mode);
 }
 
-export function deleteWorkingSection(sectionId: string, role: Role): WorkspaceState {
-  const state = ensureStore();
+export function deleteWorkingSection(sectionId: string, role: Role, mode: WorkspaceMode): WorkspaceState {
+  const state = ensureStore(mode);
   assertCanEditStructure(state, role);
   const current = state.workingSections[sectionId];
   if (!current) throw new Error(`Unknown section ${sectionId}`);
@@ -474,14 +483,15 @@ export function deleteWorkingSection(sectionId: string, role: Role): WorkspaceSt
     summary: `Deleted paragraph ${current.number} ${current.title} (${sectionId}) from ${chapterLabel(state, removed.parentId)}.`,
     sectionId,
   });
-  return persist(state);
+  return persist(state, mode);
 }
 
 export function moveWorkingSection(
   input: { sectionId: string; parentId: string; index: number },
   role: Role,
+  mode: WorkspaceMode,
 ): WorkspaceState {
-  const state = ensureStore();
+  const state = ensureStore(mode);
   assertCanEditStructure(state, role);
   const current = state.workingSections[input.sectionId];
   if (!current) throw new Error(`Unknown section ${input.sectionId}`);
@@ -496,11 +506,11 @@ export function moveWorkingSection(
     summary: `Moved paragraph ${input.sectionId} from ${fromNumber} (${chapterLabel(state, moved.fromParentId)}) to ${updated.number} (${chapterLabel(state, moved.toParentId)}).`,
     sectionId: input.sectionId,
   });
-  return persist(state);
+  return persist(state, mode);
 }
 
-export function splitWorkingSection(sectionId: string, role: Role): WorkspaceState {
-  const state = ensureStore();
+export function splitWorkingSection(sectionId: string, role: Role, mode: WorkspaceMode): WorkspaceState {
+  const state = ensureStore(mode);
   assertCanEditStructure(state, role);
   const source = state.workingSections[sectionId];
   if (!source) throw new Error(`Unknown section ${sectionId}`);
@@ -524,11 +534,11 @@ export function splitWorkingSection(sectionId: string, role: Role): WorkspaceSta
     summary: `Split ${source.number} ${source.title} (${sectionId}); empty sibling ${state.workingSections[id].number} (${id}) has no Assist chips until text is moved.`,
     sectionId,
   });
-  return persist(state);
+  return persist(state, mode);
 }
 
-export function renameWorkingSection(sectionId: string, title: string, role: Role): WorkspaceState {
-  const state = ensureStore();
+export function renameWorkingSection(sectionId: string, title: string, role: Role, mode: WorkspaceMode): WorkspaceState {
+  const state = ensureStore(mode);
   assertCanEditStructure(state, role);
   const current = state.workingSections[sectionId];
   if (!current) throw new Error(`Unknown section ${sectionId}`);
@@ -547,21 +557,42 @@ export function renameWorkingSection(sectionId: string, title: string, role: Rol
     summary: `Renamed paragraph ${current.number} (${sectionId}) from “${previous}” to “${nextTitle}”.`,
     sectionId,
   });
-  return persist(state);
+  return persist(state, mode);
 }
 
-export function workingOutline(): WorkingOutlineChapter[] {
-  return ensureStore().workingOutline;
+export function workingOutline(mode: WorkspaceMode): WorkingOutlineChapter[] {
+  return ensureStore(mode).workingOutline;
 }
 
-export function fallbackSectionId(state: WorkspaceState = ensureStore()): string {
+export function fallbackSectionId(mode: WorkspaceMode, state: WorkspaceState = ensureStore(mode)): string {
   return firstSectionId(state.workingOutline) ?? "1-1";
 }
 
-export function publicState() {
-  const state = ensureStore();
+export function resetTrainingWorkspace(role: Role): WorkspaceState {
+  if (role !== "editor" && role !== "approver") {
+    throw new ForbiddenError("Only Editors or Approvers may reset the training copy.");
+  }
+  wipeUploadsDir("training");
+  const initial = emptyState("training");
+  initial.role = role;
+  initial.timeline = [
+    {
+      id: randomUUID(),
+      at: now(),
+      actor: role,
+      kind: "training-reset",
+      summary:
+        "Training copy reset to the original regulation. Practice edits, uploads, and the training activity list were cleared. Live workspace was not changed.",
+    },
+  ];
+  return persist(initial, "training");
+}
+
+export function publicState(mode: WorkspaceMode) {
+  const state = ensureStore(mode);
   const baseline = flattenSections();
   return {
+    mode,
     role: state.role,
     locked: state.locked,
     lockedAt: state.lockedAt,

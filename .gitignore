@@ -5,7 +5,9 @@ dist
 .DS_Store
 *.log
 data/runtime
+data/runtime-training
 data/uploads
+data/uploads-training
 .env
 .env.local
 tsconfig.tsbuildinfo

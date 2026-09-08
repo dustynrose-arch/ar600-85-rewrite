@@ -41,6 +41,11 @@ export function UserGuide() {
           structure.
         </li>
         <li>Idle warning at 14 minutes; at 15 minutes the current section is saved and the workspace locks.</li>
+        <li>
+          <strong>Training</strong> — use <strong>Enter Training</strong> at the top of the page to practice on a
+          separate copy. <strong>Reset to original</strong> restores that training copy from the original regulation.
+          Live drafts, uploads, and activity are not changed.
+        </li>
       </ul>
 
       <h2 className="text-xl font-bold mt-8">Roles and gates</h2>

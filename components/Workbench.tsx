@@ -8,6 +8,8 @@ import { AssistPane } from "@/components/AssistPane";
 import { SummaryOfChangePane } from "@/components/SummaryOfChangePane";
 import { IdleGuard } from "@/components/IdleGuard";
 import { CollapsedRail } from "@/components/PaneToggle";
+import { TrainingBanner } from "@/components/TrainingBanner";
+import { TrainingSwitch } from "@/components/TrainingSwitch";
 import { DEFAULT_PANE_STATE, readPaneSession, writePaneSession } from "@/lib/panes";
 import {
   buildSummaryOfChange,
@@ -34,10 +36,12 @@ import {
   type AssistBinding,
   type WorkingOutlineChapter,
   type WorkingSection,
+  type WorkspaceMode,
 } from "@/lib/types";
 import { firstSectionId, flattenOutlineSections, parentIndexFromDocument, parentIndexFromOutline } from "@/lib/outline";
 
 type PublicState = {
+  mode: WorkspaceMode;
   role: Role;
   locked: boolean;
   lockedAt: string | null;
@@ -299,11 +303,30 @@ export function Workbench({
           className="h-12 w-12 shrink-0 rounded-full object-cover"
         />
         <div className="min-w-0 flex-1">
-          <h1 className="text-lg font-semibold leading-tight">AR 600-85 Rewrite — Working Copy</h1>
-          <p className="text-xs text-army-gold">Internal G-1 rewrite working group use only</p>
+          <h1 className="text-lg font-semibold leading-tight">
+            {state.mode === "training" ? "AR 600-85 Rewrite — TRAINING" : "AR 600-85 Rewrite — Working Copy"}
+          </h1>
+          <p className="text-xs text-army-gold">
+            {state.mode === "training"
+              ? "Practice copy — live workspace is unchanged"
+              : "Internal G-1 rewrite working group use only"}
+          </p>
           <p className="text-[11px] text-army-cream/80">Original regulation (read-only): {BASELINE_LABEL}</p>
         </div>
         <div className="flex items-center gap-2 text-xs">
+          <TrainingSwitch
+            mode={state.mode}
+            role={state.role}
+            beforeSwitch={async () => {
+              if (saveTimer.current) {
+                window.clearTimeout(saveTimer.current);
+                saveTimer.current = null;
+              }
+              if (state.role === "editor" && !state.locked && (saveState === "dirty" || saveState === "saving")) {
+                await persistDraft(resolvedEditorId, draft, state.role, "autosave");
+              }
+            }}
+          />
           <label className="flex items-center gap-1">
             Role
             <select
@@ -330,6 +353,7 @@ export function Workbench({
         </div>
       </header>
       <DraftBanner />
+      {state.mode === "training" ? <TrainingBanner /> : null}
       {state.locked ? (
         <div className="shrink-0 bg-army-rust text-white text-xs px-4 py-1.5 flex items-center justify-between">
           <span>LOCKED{state.lockReason ? ` — ${state.lockReason}` : ""}. Your draft was saved. The original regulation is unchanged.</span>

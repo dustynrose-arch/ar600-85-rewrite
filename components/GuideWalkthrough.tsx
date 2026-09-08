@@ -60,7 +60,9 @@ export function GuideWalkthrough() {
       </p>
       <p className="mt-3">
         Everything you write here is a <strong>draft</strong>. It is not Army policy until officially
-        published. The gold banner at the top marks it that way.
+        published. The gold banner at the top marks it that way. Use <strong>Enter Training</strong> at the
+        top of the page for a separate practice copy; <strong>Reset to original</strong> restores that
+        training copy only.
       </p>
 
       <nav className="mt-4" aria-label="First session walkthrough anchors">

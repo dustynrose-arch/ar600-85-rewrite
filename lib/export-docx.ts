@@ -51,12 +51,12 @@ function bodyRun(text: string, opts: { bold?: boolean; size?: number; italics?: 
   });
 }
 
-function titlePage(extraTitle?: string): Paragraph[] {
+function titlePage(extraTitle?: string, training = false): Paragraph[] {
   return [
     new Paragraph({
       alignment: AlignmentType.CENTER,
       spacing: { after: 200 },
-      children: [draftRun("DRAFT / WORKING COPY", { bold: true, size: 48 })],
+      children: [draftRun(training ? "TRAINING / DRAFT / WORKING COPY" : "DRAFT / WORKING COPY", { bold: true, size: 48 })],
     }),
     new Paragraph({
       alignment: AlignmentType.CENTER,
@@ -72,6 +72,19 @@ function titlePage(extraTitle?: string): Paragraph[] {
       spacing: { after: 200 },
       children: [bodyRun("Internal G–1 rewrite working group use only", { italics: true })],
     }),
+    ...(training
+      ? [
+          new Paragraph({
+            spacing: { after: 200 },
+            children: [
+              draftRun(
+                "TRAINING copy — practice only. This file is not the live rewrite workspace.",
+                { bold: true, italics: true },
+              ),
+            ],
+          }),
+        ]
+      : []),
     new Paragraph({
       spacing: { after: 200 },
       children: [bodyRun(`Original regulation (read-only): ${BASELINE_LABEL}`)],
@@ -170,7 +183,7 @@ function summaryTable(state: WorkspaceState): DocChild[] {
   return children;
 }
 
-function draftChrome(docTitle: string, children: DocChild[]) {
+function draftChrome(docTitle: string, children: DocChild[], training = false) {
   return new Document({
     creator: "AR 600-85 Rewrite Working Group",
     title: docTitle,
@@ -195,7 +208,7 @@ function draftChrome(docTitle: string, children: DocChild[]) {
               new Paragraph({
                 alignment: AlignmentType.CENTER,
                 children: [
-                  draftRun("DRAFT / WORKING COPY", { bold: true, size: 18 }),
+                  draftRun(training ? "TRAINING / DRAFT / WORKING COPY" : "DRAFT / WORKING COPY", { bold: true, size: 18 }),
                   bodyRun("  ·  AR 600–85 Rewrite  ·  Internal G–1 use only  ·  ", { size: 18 }),
                   draftRun("NOT FOR IMPLEMENTATION", { bold: true, size: 18 }),
                 ],
@@ -225,9 +238,10 @@ function draftChrome(docTitle: string, children: DocChild[]) {
   });
 }
 
-export async function buildDraftDocx(state: WorkspaceState): Promise<Buffer> {
+export async function buildDraftDocx(state: WorkspaceState, opts: { training?: boolean } = {}): Promise<Buffer> {
+  const training = opts.training === true;
   const children: DocChild[] = [
-    ...titlePage(),
+    ...titlePage(undefined, training),
     ...summaryTable(state),
     new Paragraph({
       spacing: { before: 360, after: 200 },
@@ -262,12 +276,17 @@ export async function buildDraftDocx(state: WorkspaceState): Promise<Buffer> {
     }
   }
 
-  const doc = draftChrome("AR 600-85 Rewrite — Working Copy (DRAFT)", children);
+  const doc = draftChrome(
+    training ? "AR 600-85 Rewrite — TRAINING (DRAFT)" : "AR 600-85 Rewrite — Working Copy (DRAFT)",
+    children,
+    training,
+  );
   return Buffer.from(await Packer.toBuffer(doc));
 }
 
-export async function buildSummaryOfChangeDocx(state: WorkspaceState): Promise<Buffer> {
-  const children = [...titlePage(SUMMARY_EXPORT_TITLE), ...summaryTable(state)];
-  const doc = draftChrome(`${SUMMARY_EXPORT_TITLE}`, children);
+export async function buildSummaryOfChangeDocx(state: WorkspaceState, opts: { training?: boolean } = {}): Promise<Buffer> {
+  const training = opts.training === true;
+  const children = [...titlePage(SUMMARY_EXPORT_TITLE, training), ...summaryTable(state)];
+  const doc = draftChrome(`${SUMMARY_EXPORT_TITLE}`, children, training);
   return Buffer.from(await Packer.toBuffer(doc));
 }

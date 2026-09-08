@@ -6,9 +6,10 @@ import { flattenSections } from "@/lib/baseline";
 import { crossmatchDocument } from "@/lib/crossmatch";
 import { extractDocument } from "@/lib/document-extract";
 import { canUpload } from "@/lib/roles";
-import { publicState, readState, recordUpload, sha256 } from "@/lib/store";
+import { publicState, readState, recordUpload, sha256, storePaths } from "@/lib/store";
 import type { CrossmatchRow } from "@/lib/types";
 import { REJECT_REVIEWER, REJECT_WRONG_TYPE, rejectUploadReason, storedUploadName } from "@/lib/upload-guard";
+import { modeFromRequest } from "@/lib/workspace-mode";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -28,9 +29,10 @@ function unreadRow(filename: string): CrossmatchRow {
 }
 
 export async function POST(request: Request) {
+  const mode = modeFromRequest(request);
   const form = await request.formData();
   const file = form.get("file");
-  const role = readState().role;
+  const role = readState(mode).role;
   if (!canUpload(role)) {
     return NextResponse.json({ error: REJECT_REVIEWER }, { status: 403 });
   }
@@ -45,11 +47,11 @@ export async function POST(request: Request) {
   const buffer = Buffer.from(await file.arrayBuffer());
   const digest = sha256(buffer);
   const storedAs = storedUploadName(digest, file.name);
-  const dir = path.join(process.cwd(), "data", "uploads");
+  const dir = storePaths(mode).uploadsDir;
   await mkdir(dir, { recursive: true });
   await writeFile(path.join(dir, storedAs), buffer);
 
-  const state = readState();
+  const state = readState(mode);
   let findings: CrossmatchRow[] = [];
   try {
     const chunks = await extractDocument(file.name, buffer);
@@ -63,15 +65,18 @@ export async function POST(request: Request) {
     findings = [unreadRow(file.name)];
   }
 
-  recordUpload({
-    filename: file.name,
-    mimeType: file.type || "application/octet-stream",
-    sizeBytes: file.size,
-    sha256: digest,
-    storedAs,
-    uploadedBy: role,
-    findings,
-  });
+  recordUpload(
+    {
+      filename: file.name,
+      mimeType: file.type || "application/octet-stream",
+      sizeBytes: file.size,
+      sha256: digest,
+      storedAs,
+      uploadedBy: role,
+      findings,
+    },
+    mode,
+  );
 
-  return NextResponse.json(publicState());
+  return NextResponse.json(publicState(mode));
 }
