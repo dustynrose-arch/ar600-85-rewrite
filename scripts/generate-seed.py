@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Generate baseline document seed. Does not overwrite an existing official G-1 seal."""
+"""Generate baseline document seed. Does not overwrite an existing official G-1 seal.
+
+Official APD paragraph bodies are stored in lib/seed/baseline-document.json.
+Re-running this script keeps those bodies and never writes stub lead-ins.
+"""
 from __future__ import annotations
 
 import json
@@ -445,23 +449,39 @@ SPECIAL_BODIES: dict[str, str] = {
 
 CHAPTER_CONTEXT = {cid: title for cid, _label, title in CHAPTERS}
 
-
-def para_skeleton() -> str:
-    """Lettered/numbered markers for reference. No invented policy prose."""
-    return "a.\nb.\n  (1)\n  (2)\n  (3)\nc."
-
-
-def with_reference_markers(text: str) -> str:
-    stripped = text.strip()
-    if stripped.startswith("a.") or stripped.startswith("a "):
-        return stripped
-    return f"a. {stripped}\n\nb.\n  (1)\n  (2)\n  (3)\nc."
+# Never emit the old generator lead-in. Official APD bodies live in
+# lib/seed/baseline-document.json; SPECIAL_BODIES is a last-resort paraphrase
+# only when a section has no stored official text.
+_STUB_LEADINS = (
+    "Working-copy baseline " + "text for",
+    "Baseline placeholder",
+)
 
 
-def body_for(chapter: str, number: str, title: str) -> str:
+def is_stub_body(body: str) -> bool:
+    stripped = (body or "").strip()
+    return any(stripped.startswith(prefix) for prefix in _STUB_LEADINS)
+
+
+def load_existing_bodies(dest: Path) -> dict[str, str]:
+    if not dest.exists():
+        return {}
+    old = json.loads(dest.read_text(encoding="utf-8"))
+    keep: dict[str, str] = {}
+    for chapter in old.get("chapters", []):
+        for section in chapter.get("sections", []):
+            body = section.get("body") or ""
+            if body and not is_stub_body(body):
+                keep[section["id"]] = body
+    return keep
+
+
+def body_for(number: str, keep: dict[str, str]) -> str:
+    if number in keep:
+        return keep[number]
     if number in SPECIAL_BODIES:
-        return with_reference_markers(SPECIAL_BODIES[number])
-    return para_skeleton()
+        return SPECIAL_BODIES[number]
+    return ""
 
 
 def write_png(path: Path) -> None:
@@ -498,6 +518,9 @@ def write_png(path: Path) -> None:
 
 
 def main() -> None:
+    dest = ROOT / "lib" / "seed" / "baseline-document.json"
+    keep = load_existing_bodies(dest)
+
     chapters = []
     for cid, label, title in CHAPTERS:
         sections = []
@@ -509,7 +532,7 @@ def main() -> None:
                     "id": number,
                     "number": number,
                     "title": sec_title,
-                    "body": body_for(chapter, number, sec_title),
+                    "body": body_for(number, keep),
                 }
             )
         chapters.append({"id": cid, "label": label, "title": title, "sections": sections})
@@ -524,16 +547,20 @@ def main() -> None:
         "chapters": chapters,
     }
 
-    dest = ROOT / "lib" / "seed" / "baseline-document.json"
+    dumped = json.dumps(out, indent=2)
+    if any(prefix in dumped for prefix in _STUB_LEADINS):
+        raise SystemExit("Refusing to write seed: stub lead-in would be regenerated.")
+
     dest.parent.mkdir(parents=True, exist_ok=True)
-    dest.write_text(json.dumps(out, indent=2), encoding="utf-8")
+    dest.write_text(dumped + "\n", encoding="utf-8")
     seal = ROOT / "public" / "g1-seal.png"
     n = sum(len(c["sections"]) for c in chapters)
+    empty = sum(1 for c in chapters for s in c["sections"] if not s["body"])
     if seal.exists():
-        print(f"Wrote {dest} ({n} sections); left existing {seal} in place")
+        print(f"Wrote {dest} ({n} sections, {empty} empty); left existing {seal} in place")
     else:
         write_png(seal)
-        print(f"Wrote {dest} ({n} sections) and placeholder {seal}")
+        print(f"Wrote {dest} ({n} sections, {empty} empty) and placeholder {seal}")
 
 
 if __name__ == "__main__":
