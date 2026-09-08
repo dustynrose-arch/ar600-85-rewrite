@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { canResetTraining } from "@/lib/roles";
 import type { Role, WorkspaceMode } from "@/lib/types";
 
@@ -16,6 +16,15 @@ export function TrainingSwitch({ mode, role, beforeSwitch, onResetApplied }: Pro
   const [confirmReset, setConfirmReset] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const canReset = mode === "training" && canResetTraining(role);
+
+  useEffect(() => {
+    if (!confirmReset) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !busy) setConfirmReset(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [confirmReset, busy]);
 
   const switchMode = async (next: WorkspaceMode) => {
     if (busy || next === mode) return;
@@ -102,19 +111,32 @@ export function TrainingSwitch({ mode, role, beforeSwitch, onResetApplied }: Pro
       </div>
       {error ? <p className="text-[10px] text-army-gold max-w-[12rem]">{error}</p> : null}
       {confirmReset ? (
-        <div className="fixed inset-0 z-50 bg-army-black/55 flex items-center justify-center p-4">
-          <div className="bg-army-paper border-2 border-army-rust max-w-md w-full p-5 shadow-xl">
+        <div
+          className="fixed inset-0 z-[80] bg-army-black/60 flex items-center justify-center p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="reset-training-title"
+          onClick={() => {
+            if (!busy) setConfirmReset(false);
+          }}
+        >
+          <div
+            className="bg-army-paper border-2 border-army-rust max-w-md w-full max-h-[90vh] overflow-y-auto p-5 shadow-xl"
+            onClick={(event) => event.stopPropagation()}
+          >
             <p className="text-xs font-bold tracking-[0.2em] text-army-rust">CONFIRM RESET</p>
-            <h2 className="text-xl font-bold mt-1">Reset the training copy?</h2>
+            <h2 id="reset-training-title" className="text-xl font-bold mt-1">
+              Reset the training copy?
+            </h2>
             <p className="mt-2 text-sm text-army-slate">
               This clears practice edits, uploads, and the training activity list, then restores the training copy
               from the original regulation. Live workspace is not touched.
             </p>
-            <div className="mt-4 flex justify-end gap-2">
+            <div className="mt-4 flex flex-wrap justify-end gap-2">
               <button
                 type="button"
                 disabled={busy}
-                className="px-3 py-1.5 text-sm border border-army-black/20"
+                className="px-3 py-1.5 text-sm font-semibold border-2 border-army-black/40 bg-white"
                 onClick={() => setConfirmReset(false)}
               >
                 Cancel
