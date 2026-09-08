@@ -5,10 +5,10 @@ export function UserGuide() {
   return (
     <article className="prose prose-slate max-w-none font-doc text-army-ink">
       <p className="mt-4 text-xs font-ui font-bold tracking-[0.2em] text-army-goldDark">USER GUIDE</p>
-      <h1 className="text-3xl font-bold mt-1">AR 600–85 Rewrite — Working Copy</h1>
+      <h1 className="text-3xl font-bold mt-1">AR 600–85 Rewrite — User Guide</h1>
       <p className="text-army-slate">
-        Internal G–1 rewrite working group use only. This application never changes the locked ACTIVE
-        baseline.
+        Internal G–1 rewrite working group use only. This application never changes the original
+        regulation (read-only).
       </p>
 
       <GuideVideo />
@@ -16,23 +16,25 @@ export function UserGuide() {
 
       <h2 className="text-xl font-bold mt-10">Workspace</h2>
       <ul className="list-disc pl-6 space-y-1">
-        <li>Three panes: outline on the left, working-copy editor in the center, and Assist on the right.</li>
+        <li>Three panes: outline on the left, your draft in the center, and Assist on the right.</li>
         <li>
           Use <strong>Hide outline</strong> and <strong>Hide Assist</strong> to widen the center editor. Use{" "}
           <strong>Show outline</strong> or <strong>Show Assist</strong> — or the thin side strips — to bring a
           pane back. The workspace remembers those choices until you close the browser tab.
         </li>
-        <li>The gold-and-black DRAFT / WORKING COPY banner stays on, next to the G–1 seal.</li>
-        <li>Baseline label: ACTIVE AR 600–85 (4 Oct 2024, admin revs 27 Feb 2025 / 19 Feb 2026).</li>
+        <li>The gold-and-black DRAFT banner stays on, next to the G–1 seal.</li>
+        <li>
+          Original regulation (read-only): AR 600–85 (4 Oct 2024, admin revs 27 Feb 2025 / 19 Feb 2026).
+        </li>
         <li>Your edits save automatically. This computer does not keep a separate copy.</li>
-        <li>Search looks only at the locked official baseline.</li>
+        <li>Search looks only at the original regulation (read-only).</li>
         <li>Idle warning at 14 minutes; at 15 minutes the current section is saved and the workspace locks.</li>
       </ul>
 
       <h2 className="text-xl font-bold mt-8">Roles and gates</h2>
       <ul className="list-disc pl-6 space-y-1">
         <li>
-          <strong>Editor</strong> — edit working-copy text, create and complete tasks, save checkpoints,
+          <strong>Editor</strong> — edit your draft, create and complete tasks, save checkpoints,
           record overlap decisions. May unlock after an idle lock.
         </li>
         <li>
@@ -107,7 +109,7 @@ export function UserGuide() {
 
       <h2 className="text-xl font-bold mt-8">Doctrine tip — overlap checks</h2>
       <p>
-        Assist runs 22 overlap checks across the working copy. For each topic, choose <em>Keep wording</em> or{" "}
+        Assist runs 22 overlap checks across your draft. For each topic, choose <em>Keep wording</em> or{" "}
         <em>Insert See cite</em>. Inserting a See cite appends the topic’s citation to the current paragraph and
         records the decision.
       </p>

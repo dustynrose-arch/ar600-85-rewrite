@@ -59,8 +59,8 @@ export function GuideWalkthrough() {
         touching the official regulation.
       </p>
       <p className="mt-3">
-        Everything you write here is a <strong>DRAFT / WORKING COPY</strong>. It is not Army policy until
-        officially published.
+        Everything you write here is a <strong>draft</strong>. It is not Army policy until officially
+        published. The gold banner at the top marks it that way.
       </p>
 
       <nav className="mt-4" aria-label="First session walkthrough anchors">
@@ -110,7 +110,7 @@ export function GuideWalkthrough() {
             <td className={tdClass}>
               <strong>Center</strong>
             </td>
-            <td className={tdClass}>Your working copy (and the locked baseline for reference)</td>
+            <td className={tdClass}>Your draft (and the original regulation, read-only, for reference)</td>
           </tr>
           <tr>
             <td className={tdClass}>
@@ -139,14 +139,14 @@ export function GuideWalkthrough() {
             It opens in the <strong>center</strong>.
           </li>
           <li>
-            Want to hunt by words? Use the outline search. Search looks at the official baseline text, then
-            jumps you there.
+            Want to hunt by words? Use the outline search. Search looks at the original regulation
+            (read-only), then jumps you there.
           </li>
         </ol>
         <p className="mt-3 font-semibold">Tips</p>
         <ul className="list-disc pl-6 space-y-1 mt-1">
           <li>
-            A <strong>gold dot</strong> means that section already differs from the official baseline.
+            A <strong>gold dot</strong> means that section already differs from the original regulation.
           </li>
           <li>
             A <strong>WG</strong> mark means an Approver said it’s ready for working-group review.
@@ -162,23 +162,23 @@ export function GuideWalkthrough() {
       <hr className="mt-8 border-army-black/15" />
 
       <article id="working-copy" className="scroll-mt-4 mt-8">
-        <h3 className="text-lg font-bold">Step 2 — Edit your draft (not the baseline)</h3>
+        <h3 className="text-lg font-bold">Step 2 — Edit your draft (not the original regulation)</h3>
         <ol className="list-decimal pl-6 space-y-1 mt-2">
           <li>
-            Stay on the <strong>Working copy</strong> in the center (the lower box).
+            Stay on <strong>your draft</strong> in the center (the lower box).
           </li>
           <li>
             Type your changes. Watch the top of the center pane — it should say <strong>Saved</strong> when your
             edits have been stored.
           </li>
           <li>
-            Leave the <strong>Locked baseline</strong> box alone. That’s the frozen official text for reference
-            only.
+            Leave the <strong>original regulation (read-only)</strong> box alone. That’s the frozen official
+            text for reference only.
           </li>
         </ol>
         <p className="mt-3">You’re always drafting. The gold banner at the top is there on purpose.</p>
-        <GuideCallout kind="Doctrine tip" title="Baseline vs working copy">
-          The left outline and search show the ACTIVE AR 600-85 (read-only). Only edit the working copy in the
+        <GuideCallout kind="Doctrine tip" title="Original regulation vs your draft">
+          The left outline and search show the original regulation (read-only). Only edit your draft in the
           center.
         </GuideCallout>
       </article>
@@ -274,11 +274,11 @@ export function GuideWalkthrough() {
         <ol className="list-decimal pl-6 space-y-1 mt-2">
           <li>
             Open <strong>Versions</strong> on the right and <strong>save a checkpoint</strong> when you want a
-            frozen copy of the working draft.
+            frozen copy of your draft.
           </li>
           <li>
-            Use <strong>Compare side by side</strong> to see your draft next to the official baseline — or next
-            to a checkpoint.
+            Use <strong>Compare side by side</strong> to see your draft next to the original regulation
+            (read-only) — or next to a checkpoint.
           </li>
           <li>
             <strong>List the changes</strong> shows the real line changes (a simple comparison — not a legal
@@ -290,7 +290,7 @@ export function GuideWalkthrough() {
           </li>
         </ol>
         <GuideCallout kind="Legal tip" title="DRAFT export">
-          Every Word export keeps DRAFT / WORKING COPY — normal for APD submit.
+          Every Word export stays marked DRAFT — that is expected when you submit to APD.
         </GuideCallout>
       </article>
 
@@ -341,7 +341,7 @@ export function GuideWalkthrough() {
       <h3 className="text-lg font-bold mt-8">Tiny tour (one breath)</h3>
       <p className="mt-2">
         Left = find it. Center = write it. Right = check it. Top = export it. Hide the sides when you need a
-        wider editor. Baseline never changes. Exports stay DRAFT.
+        wider editor. The original regulation never changes. Exports stay DRAFT.
       </p>
     </section>
   );
