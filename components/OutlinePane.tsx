@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { PaneToggle } from "@/components/PaneToggle";
 import { chapterDisplayLabel } from "@/lib/outline";
 import { canEditStructure } from "@/lib/roles";
@@ -71,10 +71,6 @@ export function OutlinePane({
   const [dropHint, setDropHint] = useState<string | null>(null);
 
   const selected = sections[selectedId];
-  const selectedChapter = useMemo(
-    () => outline.find((chapter) => chapter.id === selectedId || chapter.sectionIds.includes(selectedId)),
-    [outline, selectedId],
-  );
 
   useEffect(() => {
     if (!menu) return;
@@ -198,14 +194,6 @@ export function OutlinePane({
               </button>
               <button
                 type="button"
-                disabled={!selectedChapter}
-                onClick={() => selectedChapter && openAdd(selectedChapter.id, "child")}
-                className="text-[10px] px-1.5 py-0.5 bg-white border border-army-black/15 disabled:opacity-40"
-              >
-                Add child
-              </button>
-              <button
-                type="button"
                 disabled={!selected || busy}
                 onClick={() => selected && void onSplit(selected.id)}
                 className="text-[10px] px-1.5 py-0.5 bg-white border border-army-black/15 disabled:opacity-40"
@@ -304,7 +292,7 @@ export function OutlinePane({
                   }}
                 >
                   <summary
-                    className="cursor-pointer text-[11px] font-bold tracking-wide text-army-oliveDark py-1 flex items-center justify-between gap-2"
+                    className="cursor-pointer text-[11px] font-bold tracking-wide text-army-oliveDark py-1"
                     onContextMenu={(event) => {
                       if (!editable) return;
                       event.preventDefault();
@@ -314,18 +302,6 @@ export function OutlinePane({
                     <span>
                       {label}. {chapter.title}
                     </span>
-                    {editable ? (
-                      <button
-                        type="button"
-                        className="text-[10px] font-semibold px-1 border border-army-black/15 bg-white"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          openAdd(chapter.id, "child");
-                        }}
-                      >
-                        Add child
-                      </button>
-                    ) : null}
                   </summary>
                   <ul className="mb-2">
                     {chapter.sectionIds.map((sectionId) => {
@@ -420,9 +396,6 @@ export function OutlinePane({
               <button type="button" className="block w-full text-left px-3 py-1.5 hover:bg-army-gold/20" onClick={() => openAdd(menu.targetId, "after")}>
                 Add after
               </button>
-              <button type="button" className="block w-full text-left px-3 py-1.5 hover:bg-army-gold/20" onClick={() => openAdd(menu.targetId, "child")}>
-                Add child under chapter
-              </button>
               <button
                 type="button"
                 className="block w-full text-left px-3 py-1.5 hover:bg-army-gold/20"
@@ -441,9 +414,14 @@ export function OutlinePane({
               </button>
             </>
           ) : (
-            <button type="button" className="block w-full text-left px-3 py-1.5 hover:bg-army-gold/20" onClick={() => openAdd(menu.targetId, "child")}>
-              Add child paragraph
-            </button>
+            <>
+              <button type="button" className="block w-full text-left px-3 py-1.5 hover:bg-army-gold/20" onClick={() => openAdd(menu.targetId, "before")}>
+                Add before
+              </button>
+              <button type="button" className="block w-full text-left px-3 py-1.5 hover:bg-army-gold/20" onClick={() => openAdd(menu.targetId, "after")}>
+                Add after
+              </button>
+            </>
           )}
         </div>
       ) : null}

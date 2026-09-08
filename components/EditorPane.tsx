@@ -49,15 +49,15 @@ export function EditorPane({
           Last saved {new Date(working.updatedAt).toLocaleString()} · {status}
         </p>
       </header>
-      <div className="grid grid-rows-2 min-h-0 flex-1">
-        <div className="min-h-0 border-b border-army-black/10 flex flex-col">
+      <div className="grid grid-rows-[minmax(0,1fr)_minmax(0,2fr)] min-h-0 flex-1 overflow-hidden">
+        <div className="min-h-0 border-b border-army-black/10 flex flex-col overflow-hidden">
           <p className="px-4 pt-2 text-[10px] font-bold tracking-[0.16em] text-army-slate">
             ORIGINAL REGULATION — READ ONLY
           </p>
           <div
             spellCheck={false}
             data-spellcheck="disabled"
-            className="pane-scroll overflow-y-auto px-4 py-2 font-doc text-[13px] leading-relaxed text-army-ink/90 whitespace-pre-wrap"
+            className="pane-scroll overflow-y-auto flex-1 min-h-0 px-4 py-2 font-doc text-[13px] leading-relaxed text-army-ink/90 whitespace-pre-wrap"
           >
             {compareBody != null ? (
               <>

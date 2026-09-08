@@ -52,7 +52,7 @@ export function DraftEditor({ sectionId, value, editable, saveState, onChange, o
   }
 
   return (
-    <div className="min-h-0 flex flex-col flex-1">
+    <div className="min-h-0 h-full flex flex-col flex-1">
       <div className="px-4 pt-2 flex items-center justify-between gap-2">
         <p className="text-[10px] font-bold tracking-[0.16em] text-army-oliveDark">YOUR DRAFT</p>
         {editable ? (
@@ -103,7 +103,7 @@ export function DraftEditor({ sectionId, value, editable, saveState, onChange, o
             undo();
           }
         }}
-        className="flex-1 min-h-0 m-3 p-3 border border-army-black/15 bg-white font-doc text-[14px] leading-relaxed resize-none disabled:bg-army-cream"
+        className="flex-1 min-h-0 h-full m-3 p-3 border border-army-black/15 bg-white font-doc text-[14px] leading-relaxed resize-none disabled:bg-army-cream"
       />
     </div>
   );
