@@ -65,6 +65,19 @@ test("editable-draft chrome says Your draft; legal banner still says WORKING COP
   assert.match(banner, /DRAFT \/ WORKING COPY/);
 });
 
+test("Your draft editor uses a modest extra share of the center pane", () => {
+  const editor = readRepoFile("components/EditorPane.tsx");
+  const draft = readRepoFile("components/DraftEditor.tsx");
+  const workbench = readRepoFile("components/Workbench.tsx");
+
+  assert.match(editor, /grid-rows-\[minmax\(0,2fr\)_minmax\(14rem,3fr\)\]/);
+  assert.equal(editor.includes("grid-rows-2"), false);
+  assert.match(draft, /flex-1 min-h-0 m-2 /);
+  assert.match(workbench, /w-\[320px\]/);
+  assert.match(workbench, /w-\[340px\]/);
+  assert.match(workbench, /CollapsedRail/);
+});
+
 test("rounded-rectangle buttons share one radius; Training gold fill and Reset Cancel contrast stay", () => {
   const css = readRepoFile("app/globals.css");
   const trainingSwitch = readRepoFile("components/TrainingSwitch.tsx");
