@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { DraftBanner } from "@/components/DraftBanner";
 import { HEADER_TITLE, HeaderBrand } from "@/components/HeaderBrand";
 import { TrainingBanner } from "@/components/TrainingBanner";
 import { TrainingSwitch } from "@/components/TrainingSwitch";
@@ -17,7 +16,11 @@ export default async function GuidePage() {
   return (
     <main className="min-h-screen bg-army-cream">
       <header className="shrink-0 bg-army-black text-army-cream px-4 py-2 flex items-center gap-4">
-        <HeaderBrand title={`${HEADER_TITLE} — User Guide`} detail="How to use your draft" />
+        <HeaderBrand
+          title={`${HEADER_TITLE} — User Guide`}
+          detail="How to use your draft"
+          training={mode === "training"}
+        />
         <div className="flex items-center gap-2">
           <TrainingSwitch mode={mode} role={state.role} />
           <Link href="/" className="btn-header-ghost">
@@ -25,7 +28,6 @@ export default async function GuidePage() {
           </Link>
         </div>
       </header>
-      <DraftBanner />
       {mode === "training" ? <TrainingBanner /> : null}
       <div className="max-w-4xl mx-auto px-6 py-8">
         <UserGuide />
