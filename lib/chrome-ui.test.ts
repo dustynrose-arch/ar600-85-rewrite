@@ -6,27 +6,42 @@ function readRepoFile(relativePath: string): string {
   return readFileSync(new URL(`../${relativePath}`, import.meta.url), "utf8");
 }
 
-test("gold DRAFT / WORKING COPY and Training TRAINING banners stay non-strippable", () => {
-  const banner = readRepoFile("components/DraftBanner.tsx");
+test("header DRAFT chip is always on; gold DRAFT / WORKING COPY bar is gone; export stamps stay", () => {
+  const brand = readRepoFile("components/HeaderBrand.tsx");
   const training = readRepoFile("components/TrainingBanner.tsx");
   const workbench = readRepoFile("components/Workbench.tsx");
   const guide = readRepoFile("app/guide/page.tsx");
   const exportStamps = readRepoFile("lib/export-stamps.ts");
+  const exportDocx = readRepoFile("lib/export-docx.ts");
   const css = readRepoFile("app/globals.css");
 
-  assert.match(banner, /DRAFT \/ WORKING COPY/);
-  assert.match(banner, /draft-banner/);
-  assert.match(css, /\.draft-banner/);
-  assert.match(css, /repeating-linear-gradient/);
+  assert.equal(existsSync(new URL("../components/DraftBanner.tsx", import.meta.url)), false);
+  assert.equal(workbench.includes("DraftBanner"), false);
+  assert.equal(guide.includes("DraftBanner"), false);
+  assert.equal(css.includes("draft-banner"), false);
+  assert.equal(css.includes("repeating-linear-gradient"), false);
+
+  assert.match(brand, /headerDraftMark/);
+  assert.match(brand, /TRAINING \/ DRAFT/);
+  assert.match(brand, /data-draft-mark=""/);
+  assert.match(brand, /className="header-draft-mark"/);
+  assert.match(brand, /Never seals alone/);
+  assert.equal(brand.includes("Hide"), false);
+  assert.equal(brand.includes("<button"), false);
+  assert.match(css, /\.header-draft-mark \{/);
+
+  assert.match(workbench, /<HeaderBrand title=\{HEADER_TITLE\} training=\{state\.mode === "training"\} \/>/);
+  assert.match(guide, /training=\{mode === "training"\}/);
+  assert.match(workbench, /<TrainingBanner \/>/);
+  assert.match(guide, /<TrainingBanner \/>/);
   assert.match(training, />TRAINING</);
   assert.match(training, /training-banner/);
-  assert.match(workbench, /<DraftBanner \/>/);
-  assert.match(workbench, /<TrainingBanner \/>/);
-  assert.match(guide, /<DraftBanner \/>/);
-  assert.match(guide, /<TrainingBanner \/>/);
+
   assert.match(exportStamps, /TRAINING \/ DRAFT \/ WORKING COPY/);
   assert.match(exportStamps, /DRAFT \/ WORKING COPY/);
   assert.match(exportStamps, /TRAINING \/ DRAFT/);
+  assert.match(exportDocx, /draftRun\(wordHeaderMark\(training\)/);
+  assert.match(exportDocx, /draftRun\(wordFooterMark\(training\)/);
 });
 
 test("header: dual seals flank title, DPRR subtitle, Working Copy dropped from title", () => {
@@ -52,17 +67,39 @@ test("header: dual seals flank title, DPRR subtitle, Working Copy dropped from t
   assert.match(layout, /Directorate of Prevention, Resilience and Readiness/);
 });
 
-test("editable-draft chrome says Your draft; legal banner still says WORKING COPY", () => {
+test("editable-draft chrome says Your draft; on-screen mark is the header DRAFT chip", () => {
   const editor = readRepoFile("components/EditorPane.tsx");
   const draft = readRepoFile("components/DraftEditor.tsx");
-  const banner = readRepoFile("components/DraftBanner.tsx");
+  const brand = readRepoFile("components/HeaderBrand.tsx");
   const assist = readRepoFile("components/AssistPane.tsx");
+  const userGuide = readRepoFile("components/UserGuide.tsx");
+  const walkthrough = readRepoFile("components/GuideWalkthrough.tsx");
 
   assert.match(editor, />Your draft</);
   assert.equal(editor.includes("WORKING COPY"), false);
   assert.match(draft, />Your draft</);
   assert.match(assist, /Compare your draft against/);
-  assert.match(banner, /DRAFT \/ WORKING COPY/);
+  assert.match(brand, /headerDraftMark\(training\)/);
+  assert.match(brand, /"DRAFT"/);
+  assert.equal(brand.includes("WORKING COPY"), false);
+  assert.match(userGuide, /DRAFT<\/strong> chip/);
+  assert.equal(userGuide.includes("gold-and-black"), false);
+  assert.match(walkthrough, /DRAFT<\/strong> chip in the header/);
+  assert.equal(walkthrough.includes("gold banner"), false);
+  assert.equal(walkthrough.includes("DRAFT / WORKING COPY banner"), false);
+});
+
+test("Your draft editor uses a modest extra share of the center pane", () => {
+  const editor = readRepoFile("components/EditorPane.tsx");
+  const draft = readRepoFile("components/DraftEditor.tsx");
+  const workbench = readRepoFile("components/Workbench.tsx");
+
+  assert.match(editor, /grid-rows-\[minmax\(0,2fr\)_minmax\(14rem,3fr\)\]/);
+  assert.equal(editor.includes("grid-rows-2"), false);
+  assert.match(draft, /flex-1 min-h-0 m-2 /);
+  assert.match(workbench, /w-\[320px\]/);
+  assert.match(workbench, /w-\[340px\]/);
+  assert.match(workbench, /CollapsedRail/);
 });
 
 test("rounded-rectangle buttons share one radius; Training gold fill and Reset Cancel contrast stay", () => {

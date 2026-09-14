@@ -24,8 +24,10 @@ export function UserGuide() {
           workspace remembers those choices until you close the browser tab.
         </li>
         <li>
-          The gold-and-black DRAFT / WORKING COPY banner stays on. The G–1 seal (left) and Army emblem
-          (right) are always paired with that banner — never shown alone.
+          The header always shows a <strong>DRAFT</strong> chip (or <strong>TRAINING / DRAFT</strong> in
+          Training). The G–1 seal (left) and Army emblem (right) are always paired with that chip — never shown
+          alone. Word exports stay stamped DRAFT (and WORKING COPY in the Word header); Training exports stay{" "}
+          <strong>TRAINING / DRAFT</strong>.
         </li>
         <li>
           Original regulation (read-only): AR 600–85 (4 Oct 2024, admin revs 27 Feb 2025 / 19 Feb 2026).

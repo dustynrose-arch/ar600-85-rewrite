@@ -1,15 +1,22 @@
-/** Always render with DraftBanner (and TrainingBanner in Training). Never seals alone. */
+/** Always render both seals with the header DRAFT chip. Never seals alone. No hide control. */
 
 export const HEADER_TITLE = "AR 600-85 Rewrite";
 export const HEADER_SUBTITLE = "Directorate of Prevention, Resilience and Readiness";
 
+export function headerDraftMark(training: boolean): string {
+  return training ? "TRAINING / DRAFT" : "DRAFT";
+}
+
 export function HeaderBrand({
   title = HEADER_TITLE,
   detail,
+  training,
 }: {
   title?: string;
   detail?: string;
+  training: boolean;
 }) {
+  const mark = headerDraftMark(training);
   return (
     <div className="flex items-center gap-3 min-w-0 flex-1">
       <img
@@ -27,6 +34,14 @@ export function HeaderBrand({
         alt="United States Army emblem (official Department of the Army emblem)"
         className="h-12 w-12 shrink-0 object-contain"
       />
+      <span
+        data-draft-mark=""
+        role="status"
+        aria-label={training ? "Training draft" : "Draft"}
+        className="header-draft-mark"
+      >
+        {mark}
+      </span>
       <div className="flex-1 min-w-2" aria-hidden />
     </div>
   );

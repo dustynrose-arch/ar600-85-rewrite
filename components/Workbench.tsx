@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { DraftBanner } from "@/components/DraftBanner";
 import { OutlinePane } from "@/components/OutlinePane";
 import { EditorPane } from "@/components/EditorPane";
 import { AssistPane } from "@/components/AssistPane";
@@ -296,7 +295,7 @@ export function Workbench({
         }}
       />
       <header className="shrink-0 bg-army-black text-army-cream px-4 py-2 flex items-center gap-4">
-        <HeaderBrand title={HEADER_TITLE} />
+        <HeaderBrand title={HEADER_TITLE} training={state.mode === "training"} />
         <div className="flex items-center gap-2 text-xs">
           <TrainingSwitch
             mode={state.mode}
@@ -336,7 +335,6 @@ export function Workbench({
           </a>
         </div>
       </header>
-      <DraftBanner />
       {state.mode === "training" ? <TrainingBanner /> : null}
       {state.locked ? (
         <div className="shrink-0 bg-army-rust text-white text-xs px-4 py-1.5 flex items-center justify-between">

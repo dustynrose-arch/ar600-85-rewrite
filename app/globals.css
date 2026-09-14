@@ -69,20 +69,15 @@ textarea:focus-visible {
     @apply inline-flex items-center cursor-pointer rounded-sm underline decoration-army-goldDark underline-offset-2 text-army-goldDark text-[11px];
     @apply hover:decoration-2 hover:text-army-oliveDark;
   }
+
+  /* Persistent header legal mark — always on, never with a hide control. */
+  .header-draft-mark {
+    @apply shrink-0 rounded-lg border border-army-gold bg-army-gold text-army-black px-2 py-1 text-[11px] font-bold tracking-[0.16em] whitespace-nowrap;
+  }
 }
 
 .training-banner {
   background: #8b2e1f;
-}
-
-.draft-banner {
-  background: repeating-linear-gradient(
-    -45deg,
-    #c5a14a,
-    #c5a14a 14px,
-    #161410 14px,
-    #161410 28px
-  );
 }
 
 .pane-scroll {

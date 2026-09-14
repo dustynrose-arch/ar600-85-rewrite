@@ -49,7 +49,7 @@ export function EditorPane({
           Last saved {new Date(working.updatedAt).toLocaleString()} · {status}
         </p>
       </header>
-      <div className="grid grid-rows-2 min-h-0 flex-1">
+      <div className="grid grid-rows-[minmax(0,2fr)_minmax(14rem,3fr)] min-h-0 flex-1">
         <div className="min-h-0 border-b border-army-black/10 flex flex-col">
           <p className="section-heading px-4 pt-2 text-army-slate">
             ORIGINAL REGULATION — READ ONLY
