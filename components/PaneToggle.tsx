@@ -16,7 +16,7 @@ export function CollapsedRail({ side, label, onExpand }: RailProps) {
         aria-expanded={false}
         aria-label={label}
         title={label}
-        className="flex-1 w-full px-1 py-3 text-[11px] font-semibold text-army-oliveDark hover:bg-army-gold/25"
+        className="flex-1 w-full rounded-none px-1 py-3 text-[11px] font-semibold text-army-oliveDark hover:bg-army-gold/25"
       >
         <span
           className="inline-block whitespace-nowrap"
@@ -47,7 +47,7 @@ export function PaneToggle({ label, expanded, onClick }: ToggleProps) {
       aria-expanded={expanded}
       aria-label={text}
       title={text}
-      className="shrink-0 border border-army-black/20 bg-white px-2 py-1 text-[11px] font-semibold text-army-ink hover:bg-army-gold/25"
+      className="btn-secondary !text-[11px] !px-2 !py-1 shrink-0"
     >
       {text}
     </button>

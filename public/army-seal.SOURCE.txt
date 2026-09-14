@@ -1,0 +1,18 @@
+public/army-seal.png
+
+Official U.S. Department of the Army emblem (not the authentication seal).
+Unmodified raster of the Institute of Heraldry artwork.
+
+Source: Wikimedia Commons
+  https://commons.wikimedia.org/wiki/File:Emblem_of_the_U.S._Department_of_the_Army.svg
+  https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Emblem_of_the_U.S._Department_of_the_Army.svg/1280px-Emblem_of_the_U.S._Department_of_the_Army.svg.png
+
+Authoritative origin: U.S. Army Institute of Heraldry (public-domain U.S. government work).
+This file is the official emblem, which AR 840-1 authorizes for official / quasi-official
+display. The Department of the Army seal (War Office / authentication instrument) is
+intentionally not used so this working-group tool cannot be mistaken for an
+AR 25-30 authenticated publication.
+
+Do not recolor, crop, or otherwise alter the mark.
+Always show this file paired with the gold DRAFT / WORKING COPY banner
+(and the TRAINING banner in Training). Never show seals alone.

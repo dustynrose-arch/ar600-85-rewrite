@@ -66,12 +66,12 @@ export function IdleGuard({ role, locked, sectionId, draftBody, onLocked }: Prop
         <p className="text-xs font-bold tracking-[0.2em] text-army-rust">IDLE WARNING</p>
         <h2 className="text-xl font-bold mt-1">Session idle for 14 minutes</h2>
         <p className="mt-2 text-sm text-army-slate">
-          The working copy will save and lock in {remaining} second{remaining === 1 ? "" : "s"} unless you continue
+          Your draft will save and lock in {remaining} second{remaining === 1 ? "" : "s"} unless you continue
           editing. The original regulation is never modified.
         </p>
         <button
           type="button"
-          className="mt-4 bg-army-olive text-army-cream px-4 py-2 text-sm font-semibold"
+          className="btn-primary mt-4 !px-4 !py-2 !text-sm"
           onClick={() => {
             last.current = Date.now();
             setWarn(false);

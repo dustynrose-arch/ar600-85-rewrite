@@ -7,10 +7,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const cookieStore = await cookies();
   const training = parseWorkspaceMode(cookieStore.get(WORKSPACE_MODE_COOKIE)?.value) === "training";
   return {
-    title: training ? "TRAINING — AR 600-85 Rewrite" : "AR 600-85 Rewrite — Working Copy",
-    description: training
-      ? "Training copy — practice only. Live workspace is unchanged."
-      : "Internal G-1 rewrite working group use only",
+    title: training ? "TRAINING — AR 600-85 Rewrite" : "AR 600-85 Rewrite",
+    description: "Directorate of Prevention, Resilience and Readiness",
   };
 }
 

@@ -10,6 +10,7 @@ import { IdleGuard } from "@/components/IdleGuard";
 import { CollapsedRail } from "@/components/PaneToggle";
 import { TrainingBanner } from "@/components/TrainingBanner";
 import { TrainingSwitch } from "@/components/TrainingSwitch";
+import { HEADER_TITLE, HeaderBrand } from "@/components/HeaderBrand";
 import { DEFAULT_PANE_STATE, readPaneSession, writePaneSession } from "@/lib/panes";
 import {
   buildSummaryOfChange,
@@ -19,7 +20,6 @@ import {
 } from "@/lib/summary-of-change";
 import { canUnlock, ROLE_LABEL } from "@/lib/roles";
 import {
-  BASELINE_LABEL,
   type BaselineDocument,
   type DiffHunk,
   type Role,
@@ -296,22 +296,7 @@ export function Workbench({
         }}
       />
       <header className="shrink-0 bg-army-black text-army-cream px-4 py-2 flex items-center gap-4">
-        <img
-          src="/g1-seal.png"
-          alt="Office of the Deputy Chief of Staff, G-1, United States Army seal"
-          className="h-12 w-12 shrink-0 rounded-full object-cover"
-        />
-        <div className="min-w-0 flex-1">
-          <h1 className="text-lg font-semibold leading-tight">
-            {state.mode === "training" ? "AR 600-85 Rewrite — TRAINING" : "AR 600-85 Rewrite — Working Copy"}
-          </h1>
-          <p className="text-xs text-army-gold">
-            {state.mode === "training"
-              ? "Practice copy — live workspace is unchanged"
-              : "Internal G-1 rewrite working group use only"}
-          </p>
-          <p className="text-[11px] text-army-cream/80">Original regulation (read-only): {BASELINE_LABEL}</p>
-        </div>
+        <HeaderBrand title={HEADER_TITLE} />
         <div className="flex items-center gap-2 text-xs">
           <TrainingSwitch
             mode={state.mode}
@@ -326,12 +311,12 @@ export function Workbench({
               }
             }}
           />
-          <label className="flex items-center gap-1">
+          <label className="btn-header-ghost">
             Role
             <select
               value={state.role}
               onChange={(event) => void changeRole(event.target.value as Role)}
-              className="bg-army-ink text-army-cream border border-army-gold/40 px-1 py-0.5"
+              className="bg-transparent text-army-cream border-0 px-1 py-0.5 rounded-lg"
             >
               {(Object.keys(ROLE_LABEL) as Role[]).map((role) => (
                 <option key={role} value={role}>
@@ -340,13 +325,13 @@ export function Workbench({
               ))}
             </select>
           </label>
-          <a href="/api/export" className="bg-army-gold text-army-black px-2 py-1 font-semibold">
+          <a href="/api/export" className="btn-header">
             Export Word (DRAFT)
           </a>
-          <a href="/api/export?kind=summary" className="border border-army-gold px-2 py-1">
+          <a href="/api/export?kind=summary" className="btn-header-ghost">
             Export Summary (DRAFT)
           </a>
-          <a href="/guide" className="border border-army-gold/50 px-2 py-1">
+          <a href="/guide" className="btn-header-ghost">
             User Guide
           </a>
         </div>
@@ -357,7 +342,7 @@ export function Workbench({
         <div className="shrink-0 bg-army-rust text-white text-xs px-4 py-1.5 flex items-center justify-between">
           <span>LOCKED{state.lockReason ? ` — ${state.lockReason}` : ""}. Your draft was saved. The original regulation is unchanged.</span>
           {canUnlock(state.role) ? (
-            <button type="button" onClick={() => void unlock()} className="underline">
+            <button type="button" onClick={() => void unlock()} className="assist-link text-white decoration-white">
               Unlock
             </button>
           ) : null}
