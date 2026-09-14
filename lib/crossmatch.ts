@@ -228,7 +228,7 @@ export function findTermFlags(text: string): TermHit[] {
       /\b(same as|also called|treated as|is an?|is the|swap|instead of)\b/i.test(text)) ||
       /\b(prevention education|counsel Soldiers|alcohol and drug control)\b/i.test(text))
   ) {
-    add("upl-role", "Do not swap UPL / ADCO / DTC roles — keep UPL, ADCO, and DTC as locked.");
+    add("upl-role", "Do not swap UPL / ADCO / DTC roles — keep UDL, ADCO, and DTC as locked.");
   }
   if (/\bADCO\b/.test(text) && /\b(collect|specimen|bottle|observer|dd form 2624)\b/i.test(text)) {
     add("adco-dtc", "Do not give ADCO the DTC collection role.");

@@ -141,7 +141,7 @@ test("Miss when training/PAR uses unlocked ASAP terms from the locked list", () 
     ["Put the Soldier in EAP instead of the TDP roster.", "EAP"],
     ["Self-referral grants immunity and cannot be used for any disciplinary action.", "Limited Use"],
     ["Command referral is the same as self-referral.", "command referral"],
-    ["The UPL is the ADCO and will counsel Soldiers.", "UPL / ADCO / DTC"],
+    ["The UPL is the ADCO and will counsel Soldiers.", "keep UDL"],
     ["Rehab failure processing is done entirely inside this regulation.", "635-200"],
   ];
   for (const [text, expect] of samples) {
@@ -161,7 +161,11 @@ test("does not Miss a correct UPL mention; Misses only UPL/ADCO/DTC role swaps",
   assert.ok(swap.some((hit) => hit.id === "upl-role"));
   const reason = swap.find((hit) => hit.id === "upl-role")!.reason;
   assert.match(reason, /UPL \/ ADCO \/ DTC/);
-  assert.doesNotMatch(reason, /UDL/);
+  assert.match(reason, /keep UDL, ADCO, and DTC as locked/);
+  assert.doesNotMatch(reason, /keep UPL/);
+
+  const udlCorrect = findTermFlags("The UDL collects specimens and advises the commander.");
+  assert.equal(udlCorrect.length, 0);
 
   const rows = run("The UPL collects specimens and advises the commander.");
   assert.notEqual(rows[0]?.verdict, "miss");
