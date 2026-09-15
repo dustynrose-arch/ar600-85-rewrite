@@ -119,7 +119,7 @@ export function GuideWalkthrough() {
             <td className={tdClass}>
               <strong>Right</strong>
             </td>
-            <td className={tdClass}>Assist — helpful reminders, glossary, Process map, and authority cites</td>
+            <td className={tdClass}>Writing Assistant — helpful reminders, glossary, Process map, and authority cites</td>
           </tr>
           <tr>
             <td className={tdClass}>
@@ -157,7 +157,7 @@ export function GuideWalkthrough() {
             (empty paragraph after this one), <strong>Rename</strong>, <strong>Delete</strong> (you will be
             asked to confirm), or drag <strong>::</strong> to reorder — including into another chapter.
             Right-click a paragraph for the same actions. Display numbers update automatically (1–1, 1–2… or
-            A–1). Assist chips and the Process-step highlight stay on that paragraph’s stable id, not the
+            A–1). Writing Assistant chips and the Process-step highlight stay on that paragraph’s stable id, not the
             display number. Split leaves those reminders on the source until you move text; delete drops them
             with the paragraph. The original regulation stays frozen.
           </li>
@@ -166,8 +166,8 @@ export function GuideWalkthrough() {
           </li>
           <li>
             Need more room to write? Click <strong>Hide outline</strong> on the left pane or{" "}
-            <strong>Hide Assist</strong> on the right pane. The center pane has no hide buttons. Bring a side
-            back with <strong>Show outline</strong> / <strong>Show Assist</strong> or the thin strip on that
+            <strong>Hide Writing Assistant</strong> on the right pane. The center pane has no hide buttons. Bring a side
+            back with <strong>Show outline</strong> / <strong>Show Writing Assistant</strong> or the thin strip on that
             side.
           </li>
         </ul>
@@ -204,7 +204,7 @@ export function GuideWalkthrough() {
       <hr className="mt-8 border-army-gold/20" />
 
       <article id="assist" className="scroll-mt-4 mt-8">
-        <h3 className="text-lg font-bold">Step 3 — Use Assist reminders on the right</h3>
+        <h3 className="text-lg font-bold">Step 3 — Use Writing Assistant reminders on the right</h3>
         <p className="mt-2">
           The right-hand panel is a writing helper for this regulation. It watches the paragraph you have open
           and lists reminders when the wording needs a glossary check or a legal / adverse-action hint, or a
@@ -216,10 +216,10 @@ export function GuideWalkthrough() {
         <ol className="list-decimal pl-6 space-y-2 mt-2">
           <li>Open a paragraph in the center.</li>
           <li>
-            Open the <strong>Assist</strong> tab on the <strong>right</strong>.
+            Open the <strong>Writing Assistant</strong> tab on the <strong>right</strong>.
           </li>
           <li>
-            If Assist finds matching wording, those terms show up as <strong>underlined reminders</strong>:
+            If Writing Assistant finds matching wording, those terms show up as <strong>underlined reminders</strong>:
             locked glossary terms, Limited Use Policy (self-referral) or legal / adverse-action hints, or overlap
             with another publication. Nothing in your draft changes until you choose an action.
           </li>
@@ -238,7 +238,7 @@ export function GuideWalkthrough() {
         <p className="mt-3 font-semibold">When to use the other right-hand tabs</p>
         <ul className="list-disc pl-6 space-y-1 mt-1">
           <li>
-            <strong>Glossary reminders</strong> (on Assist) — you used a defined term (ASAP, ADAPT, Limited Use
+            <strong>Glossary reminders</strong> (on Writing Assistant) — you used a defined term (ASAP, ADAPT, Limited Use
             Policy, SUDCC, and others). Keep one official meaning.
           </li>
           <li>
@@ -252,17 +252,17 @@ export function GuideWalkthrough() {
         </ul>
         <p className="mt-3">Reviewers can read every reminder. Only Editors can record Keep wording or Insert See cite.</p>
         <GuideCallout kind="Legal tip" title="Limited Use Policy vs legal / adverse-action hints">
-          Assist shows two kinds of legal help: <strong>Limited Use Policy (self-referral)</strong> — the AR
+          Writing Assistant shows two kinds of legal help: <strong>Limited Use Policy (self-referral)</strong> — the AR
           600-85 protection that only applies in qualifying self-referral cases — and{" "}
           <strong>Legal / adverse-action hints</strong> for other rights/discipline risks. Don’t read every legal
           chip as Limited Use.
         </GuideCallout>
         <GuideCallout kind="Glossary tip" title="Glossary">
-          When Assist underlines a term, prefer the locked ASAP wording (IR versus other test bases, SUDCC
+          When Writing Assistant underlines a term, prefer the locked ASAP wording (IR versus other test bases, SUDCC
           versus ADAPT, illicit use versus prescription misuse). Reminders never rewrite the paragraph for you.
         </GuideCallout>
         <GuideCallout kind="Doctrine tip" title="Sister publications">
-          When Assist flags wording that belongs in another publication, prefer “See AR …” (flags → AR 600-8-2,
+          When Writing Assistant flags wording that belongs in another publication, prefer “See AR …” (flags → AR 600-8-2,
           separations → AR 635-200, and so on). Keep short language only if the ASAP context needs it.
         </GuideCallout>
       </article>
@@ -315,7 +315,7 @@ export function GuideWalkthrough() {
             a Word file. Both stay clearly marked <strong>DRAFT</strong> for internal use only.
           </li>
           <li>
-            Use Assist <strong>Upload</strong> to drop a <strong>.docx</strong>, <strong>.pdf</strong>, or{" "}
+            Use Writing Assistant <strong>Upload</strong> to drop a <strong>.docx</strong>, <strong>.pdf</strong>, or{" "}
             <strong>.pptx</strong> (25 MB). You get Match / Miss / Unclear suggestion rows against your draft.
             The rows never rewrite your draft or the original regulation.
           </li>
@@ -345,7 +345,7 @@ export function GuideWalkthrough() {
               </td>
               <td className={tdClass}>
                 Write the draft, reshape the working-copy outline (add, split, delete, move, rename), undo
-                draft typing, tasks, activity notes, uploads and document compare, Assist actions, checkpoints
+                draft typing, tasks, activity notes, uploads and document compare, Writing Assistant actions, checkpoints
               </td>
             </tr>
             <tr>

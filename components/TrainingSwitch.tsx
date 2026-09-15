@@ -68,15 +68,14 @@ export function TrainingSwitch({ mode, role, beforeSwitch, onResetApplied }: Pro
 
   return (
     <>
-      <div className="flex flex-wrap items-center gap-2 border-2 border-army-gold bg-army-ink px-2 py-1">
+      <div className="flex items-center gap-2" title={error ?? undefined}>
         {mode === "training" ? (
           <>
-            <span className="text-[11px] font-bold tracking-[0.28em] text-army-gold">TRAINING</span>
             <button
               type="button"
               disabled={busy}
               onClick={() => void switchMode("live")}
-              className="rounded-lg bg-army-gold text-army-black px-3 py-1.5 text-xs font-bold border border-army-cream disabled:opacity-60"
+              className="btn-header"
             >
               Leave Training
             </button>
@@ -88,12 +87,12 @@ export function TrainingSwitch({ mode, role, beforeSwitch, onResetApplied }: Pro
                   setError(null);
                   setConfirmReset(true);
                 }}
-                className="rounded-lg border border-army-gold text-army-cream px-2.5 py-1 text-xs font-semibold"
+                className="btn-header"
               >
                 Reset to original
               </button>
             ) : (
-              <span className="text-[10px] text-army-cream/70 max-w-[9rem] leading-tight">
+              <span className="text-[10px] text-army-cream/70 whitespace-nowrap">
                 Switch to Editor or Approver to reset
               </span>
             )}
@@ -103,13 +102,17 @@ export function TrainingSwitch({ mode, role, beforeSwitch, onResetApplied }: Pro
             type="button"
             disabled={busy}
             onClick={() => void switchMode("training")}
-            className="rounded-lg bg-army-gold text-army-black px-3 py-1.5 text-xs font-bold"
+            className="btn-header"
           >
             Enter Training
           </button>
         )}
+        {error ? (
+          <span className="sr-only" role="alert">
+            {error}
+          </span>
+        ) : null}
       </div>
-      {error ? <p className="text-[10px] text-army-gold max-w-[12rem]">{error}</p> : null}
       {confirmReset ? (
         <div
           className="fixed inset-0 z-[80] bg-army-black/60 flex items-center justify-center p-4"

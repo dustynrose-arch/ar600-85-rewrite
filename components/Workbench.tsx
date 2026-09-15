@@ -294,9 +294,9 @@ export function Workbench({
           applyState(await res.json());
         }}
       />
-      <header className="shrink-0 bg-army-black text-army-cream px-4 py-2 flex items-center gap-4 box-split-b">
+      <header className="shrink-0 bg-army-black text-army-cream px-3 py-1 flex items-center gap-3 flex-nowrap overflow-x-auto box-split-b">
         <HeaderBrand title={HEADER_TITLE} training={state.mode === "training"} />
-        <div className="flex items-center gap-2 text-xs">
+        <div className="flex items-center gap-2 text-xs ml-auto shrink-0">
           <TrainingSwitch
             mode={state.mode}
             role={state.role}
@@ -310,12 +310,12 @@ export function Workbench({
               }
             }}
           />
-          <label className="btn-header-ghost">
+          <label className="btn-header">
             Role
             <select
               value={state.role}
               onChange={(event) => void changeRole(event.target.value as Role)}
-              className="bg-transparent text-army-cream border-0 px-1 py-0.5 rounded-lg"
+              className="bg-transparent text-army-black border-0 px-1 py-0.5 rounded-lg"
             >
               {(Object.keys(ROLE_LABEL) as Role[]).map((role) => (
                 <option key={role} value={role}>
@@ -330,10 +330,10 @@ export function Workbench({
           <a href="/api/export?kind=track-changes" className="btn-header">
             Export Word (Track Changes)
           </a>
-          <a href="/api/export?kind=summary" className="btn-header-ghost">
+          <a href="/api/export?kind=summary" className="btn-header">
             Export Summary (DRAFT)
           </a>
-          <a href="/guide" className="btn-header-ghost">
+          <a href="/guide" className="btn-header">
             User Guide
           </a>
         </div>
@@ -421,7 +421,7 @@ export function Workbench({
           )}
         </div>
         {rightCollapsed ? (
-          <CollapsedRail side="right" label="Show Assist" onExpand={() => setRightCollapsed(false)} />
+          <CollapsedRail side="right" label="Show Writing Assistant" onExpand={() => setRightCollapsed(false)} />
         ) : (
           <div className="w-[340px] max-w-[46%] shrink-0 min-w-0 min-h-0 flex flex-col">
             <AssistPane

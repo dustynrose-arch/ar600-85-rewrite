@@ -16,10 +16,10 @@ export function UserGuide() {
 
       <h2 className="text-xl font-bold mt-10">Workspace</h2>
       <ul className="list-disc pl-6 space-y-1">
-        <li>Three panes: outline on the left, your draft in the center, and Assist on the right.</li>
+        <li>Three panes: outline on the left, your draft in the center, and Writing Assistant on the right.</li>
         <li>
-          Use <strong>Hide outline</strong> on the left pane and <strong>Hide Assist</strong> on the right pane
-          to widen the center editor. Use <strong>Show outline</strong> or <strong>Show Assist</strong> — or
+          Use <strong>Hide outline</strong> on the left pane and <strong>Hide Writing Assistant</strong> on the right pane
+          to widen the center editor. Use <strong>Show outline</strong> or <strong>Show Writing Assistant</strong> — or
           the thin side strips — to bring a pane back. The center editor does not have hide buttons. The
           workspace remembers those choices until you close the browser tab.
         </li>
@@ -42,7 +42,7 @@ export function UserGuide() {
         <li>
           Editors reshape the <strong>working-copy</strong> outline from the left pane: Add before / after /
           paragraph, Split, Delete (confirm), Rename, and drag to reorder. Display numbers renumber inside the parent
-          (chapter→para). Assist chips and the Process-step highlight stay on each paragraph’s stable id — never
+          (chapter→para). Writing Assistant chips and the Process-step highlight stay on each paragraph’s stable id — never
           the display number, and never the original regulation. Reviewers and Approvers cannot change
           structure.
         </li>
@@ -72,22 +72,22 @@ export function UserGuide() {
         </li>
       </ul>
 
-      <h2 className="text-xl font-bold mt-8">Assist — the right-hand writing helper</h2>
+      <h2 className="text-xl font-bold mt-8">Writing Assistant — the right-hand writing helper</h2>
       <p>
-        Assist watches the paragraph you have open in the center. It is a reminder list for G–1 editors, not an
+        Writing Assistant watches the paragraph you have open in the center. It is a reminder list for G–1 editors, not an
         automatic rewrite tool. When the current wording touches a locked glossary term, another legal /
-        adverse-action hint, or a topic another publication already covers, Assist lists those reminders on the
+        adverse-action hint, or a topic another publication already covers, Writing Assistant lists those reminders on the
         right. Limited Use Policy (self-referral) appears only when the open paragraph or draft hits Limited Use
         policy (paras 10–12 / 10–13 and related chapter 10), self-referral / self-ID, protected evidence, a
         commander Limited Use briefing, or a biochemical / test-result path that invokes Limited Use. It stays
         hidden on Purpose, general ASAP admin, ADAPT/SUDCC how-to, and unrelated chapters. When it appears, cite
-        See para 10-12 / 10-13. Assist does not rewrite the paragraph. Adverse-action language that treats self-ID
+        See para 10-12 / 10-13. Writing Assistant does not rewrite the paragraph. Adverse-action language that treats self-ID
         as open season stays the existing legal chip — not a standing Limited Use panel — with STEER AR 600-8-2 /
         635-200 where adverse action comes up.
       </p>
       <h3 className="text-lg font-semibold mt-4">How underlined wording appears</h3>
       <p>
-        Open a paragraph. If Assist finds matching wording, those terms and topics show up on the Assist tab as
+        Open a paragraph. If Writing Assistant finds matching wording, those terms and topics show up on the Writing Assistant tab as
         underlined reminders (locked glossary terms, legal / adverse-action hints, or overlap with another
         publication). Limited Use Policy (self-referral) is hidden unless that open paragraph warrants it. They
         are suggestions only. Your draft does not change until you choose an action.
@@ -110,7 +110,7 @@ export function UserGuide() {
       <h3 className="text-lg font-semibold mt-4">When to use Glossary, Process, and authority references</h3>
       <ul className="list-disc pl-6 space-y-1">
         <li>
-          <strong>Glossary reminders (Assist tab)</strong> — when you use a defined term such as ASAP, ADAPT,
+          <strong>Glossary reminders (Writing Assistant tab)</strong> — when you use a defined term such as ASAP, ADAPT,
           Limited Use Policy, SUDCC, UDL, MRO, or DAMIS. Keep one official meaning and point readers to the
           glossary or the controlling paragraph. Do not invent a second definition in a commander’s guide.
         </li>
@@ -127,19 +127,19 @@ export function UserGuide() {
 
       <h2 className="text-xl font-bold mt-8">Legal help — two kinds</h2>
       <p>
-        Assist shows two kinds of legal help: <strong>Limited Use Policy (self-referral)</strong> — the AR 600-85
+        Writing Assistant shows two kinds of legal help: <strong>Limited Use Policy (self-referral)</strong> — the AR 600-85
         protection that only applies in qualifying self-referral cases — and{" "}
         <strong>Legal / adverse-action hints</strong> for other rights/discipline risks. Don’t read every legal chip
         as Limited Use.
       </p>
       <p>
         <strong>Limited Use Policy (self-referral)</strong> is the AR 600–85 protection for qualifying self-referral
-        cases. Assist hides that chip unless the paragraph you have open or its draft hits the locked trigger list.
+        cases. Writing Assistant hides that chip unless the paragraph you have open or its draft hits the locked trigger list.
         It does not appear on Purpose, general ASAP admin, ADAPT/SUDCC how-to, or unrelated chapters. The rule is
         cite-don’t-copy: keep the official definition in paragraphs 10–11 through 10–13, and point separation and
         flagging actions to AR 600–8–2, AR 635–200, AR 135–175, AR 135–178, and AR 600–8–24. When Limited Use
         Assist is shown, cite See para 10-12 / 10-13. Limited Use is not a shield for later misconduct or for
-        refusing a lawful order to test. Assist does not auto-rewrite.
+        refusing a lawful order to test. Writing Assistant does not auto-rewrite.
       </p>
       <p>
         <strong>Legal / adverse-action hint</strong> covers testing-basis blur, process-skip, Art. 31 / coercion
@@ -155,7 +155,7 @@ export function UserGuide() {
 
       <h2 className="text-xl font-bold mt-8">Doctrine tip — overlap checks</h2>
       <p>
-        Assist runs 22 overlap checks across your draft. For each topic, choose <em>Keep wording</em> or{" "}
+        Writing Assistant runs 22 overlap checks across your draft. For each topic, choose <em>Keep wording</em> or{" "}
         <em>Insert See cite</em>. Inserting a See cite appends the topic’s citation to the current paragraph and
         records the decision.
       </p>
@@ -163,7 +163,7 @@ export function UserGuide() {
       <h2 className="text-xl font-bold mt-8">Working-copy outline (Editors)</h2>
       <p>
         Use the left outline to reshape <em>your draft</em> only. Every add, split, delete, move, or rename is
-        written to the activity list with who, when, the stable paragraph id, and the action. Assist reminders,
+        written to the activity list with who, when, the stable paragraph id, and the action. Writing Assistant reminders,
         tasks, and checkpoints stay attached to that id even after the display number changes. They never
         rebind against the original regulation.
       </p>
@@ -178,7 +178,7 @@ export function UserGuide() {
           <strong>Rename</strong> — change the working-copy title. Summary of Change flags it as Revises.
         </li>
         <li>
-          <strong>Delete</strong> — confirm first. Assist state for that id is dropped. Summary of Change flags
+          <strong>Delete</strong> — confirm first. Writing Assistant reminders for that id are dropped. Summary of Change flags
           it as Rescinds. The original regulation paragraph remains in the read-only pane when you open a
           surviving neighbor.
         </li>
@@ -200,7 +200,7 @@ export function UserGuide() {
       <h2 className="text-xl font-bold mt-8">Export and upload</h2>
       <p>
         Word export is always DRAFT-stamped in the header, footer, and title-page disclaimer (AR 25–30 / DA Pam
-        25–40). Open <strong>Summary of Change</strong> in the outline (or the Assist <strong>Summary</strong>{" "}
+        25–40). Open <strong>Summary of Change</strong> in the outline (or the Writing Assistant <strong>Summary</strong>{" "}
         tab) for an APD-style list of only the paragraphs that differ between the original regulation
         (read-only) and your draft. Export Summary stays marked{" "}
         <em>Summary of Change (DRAFT — working copy; not authenticated under AR 25-30 / DA Pam 25-40)</em>. There is no

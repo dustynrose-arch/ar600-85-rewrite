@@ -1,4 +1,7 @@
-/** Always render both seals with the header DRAFT chip. Never seals alone. No hide control. */
+/** Always render both seals with the header DRAFT chip. Never seals alone. No hide control.
+ *  Army seal has no decorative box/ring. Do not crop or recolor the emblem files.
+ *  Brand cluster is shrink-0: title + DPRR stay one horizontal row between the seals.
+ *  Never a stacked narrow column — that is what puffed Dustyn’s Training header. */
 
 export const HEADER_TITLE = "AR 600-85 Rewrite";
 export const HEADER_SUBTITLE = "Directorate of Prevention, Resilience and Readiness";
@@ -18,21 +21,21 @@ export function HeaderBrand({
 }) {
   const mark = headerDraftMark(training);
   return (
-    <div className="flex items-center gap-3 min-w-0 flex-1">
+    <div className="header-brand flex items-center gap-2.5 shrink-0">
       <img
         src="/g1-seal.png"
         alt="Office of the Deputy Chief of Staff, G-1, United States Army seal"
-        className="h-12 w-12 shrink-0 rounded-full object-contain ring-2 ring-army-gold/80 bg-army-cream/15"
+        className="h-10 w-10 shrink-0 rounded-full object-contain"
       />
-      <div className="min-w-0 max-w-[28rem]">
-        <h1 className="text-lg font-semibold leading-tight text-army-cream">{title}</h1>
-        <p className="text-xs text-army-goldDark">{HEADER_SUBTITLE}</p>
-        {detail ? <p className="text-[11px] text-army-cream/80">{detail}</p> : null}
+      <div className="header-brand-titles flex items-baseline gap-2 whitespace-nowrap">
+        <h1 className="text-base font-semibold leading-none text-army-cream">{title}</h1>
+        <p className="text-xs leading-none text-army-goldDark">{HEADER_SUBTITLE}</p>
+        {detail ? <p className="text-[11px] leading-none text-army-cream/80">{detail}</p> : null}
       </div>
       <img
         src="/army-seal.png"
         alt="United States Army emblem (official Department of the Army emblem)"
-        className="h-12 w-12 shrink-0 object-contain ring-2 ring-army-gold/80 bg-army-cream/15"
+        className="h-10 w-10 shrink-0 object-contain"
       />
       <span
         data-draft-mark=""
@@ -42,7 +45,6 @@ export function HeaderBrand({
       >
         {mark}
       </span>
-      <div className="flex-1 min-w-2" aria-hidden />
     </div>
   );
 }

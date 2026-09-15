@@ -26,13 +26,14 @@ test("header DRAFT chip is always on; gold DRAFT / WORKING COPY bar is gone; exp
   assert.match(brand, /data-draft-mark=""/);
   assert.match(brand, /className="header-draft-mark"/);
   assert.match(brand, /Never seals alone/);
-  assert.equal(brand.includes("Hide"), false);
+  assert.equal(brand.includes("btn-header"), false, "DRAFT / TRAINING DRAFT chips stay marks, not action buttons");
   assert.equal(brand.includes("<button"), false);
   assert.match(css, /\.header-draft-mark \{/);
 
   assert.match(workbench, /<HeaderBrand title=\{HEADER_TITLE\} training=\{state\.mode === "training"\} \/>/);
   assert.match(guide, /training=\{mode === "training"\}/);
   assert.match(workbench, /<TrainingBanner \/>/);
+  assert.match(workbench, /state\.mode === "training" \? <TrainingBanner/);
   assert.match(guide, /<TrainingBanner \/>/);
   assert.match(training, />TRAINING</);
   assert.match(training, /training-banner/);
@@ -112,15 +113,12 @@ test("rounded-rectangle buttons share one radius; Training gold fill and Reset C
 
   const leaveIdx = trainingSwitch.indexOf("Leave Training");
   const leaveBlock = trainingSwitch.slice(Math.max(0, leaveIdx - 400), leaveIdx);
-  assert.match(leaveBlock, /rounded-lg/);
-  assert.match(leaveBlock, /bg-army-gold/);
-  assert.match(leaveBlock, /text-army-black/);
-  assert.match(leaveBlock, /border-army-cream/);
+  assert.match(leaveBlock, /btn-header/);
+  assert.equal(leaveBlock.includes("bg-army-cream"), false, "Cream fill on the dark header is too pale");
 
   const enterIdx = trainingSwitch.indexOf("Enter Training");
   const enterBlock = trainingSwitch.slice(Math.max(0, enterIdx - 200), enterIdx);
-  assert.match(enterBlock, /rounded-lg/);
-  assert.match(enterBlock, /bg-army-gold/);
+  assert.match(enterBlock, /btn-header/);
 
   const confirmBlock = trainingSwitch.slice(trainingSwitch.indexOf("CONFIRM RESET"));
   assert.match(confirmBlock, /rounded-lg/);
@@ -142,8 +140,26 @@ test("panel headings share font-ui; parent class is larger than child class", ()
   assert.match(outline, /className="panel-heading">Outline</);
   assert.match(outline, /chapter-heading/);
   assert.match(editor, /className="panel-heading">Your draft</);
-  assert.match(assist, /className="panel-heading">Assist</);
+  assert.match(assist, /className="panel-heading">Writing Assistant</);
   assert.match(summary, /className="panel-heading">Summary of Change</);
+});
+
+test("right pane chrome is Writing Assistant, not Assist", () => {
+  const assist = readRepoFile("components/AssistPane.tsx");
+  const workbench = readRepoFile("components/Workbench.tsx");
+  const guide = readRepoFile("components/UserGuide.tsx");
+  const walkthrough = readRepoFile("components/GuideWalkthrough.tsx");
+
+  assert.match(assist, /className="panel-heading">Writing Assistant</);
+  assert.match(assist, /label: "Writing Assistant"/);
+  assert.match(assist, /PaneToggle label="Writing Assistant"/);
+  assert.match(workbench, /Show Writing Assistant/);
+  assert.equal(assist.includes('panel-heading">Assist<'), false);
+  assert.equal(workbench.includes("Show Assist"), false);
+  assert.equal(guide.includes("Hide Assist"), false);
+  assert.equal(walkthrough.includes("Hide Assist"), false);
+  assert.match(guide, /Writing Assistant on the right/);
+  assert.match(walkthrough, /Open the <strong>Writing Assistant<\/strong> tab/);
 });
 
 test("STEER AR sister-pub chips are buttons with cursor, underline, and focus ring", () => {
@@ -210,15 +226,78 @@ test("darker-but-fun chrome: dark scheme, gold header chip, no leftover light pa
   assert.equal(assist.includes("bg-white"), false);
   assert.equal(outline.includes("bg-white"), false);
 
-  assert.match(brand, /ring-2 ring-army-gold/);
+  assert.equal(brand.includes("ring-"), false, "Army seal must not sit in a decorative ring/box");
+  assert.match(brand, /header-brand/);
+  assert.match(brand, /header-brand-titles/);
+  assert.match(brand, /whitespace-nowrap/);
+  assert.match(brand, /shrink-0/);
+  assert.equal(brand.includes("flex-1"), false, "flex-1 squeezed the title into a stacked column between the seals");
+  assert.equal(brand.includes("max-w-[28rem]"), false, "title and DPRR subtitle must sit on one horizontal row");
+  assert.equal(brand.includes("min-w-0"), false);
   assert.match(brand, /src="\/g1-seal\.png"/);
   assert.match(brand, /src="\/army-seal\.png"/);
   assert.match(brand, /className="header-draft-mark"/);
 
   assert.match(training, /training-banner/);
-  assert.match(trainingSwitch, /bg-army-gold/);
+  assert.match(trainingSwitch, /btn-header/);
   assert.match(exportDocx, /draftRun\(wordHeaderMark\(training\)/);
   assert.match(exportDocx, /draftRun\(wordFooterMark\(training\)/);
+});
+
+test("top-bar buttons share one gold fill/border/text scheme; Army seal has no decorative box", () => {
+  const css = readRepoFile("app/globals.css");
+  const workbench = readRepoFile("components/Workbench.tsx");
+  const guide = readRepoFile("app/guide/page.tsx");
+  const brand = readRepoFile("components/HeaderBrand.tsx");
+  const trainingSwitch = readRepoFile("components/TrainingSwitch.tsx");
+
+  assert.match(css, /\.btn-header \{[\s\S]*bg-army-gold[\s\S]*text-army-black[\s\S]*border-army-gold/);
+  assert.match(css, /\.btn-header-ghost \{[\s\S]*btn-header/);
+
+  const headerStart = workbench.indexOf("<header");
+  const headerEnd = workbench.indexOf("</header>");
+  const header = workbench.slice(headerStart, headerEnd);
+  assert.match(header, /className="btn-header"/);
+  assert.equal(header.includes("btn-header-ghost"), false);
+  assert.match(header, /Export Word \(Plain\)/);
+  assert.match(header, /Export Word \(Track Changes\)/);
+  assert.match(header, /User Guide/);
+  assert.match(header, /<label className="btn-header">/);
+  assert.match(header, /py-1 /);
+  assert.match(header, /flex-nowrap/);
+  assert.match(header, /flex items-center gap-3/);
+
+  assert.match(guide, /className="btn-header"/);
+  assert.equal(guide.includes("btn-header-ghost"), false);
+
+  const leaveIdx = trainingSwitch.indexOf("Leave Training");
+  const leaveBlock = trainingSwitch.slice(Math.max(0, leaveIdx - 250), leaveIdx);
+  assert.match(leaveBlock, /btn-header/);
+  const enterIdx = trainingSwitch.indexOf("Enter Training");
+  const enterBlock = trainingSwitch.slice(Math.max(0, enterIdx - 250), enterIdx);
+  assert.match(enterBlock, /btn-header/);
+  assert.equal(trainingSwitch.includes("border-2 border-army-gold"), false, "Training cluster must not puff the black bar");
+  assert.equal(trainingSwitch.includes("flex-wrap items-center gap-2 border-2"), false);
+
+  const armyIdx = brand.indexOf("army-seal.png");
+  const armyTag = brand.slice(armyIdx, brand.indexOf("/>", armyIdx) + 2);
+  assert.equal(armyTag.includes("ring-"), false);
+  assert.equal(armyTag.includes("border"), false);
+  assert.equal(armyTag.includes("bg-army-cream"), false);
+  assert.equal(armyTag.includes("shadow"), false);
+  assert.match(armyTag, /object-contain/);
+
+  const g1Idx = brand.indexOf("g1-seal.png");
+  const g1Tag = brand.slice(g1Idx, brand.indexOf("/>", g1Idx) + 2);
+  assert.equal(g1Tag.includes("ring-"), false);
+  assert.equal(g1Tag.includes("bg-army-cream"), false);
+  assert.match(brand, /className="header-draft-mark"/);
+  assert.equal(brand.includes("btn-header"), false);
+  assert.match(brand, /header-brand-titles/);
+  assert.match(brand, /whitespace-nowrap/);
+  assert.equal(brand.includes("flex-1"), false);
+  assert.match(brand, /src="\/g1-seal\.png"/);
+  assert.match(brand, /src="\/army-seal\.png"/);
 });
 
 test("Your draft delta highlight is gold-on-charcoal; Word export has Plain and Track Changes", () => {

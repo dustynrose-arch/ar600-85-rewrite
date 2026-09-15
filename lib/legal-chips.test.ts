@@ -250,6 +250,6 @@ test("AssistPane gates Limited Use on the open section id and cites 10-12 / 10-1
   );
   assert.match(assist, /lupChips\.length \? \(/);
   assert.match(assist, /LIMITED_USE_SEE_CITE/);
-  assert.match(assist, /Suggestion only — Assist does not rewrite this paragraph/);
+  assert.match(assist, /Suggestion only — Writing Assistant does not rewrite this paragraph/);
   assert.equal(assist.includes("No Limited Use Policy (self-referral) language in the current paragraph."), false);
 });
