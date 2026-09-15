@@ -68,10 +68,9 @@ export function TrainingSwitch({ mode, role, beforeSwitch, onResetApplied }: Pro
 
   return (
     <>
-      <div className="flex flex-wrap items-center gap-2 border-2 border-army-gold bg-army-ink px-2 py-1">
+      <div className="flex items-center gap-2" title={error ?? undefined}>
         {mode === "training" ? (
           <>
-            <span className="text-[11px] font-bold tracking-[0.28em] text-army-gold">TRAINING</span>
             <button
               type="button"
               disabled={busy}
@@ -93,7 +92,7 @@ export function TrainingSwitch({ mode, role, beforeSwitch, onResetApplied }: Pro
                 Reset to original
               </button>
             ) : (
-              <span className="text-[10px] text-army-cream/70 max-w-[9rem] leading-tight">
+              <span className="text-[10px] text-army-cream/70 whitespace-nowrap">
                 Switch to Editor or Approver to reset
               </span>
             )}
@@ -108,8 +107,12 @@ export function TrainingSwitch({ mode, role, beforeSwitch, onResetApplied }: Pro
             Enter Training
           </button>
         )}
+        {error ? (
+          <span className="sr-only" role="alert">
+            {error}
+          </span>
+        ) : null}
       </div>
-      {error ? <p className="text-[10px] text-army-gold max-w-[12rem]">{error}</p> : null}
       {confirmReset ? (
         <div
           className="fixed inset-0 z-[80] bg-army-black/60 flex items-center justify-center p-4"

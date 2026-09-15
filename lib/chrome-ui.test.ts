@@ -26,13 +26,14 @@ test("header DRAFT chip is always on; gold DRAFT / WORKING COPY bar is gone; exp
   assert.match(brand, /data-draft-mark=""/);
   assert.match(brand, /className="header-draft-mark"/);
   assert.match(brand, /Never seals alone/);
-  assert.equal(brand.includes("Hide"), false);
+  assert.equal(brand.includes("btn-header"), false, "DRAFT / TRAINING DRAFT chips stay marks, not action buttons");
   assert.equal(brand.includes("<button"), false);
   assert.match(css, /\.header-draft-mark \{/);
 
   assert.match(workbench, /<HeaderBrand title=\{HEADER_TITLE\} training=\{state\.mode === "training"\} \/>/);
   assert.match(guide, /training=\{mode === "training"\}/);
   assert.match(workbench, /<TrainingBanner \/>/);
+  assert.match(workbench, /state\.mode === "training" \? <TrainingBanner/);
   assert.match(guide, /<TrainingBanner \/>/);
   assert.match(training, />TRAINING</);
   assert.match(training, /training-banner/);
@@ -207,7 +208,10 @@ test("darker-but-fun chrome: dark scheme, gold header chip, no leftover light pa
   assert.equal(assist.includes("bg-white"), false);
   assert.equal(outline.includes("bg-white"), false);
 
-  assert.equal(brand.includes("ring-"), false, "seals must not sit in a decorative ring/box");
+  assert.equal(brand.includes("ring-"), false, "Army seal must not sit in a decorative ring/box");
+  assert.match(brand, /items-baseline gap-2/);
+  assert.equal(brand.includes("max-w-[28rem]"), false, "title and DPRR subtitle must sit on one horizontal row");
+  assert.match(brand, /whitespace-nowrap/);
   assert.match(brand, /src="\/g1-seal\.png"/);
   assert.match(brand, /src="\/army-seal\.png"/);
   assert.match(brand, /className="header-draft-mark"/);
@@ -237,6 +241,8 @@ test("top-bar buttons share one gold fill/border/text scheme; Army seal has no d
   assert.match(header, /Export Word \(Track Changes\)/);
   assert.match(header, /User Guide/);
   assert.match(header, /<label className="btn-header">/);
+  assert.match(header, /py-1\.5/);
+  assert.match(header, /flex items-center gap-3/);
 
   assert.match(guide, /className="btn-header"/);
   assert.equal(guide.includes("btn-header-ghost"), false);
@@ -247,6 +253,8 @@ test("top-bar buttons share one gold fill/border/text scheme; Army seal has no d
   const enterIdx = trainingSwitch.indexOf("Enter Training");
   const enterBlock = trainingSwitch.slice(Math.max(0, enterIdx - 250), enterIdx);
   assert.match(enterBlock, /btn-header/);
+  assert.equal(trainingSwitch.includes("border-2 border-army-gold"), false, "Training cluster must not puff the black bar");
+  assert.equal(trainingSwitch.includes("flex-wrap items-center gap-2 border-2"), false);
 
   const armyIdx = brand.indexOf("army-seal.png");
   const armyTag = brand.slice(armyIdx, brand.indexOf("/>", armyIdx) + 2);
@@ -260,8 +268,8 @@ test("top-bar buttons share one gold fill/border/text scheme; Army seal has no d
   const g1Tag = brand.slice(g1Idx, brand.indexOf("/>", g1Idx) + 2);
   assert.equal(g1Tag.includes("ring-"), false);
   assert.equal(g1Tag.includes("bg-army-cream"), false);
-  assert.match(brand, /Never seals alone/);
   assert.match(brand, /className="header-draft-mark"/);
+  assert.equal(brand.includes("btn-header"), false);
   assert.match(brand, /src="\/g1-seal\.png"/);
   assert.match(brand, /src="\/army-seal\.png"/);
 });

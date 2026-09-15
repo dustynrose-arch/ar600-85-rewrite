@@ -1,5 +1,6 @@
 /** Always render both seals with the header DRAFT chip. Never seals alone. No hide control.
- *  No decorative box/ring around either seal. Do not crop or recolor the emblem files. */
+ *  Army seal has no decorative box/ring. Do not crop or recolor the emblem files.
+ *  Title and DPRR subtitle sit on one horizontal row so Live and Training share a thin bar. */
 
 export const HEADER_TITLE = "AR 600-85 Rewrite";
 export const HEADER_SUBTITLE = "Directorate of Prevention, Resilience and Readiness";
@@ -25,10 +26,10 @@ export function HeaderBrand({
         alt="Office of the Deputy Chief of Staff, G-1, United States Army seal"
         className="h-12 w-12 shrink-0 rounded-full object-contain"
       />
-      <div className="min-w-0 max-w-[28rem]">
-        <h1 className="text-lg font-semibold leading-tight text-army-cream">{title}</h1>
-        <p className="text-xs text-army-goldDark">{HEADER_SUBTITLE}</p>
-        {detail ? <p className="text-[11px] text-army-cream/80">{detail}</p> : null}
+      <div className="min-w-0 flex items-baseline gap-2">
+        <h1 className="text-base font-semibold leading-none text-army-cream whitespace-nowrap">{title}</h1>
+        <p className="text-xs leading-none text-army-goldDark truncate">{HEADER_SUBTITLE}</p>
+        {detail ? <p className="text-[11px] leading-none text-army-cream/80 truncate">{detail}</p> : null}
       </div>
       <img
         src="/army-seal.png"
