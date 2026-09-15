@@ -121,7 +121,7 @@ export function TrainingSwitch({ mode, role, beforeSwitch, onResetApplied }: Pro
           }}
         >
           <div
-            className="bg-army-paper border-2 border-army-rust max-w-md w-full max-h-[90vh] overflow-y-auto p-5 shadow-xl"
+            className="bg-army-raised border-2 border-army-rust max-w-md w-full max-h-[90vh] overflow-y-auto p-5 shadow-xl text-army-cream"
             onClick={(event) => event.stopPropagation()}
           >
             <p className="text-xs font-bold tracking-[0.2em] text-army-rust">CONFIRM RESET</p>

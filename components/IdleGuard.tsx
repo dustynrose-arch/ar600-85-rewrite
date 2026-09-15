@@ -62,8 +62,8 @@ export function IdleGuard({ role, locked, sectionId, draftBody, onLocked }: Prop
   if (!warn || locked) return null;
   return (
     <div className="fixed inset-0 z-50 bg-army-black/55 flex items-center justify-center p-4">
-      <div className="bg-army-paper border-2 border-army-gold max-w-md w-full p-5 shadow-xl">
-        <p className="text-xs font-bold tracking-[0.2em] text-army-rust">IDLE WARNING</p>
+      <div className="bg-army-raised border-2 border-army-gold max-w-md w-full p-5 shadow-xl text-army-cream">
+        <p className="text-xs font-bold tracking-[0.2em] text-army-gold">IDLE WARNING</p>
         <h2 className="text-xl font-bold mt-1">Session idle for 14 minutes</h2>
         <p className="mt-2 text-sm text-army-slate">
           Your draft will save and lock in {remaining} second{remaining === 1 ? "" : "s"} unless you continue

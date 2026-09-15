@@ -283,7 +283,7 @@ export function Workbench({
   if (!working) return null;
 
   return (
-    <div className="h-screen flex flex-col bg-army-cream">
+    <div className="h-screen flex flex-col bg-army-black">
       <IdleGuard
         role={state.role}
         locked={state.locked}

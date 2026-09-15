@@ -39,10 +39,10 @@ export function EditorPane({
           : "Saved";
 
   return (
-    <section className="flex flex-col min-h-0 h-full bg-army-paper">
-      <header className="px-4 py-3 border-b border-army-black/10">
+    <section className="flex flex-col min-h-0 h-full panel-surface">
+      <header className="px-4 py-3 border-b border-army-gold/20">
         <p className="panel-heading">Your draft</p>
-        <h2 className="font-doc text-xl font-semibold">
+        <h2 className="font-doc text-xl font-semibold text-army-cream">
           {working.number}. {working.title}
         </h2>
         <p className="text-[11px] text-army-slate">
@@ -50,14 +50,14 @@ export function EditorPane({
         </p>
       </header>
       <div className="grid grid-rows-[minmax(0,2fr)_minmax(14rem,3fr)] min-h-0 flex-1">
-        <div className="min-h-0 border-b border-army-black/10 flex flex-col">
-          <p className="section-heading px-4 pt-2 text-army-slate">
+        <div className="min-h-0 border-b border-army-gold/20 flex flex-col">
+          <p className="section-heading px-4 pt-2">
             ORIGINAL REGULATION — READ ONLY
           </p>
           <div
             spellCheck={false}
             data-spellcheck="disabled"
-            className="pane-scroll overflow-y-auto px-4 py-2 font-doc text-[13px] leading-relaxed text-army-ink/90 whitespace-pre-wrap"
+            className="pane-scroll overflow-y-auto px-4 py-2 font-doc text-[13px] leading-relaxed text-army-cream/90 whitespace-pre-wrap"
           >
             {compareBody != null ? (
               <>
