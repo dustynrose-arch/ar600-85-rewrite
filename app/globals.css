@@ -134,6 +134,14 @@ option {
   background-size: 6px 3px;
 }
 
+.draft-delta {
+  background-color: #f4d56a;
+  color: #101218;
+  border-radius: 2px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
 #draft-editor {
   color: transparent;
   caret-color: #f4efe3;

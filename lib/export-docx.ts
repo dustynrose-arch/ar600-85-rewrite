@@ -12,7 +12,7 @@ import {
   TextRun,
   WidthType,
 } from "docx";
-import { baselineDocument, sectionMap } from "./baseline";
+import { baselineDocument, flattenSections, sectionMap } from "./baseline";
 import { chapterDisplayLabel, flattenOutlineSections, parentIndexFromDocument, seedWorkingOutline } from "./outline";
 import {
   actionLabel,
@@ -23,10 +23,27 @@ import {
   SUMMARY_TABLE_COLUMNS,
 } from "./summary-of-change";
 import { BASELINE_LABEL } from "./types";
-import type { WorkspaceState } from "./types";
-import { wordFooterMark, wordHeaderMark } from "./export-stamps";
+import type { Section, WorkspaceState } from "./types";
+import {
+  TRACK_CHANGES_COVER_LINE,
+  wordFooterMark,
+  wordHeaderMark,
+} from "./export-stamps";
+import {
+  headingLine,
+  newRevisionClock,
+  trackedSectionParagraphs,
+  flattenExportText,
+} from "./revision-markup";
 
 type DocChild = Paragraph | Table;
+
+export type DraftExportOptions = {
+  training?: boolean;
+  trackChanges?: boolean;
+  includeSummary?: boolean;
+  includeRescinded?: boolean;
+};
 
 const DISCLAIMER =
   "DRAFT / WORKING COPY — Not an official Army publication. This document is an internal Deputy Chief of Staff, G–1 rewrite working-copy for working-group use only. It has not been authenticated under AR 25–30 (Army Publishing Program) or processed under DA Pam 25–40 (Army Publishing Program Procedures). Do not cite, implement, or distribute outside the G–1 rewrite working group. The original regulation remains ACTIVE AR 600–85 (4 October 2024, administrative revisions 27 February 2025 and 19 February 2026).";
@@ -52,7 +69,7 @@ function bodyRun(text: string, opts: { bold?: boolean; size?: number; italics?: 
   });
 }
 
-function titlePage(extraTitle?: string, training = false): Paragraph[] {
+function titlePage(extraTitle?: string, training = false, trackChanges = false): Paragraph[] {
   return [
     new Paragraph({
       alignment: AlignmentType.CENTER,
@@ -64,6 +81,15 @@ function titlePage(extraTitle?: string, training = false): Paragraph[] {
       spacing: { after: 120 },
       children: [draftRun(extraTitle ?? "AR 600–85 Rewrite — Working Copy", { bold: true, size: 36 })],
     }),
+    ...(trackChanges
+      ? [
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            spacing: { after: 120 },
+            children: [draftRun(TRACK_CHANGES_COVER_LINE, { bold: true, size: 28 })],
+          }),
+        ]
+      : []),
     new Paragraph({
       alignment: AlignmentType.CENTER,
       spacing: { after: 200 },
@@ -184,11 +210,12 @@ function summaryTable(state: WorkspaceState): DocChild[] {
   return children;
 }
 
-function draftChrome(docTitle: string, children: DocChild[], training = false) {
+function draftChrome(docTitle: string, children: DocChild[], training = false, trackChanges = false) {
   return new Document({
     creator: "AR 600-85 Rewrite Working Group",
     title: docTitle,
     description: DISCLAIMER,
+    features: trackChanges ? { trackRevisions: true } : undefined,
     styles: {
       default: {
         document: {
@@ -239,18 +266,37 @@ function draftChrome(docTitle: string, children: DocChild[], training = false) {
   });
 }
 
-export async function buildDraftDocx(state: WorkspaceState, opts: { training?: boolean } = {}): Promise<Buffer> {
-  const training = opts.training === true;
+function plainSectionParagraphs(working: Section): Paragraph[] {
+  const children: Paragraph[] = [
+    new Paragraph({
+      spacing: { before: 200, after: 80 },
+      children: [bodyRun(headingLine(working), { bold: true })],
+    }),
+  ];
+  for (const para of working.body.split(/\n{2,}/)) {
+    children.push(
+      new Paragraph({
+        spacing: { after: 160 },
+        children: [bodyRun(flattenExportText(para))],
+      }),
+    );
+  }
+  return children;
+}
+
+function workingCopyBody(state: WorkspaceState, opts: { trackChanges: boolean; includeRescinded: boolean }): DocChild[] {
+  const trackChanges = opts.trackChanges;
   const children: DocChild[] = [
-    ...titlePage(undefined, training),
-    ...summaryTable(state),
     new Paragraph({
       spacing: { before: 360, after: 200 },
       children: [draftRun("Working-copy text (DRAFT)", { bold: true, size: 28 })],
     }),
   ];
-
+  const originalSections = sectionMap();
   const outline = state.workingOutline?.length ? state.workingOutline : seedWorkingOutline(baselineDocument);
+  const clock = newRevisionClock();
+  const keptIds = new Set<string>();
+
   for (const chapter of outline) {
     children.push(
       new Paragraph({
@@ -258,29 +304,49 @@ export async function buildDraftDocx(state: WorkspaceState, opts: { training?: b
         children: [bodyRun(`${chapterDisplayLabel(chapter, outline)}. ${chapter.title}`, { bold: true, size: 28 })],
       }),
     );
-    for (const section of flattenOutlineSections([chapter], state.workingSections)) {
-      const working = section;
-      children.push(
-        new Paragraph({
-          spacing: { before: 200, after: 80 },
-          children: [bodyRun(`${working.number}. ${working.title}`, { bold: true })],
-        }),
-      );
-      for (const para of working.body.split(/\n{2,}/)) {
-        children.push(
-          new Paragraph({
-            spacing: { after: 160 },
-            children: [bodyRun(para.replace(/\s+/g, " ").trim())],
-          }),
-        );
+    for (const working of flattenOutlineSections([chapter], state.workingSections)) {
+      keptIds.add(working.id);
+      if (trackChanges) {
+        children.push(...trackedSectionParagraphs(originalSections[working.id], working, clock));
+      } else {
+        children.push(...plainSectionParagraphs(working));
       }
     }
   }
+
+  if (trackChanges && opts.includeRescinded) {
+    const rescinded = flattenSections(baselineDocument).filter((section) => !keptIds.has(section.id));
+    if (rescinded.length) {
+      children.push(
+        new Paragraph({
+          spacing: { before: 360, after: 160 },
+          children: [draftRun("Rescinded from the original regulation", { bold: true, size: 28 })],
+        }),
+      );
+      for (const section of rescinded) {
+        children.push(...trackedSectionParagraphs(section, { number: "", title: "", body: "" }, clock));
+      }
+    }
+  }
+
+  return children;
+}
+
+export async function buildDraftDocx(state: WorkspaceState, opts: DraftExportOptions = {}): Promise<Buffer> {
+  const training = opts.training === true;
+  const trackChanges = opts.trackChanges === true;
+  const includeSummary = opts.includeSummary !== false;
+  const children: DocChild[] = [
+    ...titlePage(undefined, training, trackChanges),
+    ...(includeSummary ? summaryTable(state) : []),
+    ...workingCopyBody(state, { trackChanges, includeRescinded: opts.includeRescinded !== false }),
+  ];
 
   const doc = draftChrome(
     training ? "AR 600-85 Rewrite — TRAINING (DRAFT)" : "AR 600-85 Rewrite — Working Copy (DRAFT)",
     children,
     training,
+    trackChanges,
   );
   return Buffer.from(await Packer.toBuffer(doc));
 }

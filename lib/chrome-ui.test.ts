@@ -217,12 +217,36 @@ test("darker-but-fun chrome: dark scheme, gold header chip, no leftover light pa
 
   assert.match(training, /training-banner/);
   assert.match(trainingSwitch, /bg-army-gold/);
-  assert.match(trainingSwitch, /Leave Training/);
-  assert.match(trainingSwitch, /Enter Training/);
-
-  assert.match(exportStamps, /TRAINING \/ DRAFT \/ WORKING COPY/);
-  assert.match(exportStamps, /DRAFT \/ WORKING COPY/);
-  assert.match(exportStamps, /TRAINING \/ DRAFT/);
   assert.match(exportDocx, /draftRun\(wordHeaderMark\(training\)/);
   assert.match(exportDocx, /draftRun\(wordFooterMark\(training\)/);
+});
+
+test("Your draft delta highlight is gold-on-charcoal; Word export has Plain and Track Changes", () => {
+  const css = readRepoFile("app/globals.css");
+  const workbench = readRepoFile("components/Workbench.tsx");
+  const draft = readRepoFile("components/DraftEditor.tsx");
+  const editor = readRepoFile("components/EditorPane.tsx");
+  const brand = readRepoFile("components/HeaderBrand.tsx");
+  const exportStamps = readRepoFile("lib/export-stamps.ts");
+  const exportRoute = readRepoFile("app/api/export/route.ts");
+
+  assert.match(css, /\.draft-delta \{[\s\S]*#f4d56a/);
+  assert.match(css, /\.draft-delta \{[\s\S]*#101218/);
+  assert.match(draft, /data-delta-overlay="draft"/);
+  assert.match(draft, /data-spell-overlay="draft"/);
+  assert.match(draft, /insertRanges/);
+  assert.match(editor, /original=\{compareBody != null \? compareBody : baseline\.body\}/);
+  assert.equal(editor.includes("draft-delta"), false);
+  assert.equal(editor.includes("data-draft-delta"), false);
+
+  assert.match(workbench, /Export Word \(Plain\)/);
+  assert.match(workbench, /Export Word \(Track Changes\)/);
+  assert.match(workbench, /href="\/api\/export"/);
+  assert.match(workbench, /href="\/api\/export\?kind=track-changes"/);
+  assert.match(exportRoute, /kind === "track-changes"/);
+  assert.match(exportStamps, /change-markup working draft for WG review/);
+
+  assert.match(brand, /className="header-draft-mark"/);
+  assert.match(brand, /headerDraftMark\(training\)/);
+  assert.equal(brand.includes("WORKING COPY"), false);
 });

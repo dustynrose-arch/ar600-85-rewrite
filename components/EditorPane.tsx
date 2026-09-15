@@ -75,6 +75,7 @@ export function EditorPane({
           key={working.id}
           sectionId={working.id}
           value={draft}
+          original={compareBody != null ? compareBody : baseline.body}
           editable={editable}
           saveState={saveState}
           onChange={onChange}

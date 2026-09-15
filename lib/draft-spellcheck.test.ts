@@ -30,12 +30,14 @@ test("draft textarea stays uncontrolled and hosts the in-app overlay", () => {
   assert.match(draftEditor, /defaultValue=\{seedRef\.current\.text\}/);
   assert.match(draftEditor, /data-spellcheck="app"/);
   assert.match(draftEditor, /data-spell-overlay="draft"/);
+  assert.match(draftEditor, /data-delta-overlay="draft"/);
   assert.match(draftEditor, /data-misspelled=/);
   assert.match(draftEditor, /data-spell-menu/);
   assert.match(draftEditor, /spellCheck=\{false\}/);
   assert.match(draftEditor, /Undo/);
   assert.match(draftEditor, /Save/);
   assert.match(draftEditor, /onContextMenu=\{openSpellMenu\}/);
+  assert.match(draftEditor, /insertRanges/);
 });
 
 test("original regulation pane stays spellcheck off and CSS does not restyle ::spelling-error", () => {

@@ -325,7 +325,10 @@ export function Workbench({
             </select>
           </label>
           <a href="/api/export" className="btn-header">
-            Export Word (DRAFT)
+            Export Word (Plain)
+          </a>
+          <a href="/api/export?kind=track-changes" className="btn-header">
+            Export Word (Track Changes)
           </a>
           <a href="/api/export?kind=summary" className="btn-header-ghost">
             Export Summary (DRAFT)
