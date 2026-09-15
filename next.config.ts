@@ -8,6 +8,13 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "26mb",
     },
   },
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.md$/,
+      type: "asset/source",
+    });
+    return config;
+  },
 };
 
 export default nextConfig;
