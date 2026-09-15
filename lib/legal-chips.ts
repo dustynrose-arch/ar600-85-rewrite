@@ -7,7 +7,7 @@ export const LEGAL_CHIP_BODY =
 export const LEGAL_CITE_PUBS = ["AR 600-8-2", "AR 635-200", "AR 135-175", "AR 135-178"] as const;
 
 export const GUIDE_LEGAL_ONE_LINER =
-  "Assist shows two kinds of legal help: Limited Use Policy (self-referral) — the AR 600-85 protection that only applies in qualifying self-referral cases — and Legal / adverse-action hints for other rights/discipline risks. Don’t read every legal chip as Limited Use.";
+  "Writing Assistant shows two kinds of legal help: Limited Use Policy (self-referral) — the AR 600-85 protection that only applies in qualifying self-referral cases — and Legal / adverse-action hints for other rights/discipline risks. Don’t read every legal chip as Limited Use.";
 
 export const LIMITED_USE_CATEGORY = "Limited Use Policy (self-referral)";
 export const ADVERSE_ACTION_CATEGORY = "Legal / adverse-action hint";

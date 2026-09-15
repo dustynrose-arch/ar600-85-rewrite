@@ -421,7 +421,7 @@ export function Workbench({
           )}
         </div>
         {rightCollapsed ? (
-          <CollapsedRail side="right" label="Show Assist" onExpand={() => setRightCollapsed(false)} />
+          <CollapsedRail side="right" label="Show Writing Assistant" onExpand={() => setRightCollapsed(false)} />
         ) : (
           <div className="w-[340px] max-w-[46%] shrink-0 min-w-0 min-h-0 flex flex-col">
             <AssistPane

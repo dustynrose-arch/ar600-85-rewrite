@@ -76,7 +76,7 @@ type Props = {
 };
 
 const TABS: { id: Tab; label: string }[] = [
-  { id: "assist", label: "Assist" },
+  { id: "assist", label: "Writing Assistant" },
   { id: "authority", label: "Authority" },
   { id: "process", label: "Process" },
   { id: "tasks", label: "Tasks" },
@@ -91,8 +91,8 @@ export function AssistPane(props: Props) {
   return (
     <aside className="flex flex-col min-h-0 h-full pane-split-x panel-surface">
       <div className="flex items-center justify-between gap-2 px-2 py-1.5 box-split-b">
-        <p className="panel-heading">Assist</p>
-        <PaneToggle label="Assist" expanded onClick={props.onCollapse} />
+        <p className="panel-heading">Writing Assistant</p>
+        <PaneToggle label="Writing Assistant" expanded onClick={props.onCollapse} />
       </div>
       <div className="flex flex-wrap gap-1 p-2 box-split-b">
         {TABS.map((item) => (
@@ -176,7 +176,7 @@ function AssistTab({
       <section>
         <h3 className="section-heading">What this panel does</h3>
         <p className="text-xs text-army-slate mt-1">
-          Assist watches the paragraph open in the center. When it finds locked glossary wording, other legal /
+          Writing Assistant watches the paragraph open in the center. When it finds locked glossary wording, other legal /
           adverse-action hints, or overlap with another publication, it lists those reminders here. Limited Use
           Policy (self-referral) appears only when this open paragraph or draft hits Limited Use, self-referral,
           protected evidence, a commander Limited Use briefing, or a biochemical ID path that invokes it. It stays
@@ -210,7 +210,7 @@ function AssistTab({
           </h3>
           <p className="text-xs text-army-slate mt-1">{LEGAL_CHIP_BODY}</p>
           <p className="text-xs text-army-slate mt-1">
-            {LIMITED_USE_SEE_CITE}. Suggestion only — Assist does not rewrite this paragraph.
+            {LIMITED_USE_SEE_CITE}. Suggestion only — Writing Assistant does not rewrite this paragraph.
           </p>
           <div className="mt-2 space-y-1.5">
             {lupChips.map((chip) => (

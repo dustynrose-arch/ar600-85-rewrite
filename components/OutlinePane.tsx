@@ -453,7 +453,7 @@ export function OutlinePane({
             {dialog === "delete" ? (
               <p className="text-sm">
                 Delete <strong>{sections[dialogTarget]?.number} {sections[dialogTarget]?.title}</strong> from the
-                working copy? Assist reminders for this paragraph are dropped with it. The original regulation
+                working copy? Writing Assistant reminders for this paragraph are dropped with it. The original regulation
                 is unchanged. Remaining chips stay on their stable ids.
               </p>
             ) : (

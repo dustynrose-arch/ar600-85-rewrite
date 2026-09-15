@@ -531,7 +531,7 @@ export function splitWorkingSection(sectionId: string, role: Role, mode: Workspa
   pushEvent(state, {
     actor: role,
     kind: "structure-split",
-    summary: `Split ${source.number} ${source.title} (${sectionId}); empty sibling ${state.workingSections[id].number} (${id}) has no Assist chips until text is moved.`,
+    summary: `Split ${source.number} ${source.title} (${sectionId}); empty sibling ${state.workingSections[id].number} (${id}) has no Writing Assistant reminders until text is moved.`,
     sectionId,
   });
   return persist(state, mode);

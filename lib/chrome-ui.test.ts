@@ -140,8 +140,26 @@ test("panel headings share font-ui; parent class is larger than child class", ()
   assert.match(outline, /className="panel-heading">Outline</);
   assert.match(outline, /chapter-heading/);
   assert.match(editor, /className="panel-heading">Your draft</);
-  assert.match(assist, /className="panel-heading">Assist</);
+  assert.match(assist, /className="panel-heading">Writing Assistant</);
   assert.match(summary, /className="panel-heading">Summary of Change</);
+});
+
+test("right pane chrome is Writing Assistant, not Assist", () => {
+  const assist = readRepoFile("components/AssistPane.tsx");
+  const workbench = readRepoFile("components/Workbench.tsx");
+  const guide = readRepoFile("components/UserGuide.tsx");
+  const walkthrough = readRepoFile("components/GuideWalkthrough.tsx");
+
+  assert.match(assist, /className="panel-heading">Writing Assistant</);
+  assert.match(assist, /label: "Writing Assistant"/);
+  assert.match(assist, /PaneToggle label="Writing Assistant"/);
+  assert.match(workbench, /Show Writing Assistant/);
+  assert.equal(assist.includes('panel-heading">Assist<'), false);
+  assert.equal(workbench.includes("Show Assist"), false);
+  assert.equal(guide.includes("Hide Assist"), false);
+  assert.equal(walkthrough.includes("Hide Assist"), false);
+  assert.match(guide, /Writing Assistant on the right/);
+  assert.match(walkthrough, /Open the <strong>Writing Assistant<\/strong> tab/);
 });
 
 test("STEER AR sister-pub chips are buttons with cursor, underline, and focus ring", () => {
