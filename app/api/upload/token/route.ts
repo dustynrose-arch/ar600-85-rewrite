@@ -1,7 +1,7 @@
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { NextResponse } from "next/server";
 import { isAllowedBlobUploadPath } from "@/lib/persist";
-import { runtimeEnv } from "@/lib/runtime-env";
+import { serverEnv } from "@/lib/server-env";
 import { canUpload } from "@/lib/roles";
 import { readState } from "@/lib/store";
 import { MAX_UPLOAD_BYTES } from "@/lib/types";
@@ -15,7 +15,7 @@ export async function POST(request: Request) {
   if (!canUpload(role)) {
     return NextResponse.json({ error: "Reviewers cannot upload files. Switch to Editor or Approver." }, { status: 403 });
   }
-  if (!runtimeEnv("BLOB_READ_WRITE_TOKEN")) {
+  if (!serverEnv("BLOB_READ_WRITE_TOKEN")) {
     return NextResponse.json(
       { error: "BLOB_READ_WRITE_TOKEN is required for browser uploads on Vercel." },
       { status: 500 },

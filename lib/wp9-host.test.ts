@@ -41,12 +41,18 @@ test("WP9 host files keep Secure cookies, isolated stores, and a non-official ac
   assert.match(middleware, /WG_ACCESS_COOKIE/);
   assert.match(middleware, /\/access/);
   assert.match(middleware, /process\.env\.WG_ACCESS_SECRET/);
+  assert.match(middleware, /process\.env\.BLOB_READ_WRITE_TOKEN/);
   assert.match(middleware, /runtimeEnv\("WG_ACCESS_SECRET"\)/);
   assert.match(middleware, /Never 500 the document/);
   assert.match(persist, /blobSdkOptions/);
   assert.match(persist, /BLOB_READ_WRITE_TOKEN/);
   assert.match(persist, /class PersistError/);
-  assert.match(persist, /runtimeEnv\("BLOB_READ_WRITE_TOKEN"\)/);
+  assert.match(persist, /serverEnv\("BLOB_READ_WRITE_TOKEN"\)/);
+  assert.equal(persist.includes("from \"./node-env.ts\""), false);
+  assert.match(readRepoFile("lib/server-env.ts"), /nodeIsolateEnv/);
+  assert.match(readRepoFile("lib/node-env.ts"), /node:process/);
+  assert.equal(readRepoFile("middleware.ts").includes("node-env"), false);
+  assert.equal(readRepoFile("middleware.ts").includes("server-env"), false);
   assert.match(readRepoFile("app/page.tsx"), /requireWgAccess/);
   assert.match(readRepoFile("app/page.tsx"), /loadPublicStateOrError/);
   assert.equal(readRepoFile("app/page.tsx").includes("@/lib/store"), false);
@@ -54,7 +60,12 @@ test("WP9 host files keep Secure cookies, isolated stores, and a non-official ac
   assert.equal(readRepoFile("app/access/page.tsx").includes("@/lib/store"), false);
   assert.match(readRepoFile("app/guide/page.tsx"), /requireWgAccess/);
   assert.match(readRepoFile("lib/require-wg-access.ts"), /redirect\(`\/access/);
-  assert.match(readRepoFile("lib/runtime-env.ts"), /process\.env as Record/);
+  const runtimeEnvSource = readRepoFile("lib/runtime-env.ts");
+  assert.match(runtimeEnvSource, /process\.env as Record/);
+  assert.match(runtimeEnvSource, /process\.env\.WG_ACCESS_SECRET/);
+  assert.match(runtimeEnvSource, /process\.env\.BLOB_READ_WRITE_TOKEN/);
+  assert.match(runtimeEnvSource, /process\.env\.BLOB_STORE_ID/);
+  assert.match(readRepoFile("app/api/access/route.ts"), /force-dynamic/);
   assert.match(readRepoFile("app/error.tsx"), /\/access/);
   assert.match(readRepoFile("app/global-error.tsx"), /\/access/);
 
