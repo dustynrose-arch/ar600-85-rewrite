@@ -12,6 +12,35 @@ export const GUIDE_LEGAL_ONE_LINER =
 export const LIMITED_USE_CATEGORY = "Limited Use Policy (self-referral)";
 export const ADVERSE_ACTION_CATEGORY = "Legal / adverse-action hint";
 
+/** Plain-language cite shown with Limited Use Assist (suggestion only — no auto-rewrite). */
+export const LIMITED_USE_SEE_CITE = "See para 10-12 / 10-13";
+
+export const LIMITED_USE_CHIP_TITLE = "Limited Use Policy (self-referral)";
+
+/**
+ * Stable outline ids that warrant Limited Use Assist. Hidden for every other
+ * open section, including unrelated chapters and display-number lookalikes.
+ *
+ * Chapter 10 cluster: 10-11 through 10-13 (definition / implementation).
+ * Self-referral: 7-3, B-5.
+ * Protected evidence: 10-12.
+ * Commander Limited Use briefing: B-5, B-10, 9-11.
+ * Biochemical (and other) ID paths that invoke Limited Use: 7-4, 7-5, 7-6, 7-7.
+ */
+export const LIMITED_USE_ASSIST_SECTION_IDS: ReadonlySet<string> = new Set([
+  "10-11",
+  "10-12",
+  "10-13",
+  "7-3",
+  "7-4",
+  "7-5",
+  "7-6",
+  "7-7",
+  "9-11",
+  "B-5",
+  "B-10",
+]);
+
 export type LegalChipCategory = typeof LIMITED_USE_CATEGORY | typeof ADVERSE_ACTION_CATEGORY;
 
 export type LegalChip = {
@@ -24,6 +53,7 @@ export type LegalChip = {
     | "adverse-other";
   category: LegalChipCategory;
   title: string;
+  seeCite?: string;
 };
 
 const LEGAL_CHIP_SPECS: {
@@ -32,12 +62,6 @@ const LEGAL_CHIP_SPECS: {
   title: string;
   pattern: RegExp;
 }[] = [
-  {
-    id: "limited-use-self-referral",
-    category: LIMITED_USE_CATEGORY,
-    title: "Limited Use Policy (self-referral)",
-    pattern: /\blimited use\b|\bself[- ]?referral\b|\bprotected evidence\b/i,
-  },
   {
     id: "adverse-testing-bases",
     category: ADVERSE_ACTION_CATEGORY,
@@ -65,23 +89,45 @@ const LEGAL_CHIP_SPECS: {
   },
 ];
 
+export function sectionWarrantsLimitedUseAssist(sectionId: string | null | undefined): boolean {
+  return Boolean(sectionId && LIMITED_USE_ASSIST_SECTION_IDS.has(sectionId));
+}
+
+export function limitedUseAssistChip(): LegalChip {
+  return {
+    id: "limited-use-self-referral",
+    category: LIMITED_USE_CATEGORY,
+    title: LIMITED_USE_CHIP_TITLE,
+    seeCite: LIMITED_USE_SEE_CITE,
+  };
+}
+
 /**
- * Title split only. `limitedUse` is the existing Assist detection gate
- * (`LIMITED_USE_RE` / stable-id binding) — this does not add or drop firings.
+ * Adverse-action titles still follow the existing `limitedUse` text/binding gate.
+ * Limited Use chips are gated on the open outline section’s stable id (hidden
+ * by default; never inferred from display numbers or unrelated-chapter text).
  */
 export function legalChipsFromWorkingText(
   title: string,
   body: string,
   limitedUse: AssistBinding["limitedUse"],
+  sectionId?: string | null,
 ): LegalChip[] {
-  if (!limitedUse) return [];
   const hay = `${title} ${body}`;
-  const matched = LEGAL_CHIP_SPECS.filter((spec) => spec.pattern.test(hay)).map((spec) => ({
-    id: spec.id,
-    category: spec.category,
-    title: spec.title,
-  }));
-  if (matched.length) return matched;
+  const adverse = limitedUse
+    ? LEGAL_CHIP_SPECS.filter(
+        (spec) => spec.category === ADVERSE_ACTION_CATEGORY && spec.pattern.test(hay),
+      ).map((spec) => ({
+        id: spec.id,
+        category: spec.category,
+        title: spec.title,
+      }))
+    : [];
+  const chips: LegalChip[] = [];
+  if (sectionWarrantsLimitedUseAssist(sectionId)) chips.push(limitedUseAssistChip());
+  chips.push(...adverse);
+  if (chips.length) return chips;
+  if (!limitedUse) return [];
   return [
     {
       id: "adverse-other",

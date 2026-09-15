@@ -207,9 +207,9 @@ export function GuideWalkthrough() {
         <h3 className="text-lg font-bold">Step 3 — Use Assist reminders on the right</h3>
         <p className="mt-2">
           The right-hand panel is a writing helper for this regulation. It watches the paragraph you have open
-          and lists reminders when the wording needs a glossary check, Limited Use Policy (self-referral) or a
-          legal / adverse-action hint, or a pointer to another publication. These are gentle nudges — not
-          automatic corrections.
+          and lists reminders when the wording needs a glossary check or a legal / adverse-action hint, or a
+          pointer to another publication. Limited Use Policy (self-referral) is hidden unless the open paragraph
+          warrants it. These are gentle nudges — not automatic corrections.
         </p>
         <p className="mt-3 font-semibold">How underlined wording appears</p>
         <ol className="list-decimal pl-6 space-y-2 mt-2">

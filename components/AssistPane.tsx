@@ -11,6 +11,7 @@ import {
   LEGAL_CHIP_BODY,
   LEGAL_CITE_PUBS,
   LIMITED_USE_CATEGORY,
+  LIMITED_USE_SEE_CITE,
   chipsInCategory,
   legalChipsFromWorkingText,
 } from "@/lib/legal-chips";
@@ -159,7 +160,7 @@ function AssistTab({
   );
   const cheech = GLOSSARY_TERMS.filter((term) => chips.glossaryTermIds.includes(term.id));
   const legalChips = useMemo(
-    () => legalChipsFromWorkingText(working.title, draftBody ?? working.body, chips.limitedUse),
+    () => legalChipsFromWorkingText(working.title, draftBody ?? working.body, chips.limitedUse, working.id),
     [working, draftBody, chips.limitedUse],
   );
   const lupChips = chipsInCategory(legalChips, LIMITED_USE_CATEGORY);
@@ -175,9 +176,10 @@ function AssistTab({
       <section>
         <h3 className="section-heading">What this panel does</h3>
         <p className="text-xs text-army-slate mt-1">
-          Assist watches the paragraph open in the center. When it finds locked glossary wording, Limited Use
-          Policy (self-referral), other legal / adverse-action hints, or overlap with another publication, it
-          lists those reminders here. Nothing in your draft changes unless you choose an action below.
+          Assist watches the paragraph open in the center. When it finds locked glossary wording, other legal /
+          adverse-action hints, or overlap with another publication, it lists those reminders here. Limited Use
+          Policy (self-referral) appears only when this open paragraph warrants it. Nothing in your draft
+          changes unless you choose an action below.
         </p>
       </section>
       <section>
@@ -199,12 +201,15 @@ function AssistTab({
           ))}
         </div>
       </section>
-      <section>
-        <h3 className="section-heading text-army-rust">
-          Limited Use Policy (self-referral)
-        </h3>
-        <p className="text-xs text-army-slate mt-1">{LEGAL_CHIP_BODY}</p>
-        {lupChips.length ? (
+      {lupChips.length ? (
+        <section>
+          <h3 className="section-heading text-army-rust">
+            Limited Use Policy (self-referral)
+          </h3>
+          <p className="text-xs text-army-slate mt-1">{LEGAL_CHIP_BODY}</p>
+          <p className="text-xs text-army-slate mt-1">
+            {LIMITED_USE_SEE_CITE}. Suggestion only — Assist does not rewrite this paragraph.
+          </p>
           <div className="mt-2 space-y-1.5">
             {lupChips.map((chip) => (
               <span
@@ -215,10 +220,8 @@ function AssistTab({
               </span>
             ))}
           </div>
-        ) : (
-          <p className="text-xs mt-2">No Limited Use Policy (self-referral) language in the current paragraph.</p>
-        )}
-      </section>
+        </section>
+      ) : null}
       <section>
         <h3 className="section-heading text-army-rust">Legal / adverse-action hint</h3>
         {adverseChips.length ? (
