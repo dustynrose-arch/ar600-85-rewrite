@@ -140,15 +140,16 @@ option {
   }
 
   /* Persistent header legal mark — always on, never with a hide control.
-     Plain gold text only (no fill, no chip/button chrome) so Live DRAFT and
-     Training TRAINING·DRAFT stay high-contrast on the dark header, never look
-     like action buttons, and never leave the dual seals unpaired. */
+     Justice: plain gold text only (no fill, no chip/button chrome) so Live DRAFT
+     and Training TRAINING·DRAFT stay high-contrast on #101218, never look like
+     action buttons or an authenticated AR, and never leave the dual seals unpaired. */
   .header-draft-mark {
-    @apply shrink-0 text-army-gold text-[11px] font-bold tracking-[0.2em] leading-none whitespace-nowrap;
+    @apply shrink-0 text-army-gold text-[11px] font-bold tracking-[0.22em] leading-none whitespace-nowrap;
     background: none;
     border: 0;
     box-shadow: none;
     pointer-events: none;
+    cursor: default;
   }
 }
 

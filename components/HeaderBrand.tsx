@@ -2,7 +2,9 @@
  *  No hide control. Army seal has no decorative box/ring. Do not crop or recolor the emblem files.
  *  Brand cluster is shrink-0: title + DPRR stay one horizontal row between the seals.
  *  Dual seals + the plain-text DRAFT / TRAINING·DRAFT mark stay visible; wrap or compress actions
- *  to the right — never overflow-x scroll the brand off-screen. The mark is text only (no fill). */
+ *  to the right — never overflow-x scroll the brand off-screen.
+ *  Justice: on-screen mark is plain text (no fill). High-contrast on the dark bar. Never a
+ *  button, never an authenticated-AR look. Word export stamps stay in lib/export-stamps.ts. */
 
 export const HEADER_TITLE = "AR 600-85 Rewrite";
 export const HEADER_SUBTITLE = "Directorate of Prevention, Resilience and Readiness";
@@ -41,7 +43,11 @@ export function HeaderBrand({
       <span
         data-draft-mark=""
         role="status"
-        aria-label={training ? "Training draft" : "Draft"}
+        aria-label={
+          training
+            ? "Training draft — not an official Army publication"
+            : "Draft — not an official Army publication"
+        }
         className="header-draft-mark"
       >
         {mark}

@@ -419,3 +419,68 @@ test("thicker black pane seams, Add paragraph, no FRONT MATTER, SoC visual compa
   assert.match(exportDocx, /revisedCell\(row\)/);
   assert.equal(exportDocx.includes("soc-ins"), false);
 });
+
+test("Justice: DRAFT / TRAINING·DRAFT is plain high-contrast text with dual seals; Word stamps unchanged", () => {
+  const brand = readRepoFile("components/HeaderBrand.tsx");
+  const css = readRepoFile("app/globals.css");
+  const tailwind = readRepoFile("tailwind.config.ts");
+  const workbench = readRepoFile("components/Workbench.tsx");
+  const guide = readRepoFile("app/guide/page.tsx");
+  const access = readRepoFile("app/access/page.tsx");
+  const exportStamps = readRepoFile("lib/export-stamps.ts");
+  const exportDocx = readRepoFile("lib/export-docx.ts");
+  const exportRoute = readRepoFile("app/api/export/route.ts");
+
+  assert.match(brand, /return training \? "TRAINING·DRAFT" : "DRAFT"/);
+  assert.match(brand, /src="\/g1-seal\.png"/);
+  assert.match(brand, /src="\/army-seal\.png"/);
+  const g1Idx = brand.indexOf('src="/g1-seal.png"');
+  const armyIdx = brand.indexOf('src="/army-seal.png"');
+  const markIdx = brand.indexOf("header-draft-mark");
+  assert.ok(g1Idx >= 0 && armyIdx > g1Idx && markIdx > armyIdx, "G-1, Army, then DRAFT mark — never seals alone");
+  assert.equal(brand.includes("Hide"), false);
+  assert.equal(brand.includes("<button"), false);
+  assert.equal(brand.includes("<a "), false);
+  assert.equal(brand.includes("href="), false);
+  assert.equal(brand.includes("onClick"), false);
+  assert.match(brand, /not an official Army publication/);
+  assert.match(brand, /role="status"/);
+  assert.match(brand, /data-draft-mark=""/);
+
+  assert.match(tailwind, /black:\s*"#101218"/);
+  assert.match(tailwind, /gold:\s*"#e2b84a"/);
+  assert.match(css, /\.header-draft-mark \{[\s\S]*text-army-gold/);
+  assert.match(css, /\.header-draft-mark \{[\s\S]*background:\s*none/);
+  assert.match(css, /\.header-draft-mark \{[\s\S]*border:\s*0/);
+  assert.match(css, /\.header-draft-mark \{[\s\S]*box-shadow:\s*none/);
+  assert.match(css, /\.header-draft-mark \{[\s\S]*pointer-events:\s*none/);
+  assert.match(css, /\.header-draft-mark \{[\s\S]*cursor:\s*default/);
+  assert.equal(/\.header-draft-mark \{[^}]*bg-army-gold/.test(css), false);
+  assert.equal(/\.header-draft-mark \{[^}]*rounded-lg/.test(css), false);
+  assert.equal(/\.header-draft-mark \{[^}]*btn-header/.test(css), false);
+  assert.equal(/\.header-draft-mark \{[^}]*hover:/.test(css), false);
+
+  assert.match(workbench, /<HeaderBrand title=\{HEADER_TITLE\} training=\{state\.mode === "training"\} \/>/);
+  assert.match(guide, /<HeaderBrand/);
+  assert.match(access, /<HeaderBrand/);
+
+  assert.equal(
+    exportStamps,
+    `export function wordHeaderMark(training: boolean): string {
+  return training ? "TRAINING / DRAFT / WORKING COPY" : "DRAFT / WORKING COPY";
+}
+
+export function wordFooterMark(training: boolean): string {
+  return training ? "TRAINING / DRAFT" : "DRAFT";
+}
+
+export const TRACK_CHANGES_COVER_LINE = "change-markup working draft for WG review";
+
+export const TRACK_CHANGES_AUTHOR = "AR 600-85 Rewrite WG";
+`,
+  );
+  assert.match(exportDocx, /draftRun\(wordHeaderMark\(training\)/);
+  assert.match(exportDocx, /draftRun\(wordFooterMark\(training\)/);
+  assert.match(exportRoute, /X-Draft-Stamp/);
+});
+
