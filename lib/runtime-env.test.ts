@@ -28,5 +28,7 @@ test("runtime-env lists static process.env keys so Next.js embeds them", () => {
   }
   assert.match(source, /process\.env as Record/);
   assert.match(source, /knownRuntimeEnv/);
+  assert.match(source, /globalThis/);
+  assert.equal(source.includes("from \"node:process\""), false);
   assert.equal(source.includes("const WG_ACCESS_SECRET = process.env.WG_ACCESS_SECRET"), false);
 });

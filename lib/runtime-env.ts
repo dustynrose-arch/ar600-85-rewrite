@@ -1,14 +1,22 @@
 /**
- * Request-time env for Node serverless, Edge middleware, and Blob helpers.
+ * Request-time env for Edge middleware and Node bundles.
  *
- * Next.js only embeds keys that appear as static `process.env.NAME` in that
- * bundle. Bracket-only reads (`process.env[name]`) can omit Production secrets
- * from the inlined env object even when Vercel injects them — `/api/access`
- * stays configured:false and GET `/` shows "Draft storage is not ready".
+ * Production evidence (PR #32 still live):
+ * - GET /api/access is a Vercel cache MISS returning configured:false — not a
+ *   static/CDN leftover.
+ * - The same helper already sees VERCEL=1 (home throws VERCEL_REQUIRES_BLOB)
+ *   but not WG_ACCESS_SECRET / BLOB_*. So bracket access is not "always empty";
+ *   the webpack `process.env` view can keep build-time system keys and omit
+ *   runtime-only / Sensitive secrets.
  *
- * The map below lists every key this app reads so webpack/Edge include them.
- * Values are still read inside the function (not at module init) so a cold
- * start sees the isolate env, not a `next build` snapshot.
+ * Next.js 15 only DefinePlugin-inlines NEXT_PUBLIC_* and its own keys. User
+ * secrets stay as `process.env.NAME` — but only if that identifier appears in
+ * the bundle. Edge isolates also allowlist static `process.env.NAME`.
+ *
+ * Read order: static map (embed + Edge), then process.env[name], then
+ * globalThis.process.env (isolate, not DefinePlugin). Node API/RSC also call
+ * `nodeIsolateEnv` via server-env.ts (node:process, never imported here so
+ * Edge middleware cannot pull in the Node builtin).
  */
 function knownRuntimeEnv(): Record<string, string | undefined> {
   return {
@@ -24,7 +32,17 @@ function knownRuntimeEnv(): Record<string, string | undefined> {
   };
 }
 
-function firstNonEmpty(...candidates: Array<string | undefined>): string {
+function globalProcessEnv(name: string): string | undefined {
+  try {
+    return (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env?.[
+      name
+    ];
+  } catch {
+    return undefined;
+  }
+}
+
+export function firstNonEmpty(...candidates: Array<string | undefined>): string {
   for (const candidate of candidates) {
     if (typeof candidate === "string" && candidate.trim()) return candidate.trim();
   }
@@ -35,5 +53,6 @@ export function runtimeEnv(name: string): string {
   return firstNonEmpty(
     knownRuntimeEnv()[name],
     (process.env as Record<string, string | undefined>)[name],
+    globalProcessEnv(name),
   );
 }

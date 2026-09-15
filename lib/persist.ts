@@ -1,7 +1,7 @@
 import { mkdirSync, readFileSync, rmSync, writeFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import type { WorkspaceMode } from "./types.ts";
-import { runtimeEnv } from "./runtime-env.ts";
+import { serverEnv } from "./server-env.ts";
 import { storePaths } from "./store-paths.ts";
 
 export type PersistKind = "filesystem" | "blob" | "memory";
@@ -50,8 +50,8 @@ export function persistKind(): PersistKind {
 }
 
 export function blobConfigured(): boolean {
-  if (runtimeEnv("BLOB_READ_WRITE_TOKEN")) return true;
-  return Boolean(runtimeEnv("BLOB_STORE_ID") && runtimeEnv("VERCEL_OIDC_TOKEN"));
+  if (serverEnv("BLOB_READ_WRITE_TOKEN")) return true;
+  return Boolean(serverEnv("BLOB_STORE_ID") && serverEnv("VERCEL_OIDC_TOKEN"));
 }
 
 /**
@@ -59,7 +59,7 @@ export function blobConfigured(): boolean {
  * BLOB_STORE_ID + VERCEL_OIDC_TOKEN exist; a 403 there becomes Application error.
  */
 export function blobSdkOptions(): { token: string } | Record<string, never> {
-  const token = runtimeEnv("BLOB_READ_WRITE_TOKEN");
+  const token = serverEnv("BLOB_READ_WRITE_TOKEN");
   return token ? { token } : {};
 }
 
@@ -72,13 +72,13 @@ function wrapBlobError(op: string, error: unknown): PersistError {
 }
 
 function onVercelRuntime(): boolean {
-  if (runtimeEnv("VERCEL") !== "1") return false;
+  if (serverEnv("VERCEL") !== "1") return false;
   // Allow `next build` on Vercel to compile before the Blob token is read at request time.
-  return runtimeEnv("NEXT_PHASE") !== "phase-production-build";
+  return serverEnv("NEXT_PHASE") !== "phase-production-build";
 }
 
 export function kvLockConfigured(): boolean {
-  return Boolean(runtimeEnv("KV_REST_API_URL") && runtimeEnv("KV_REST_API_TOKEN"));
+  return Boolean(serverEnv("KV_REST_API_URL") && serverEnv("KV_REST_API_TOKEN"));
 }
 
 /** Live and Training never share a pathname. */
@@ -285,8 +285,8 @@ export function parseKvPipelineFirst(payload: unknown): string | null {
 }
 
 async function kvPipeline(commands: string[][]): Promise<string | null | "unavailable"> {
-  const url = runtimeEnv("KV_REST_API_URL");
-  const token = runtimeEnv("KV_REST_API_TOKEN");
+  const url = serverEnv("KV_REST_API_URL");
+  const token = serverEnv("KV_REST_API_TOKEN");
   if (!url || !token) return "unavailable";
   try {
     const response = await fetch(`${url.replace(/\/$/, "")}/pipeline`, {

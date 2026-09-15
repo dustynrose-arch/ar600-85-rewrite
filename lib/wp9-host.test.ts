@@ -47,7 +47,12 @@ test("WP9 host files keep Secure cookies, isolated stores, and a non-official ac
   assert.match(persist, /blobSdkOptions/);
   assert.match(persist, /BLOB_READ_WRITE_TOKEN/);
   assert.match(persist, /class PersistError/);
-  assert.match(persist, /runtimeEnv\("BLOB_READ_WRITE_TOKEN"\)/);
+  assert.match(persist, /serverEnv\("BLOB_READ_WRITE_TOKEN"\)/);
+  assert.equal(persist.includes("from \"./node-env.ts\""), false);
+  assert.match(readRepoFile("lib/server-env.ts"), /nodeIsolateEnv/);
+  assert.match(readRepoFile("lib/node-env.ts"), /node:process/);
+  assert.equal(readRepoFile("middleware.ts").includes("node-env"), false);
+  assert.equal(readRepoFile("middleware.ts").includes("server-env"), false);
   assert.match(readRepoFile("app/page.tsx"), /requireWgAccess/);
   assert.match(readRepoFile("app/page.tsx"), /loadPublicStateOrError/);
   assert.equal(readRepoFile("app/page.tsx").includes("@/lib/store"), false);
