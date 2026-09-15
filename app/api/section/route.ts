@@ -15,8 +15,8 @@ export async function PATCH(request: Request) {
       role: Role;
       source?: SaveSource;
     };
-    saveSection(body.sectionId, body.body, body.title, body.role, mode, body.source ?? "autosave");
-    return NextResponse.json(publicState(mode));
+    await saveSection(body.sectionId, body.body, body.title, body.role, mode, body.source ?? "autosave");
+    return NextResponse.json(await publicState(mode));
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Save failed" }, { status: 400 });
   }

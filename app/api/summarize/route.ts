@@ -10,7 +10,7 @@ export async function POST(request: Request) {
   const mode = modeFromRequest(request);
   const body = (await request.json().catch(() => ({}))) as { against?: string };
   const against = body.against ?? "baseline";
-  const state = readState(mode);
+  const state = await readState(mode);
   const compare =
     against === "baseline"
       ? sectionMap()

@@ -18,11 +18,11 @@ export async function POST(request: Request) {
     };
     if (body.action === "create") {
       if (!body.title?.trim()) throw new Error("Task title is required.");
-      createTask({ title: body.title.trim(), notes: body.notes, sectionId: body.sectionId }, body.role, mode);
+      await createTask({ title: body.title.trim(), notes: body.notes, sectionId: body.sectionId }, body.role, mode);
     } else if (body.action === "complete" && body.taskId) {
-      completeTask(body.taskId, body.role, mode);
+      await completeTask(body.taskId, body.role, mode);
     }
-    return NextResponse.json(publicState(mode));
+    return NextResponse.json(await publicState(mode));
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Task failed" }, { status: 400 });
   }

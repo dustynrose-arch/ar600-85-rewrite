@@ -12,9 +12,10 @@ export async function GET(request: Request) {
   const summary = kind === "summary" || kind === "summary-of-change";
   const trackChanges = kind === "track-changes" || kind === "trackChanges";
   const training = mode === "training";
+  const workspace = await readState(mode);
   const buffer = summary
-    ? await buildSummaryOfChangeDocx(readState(mode), { training })
-    : await buildDraftDocx(readState(mode), { training, trackChanges });
+    ? await buildSummaryOfChangeDocx(workspace, { training })
+    : await buildDraftDocx(workspace, { training, trackChanges });
   const filename = summary
     ? training
       ? "AR600-85-Summary-of-Change-TRAINING-DRAFT.docx"

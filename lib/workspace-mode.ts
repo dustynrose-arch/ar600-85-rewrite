@@ -1,4 +1,5 @@
-import type { WorkspaceMode } from "./types";
+import { sessionCookieOptions } from "./cookie-options.ts";
+import type { WorkspaceMode } from "./types.ts";
 
 export type { WorkspaceMode };
 
@@ -32,17 +33,19 @@ export function modeFromRequest(request: Request): WorkspaceMode {
   return modeFromCookieHeader(request.headers.get("cookie"));
 }
 
-export function workspaceModeCookie(mode: WorkspaceMode): {
+export function workspaceModeCookie(
+  mode: WorkspaceMode,
+  request?: Request,
+): {
   name: string;
   value: WorkspaceMode;
-  options: { path: string; sameSite: "lax"; maxAge: number; httpOnly: boolean };
+  options: { path: string; sameSite: "lax"; maxAge: number; httpOnly: boolean; secure: boolean };
 } {
   return {
     name: WORKSPACE_MODE_COOKIE,
     value: mode,
     options: {
-      path: "/",
-      sameSite: "lax",
+      ...sessionCookieOptions(request),
       maxAge: WORKSPACE_MODE_MAX_AGE,
       httpOnly: false,
     },

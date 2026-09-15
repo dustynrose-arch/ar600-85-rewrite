@@ -38,9 +38,11 @@ import {
   type WorkspaceMode,
 } from "@/lib/types";
 import { firstSectionId, flattenOutlineSections, parentIndexFromDocument, parentIndexFromOutline } from "@/lib/outline";
+import { storedUploadName } from "@/lib/upload-guard";
 
 type PublicState = {
   mode: WorkspaceMode;
+  storage?: "filesystem" | "blob";
   role: Role;
   locked: boolean;
   lockedAt: string | null;
@@ -498,6 +500,32 @@ export function Workbench({
             }
           }}
           onUpload={async (file) => {
+            if (state.storage === "blob") {
+              const digest = await sha256Hex(file);
+              const storedAs = storedUploadName(digest, file.name);
+              const { upload } = await import("@vercel/blob/client");
+              await upload(`ar60085/${state.mode}/uploads/${storedAs}`, file, {
+                access: "private",
+                handleUploadUrl: "/api/upload/token",
+                clientPayload: JSON.stringify({ mode: state.mode }),
+                multipart: file.size > 4 * 1024 * 1024,
+              });
+              const res = await fetch("/api/upload", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  storedAs,
+                  filename: file.name,
+                  mimeType: file.type,
+                  sizeBytes: file.size,
+                  sha256: digest,
+                }),
+              });
+              const data = await res.json();
+              if (!res.ok) throw new Error(data.error ?? "Upload failed");
+              applyState(data);
+              return;
+            }
             const form = new FormData();
             form.set("file", file);
             form.set("role", state.role);
@@ -532,4 +560,9 @@ export function Workbench({
       </div>
     </div>
   );
+}
+
+async function sha256Hex(file: File): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", await file.arrayBuffer());
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
 }

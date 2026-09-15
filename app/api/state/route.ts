@@ -16,12 +16,13 @@ import {
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
-function jsonState(mode: WorkspaceMode) {
-  return NextResponse.json(publicState(mode));
+async function jsonState(mode: WorkspaceMode) {
+  return NextResponse.json(await publicState(mode));
 }
 
-export function GET(request: Request) {
+export async function GET(request: Request) {
   return jsonState(modeFromRequest(request));
 }
 
@@ -33,8 +34,8 @@ export async function POST(request: Request) {
     mode?: WorkspaceMode;
   };
   if (body.action === "mode" && isWorkspaceMode(body.mode)) {
-    const response = jsonState(body.mode);
-    const cookie = workspaceModeCookie(body.mode);
+    const response = await jsonState(body.mode);
+    const cookie = workspaceModeCookie(body.mode, request);
     response.cookies.set(cookie.name, cookie.value, cookie.options);
     return response;
   }
@@ -43,8 +44,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Reset is only available in Training." }, { status: 400 });
     }
     try {
-      const role = body.role ?? publicState(currentMode).role;
-      resetTrainingWorkspace(role);
+      const role = body.role ?? (await publicState(currentMode)).role;
+      await resetTrainingWorkspace(role);
       return jsonState("training");
     } catch (error) {
       return NextResponse.json(
@@ -54,9 +55,9 @@ export async function POST(request: Request) {
     }
   }
   if (body.action === "role" && body.role) {
-    setRole(body.role, currentMode);
+    await setRole(body.role, currentMode);
   } else if (body.action === "touch") {
-    touchActivity(currentMode);
+    await touchActivity(currentMode);
   }
   return jsonState(currentMode);
 }

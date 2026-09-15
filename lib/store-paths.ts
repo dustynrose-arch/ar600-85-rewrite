@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, rmSync } from "node:fs";
 import path from "node:path";
-import type { WorkspaceMode } from "./types";
+import type { WorkspaceMode } from "./types.ts";
 
 let testDataRoot: string | undefined;
 
