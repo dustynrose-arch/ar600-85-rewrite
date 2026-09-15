@@ -296,9 +296,9 @@ export function Workbench({
           applyState(await res.json());
         }}
       />
-      <header className="shrink-0 bg-army-black text-army-cream px-3 py-1 flex items-center gap-3 flex-nowrap overflow-x-auto box-split-b">
+      <header className="shrink-0 bg-army-black text-army-cream px-3 py-1 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 box-split-b">
         <HeaderBrand title={HEADER_TITLE} training={state.mode === "training"} />
-        <div className="flex items-center gap-2 text-xs ml-auto shrink-0">
+        <div className="flex flex-wrap items-center justify-end gap-2 text-xs">
           <TrainingSwitch
             mode={state.mode}
             role={state.role}
@@ -312,29 +312,34 @@ export function Workbench({
               }
             }}
           />
-          <label className="btn-header">
+          <label className="header-role">
             Role
-            <select
-              value={state.role}
-              onChange={(event) => void changeRole(event.target.value as Role)}
-              className="bg-transparent text-army-black border-0 px-1 py-0.5 rounded-lg"
-            >
-              {(Object.keys(ROLE_LABEL) as Role[]).map((role) => (
-                <option key={role} value={role}>
-                  {ROLE_LABEL[role]}
-                </option>
-              ))}
-            </select>
+            <span className="header-role-value">
+              <select
+                aria-label="Role"
+                value={state.role}
+                onChange={(event) => void changeRole(event.target.value as Role)}
+                className="header-role-select"
+              >
+                {(Object.keys(ROLE_LABEL) as Role[]).map((role) => (
+                  <option key={role} value={role}>
+                    {ROLE_LABEL[role]}
+                  </option>
+                ))}
+              </select>
+            </span>
           </label>
-          <a href="/api/export" className="btn-header">
-            Export Word (Plain)
-          </a>
-          <a href="/api/export?kind=track-changes" className="btn-header">
-            Export Word (Track Changes)
-          </a>
-          <a href="/api/export?kind=summary" className="btn-header">
-            Export Summary (DRAFT)
-          </a>
+          <div className="header-export-group" role="group" aria-label="Exports">
+            <a href="/api/export" className="btn-header-export">
+              Export Word (Plain)
+            </a>
+            <a href="/api/export?kind=track-changes" className="btn-header-export">
+              Export Word (Track Changes)
+            </a>
+            <a href="/api/export?kind=summary" className="btn-header-export">
+              Export Summary (DRAFT)
+            </a>
+          </div>
           <a href="/guide" className="btn-header">
             User Guide
           </a>
