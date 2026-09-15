@@ -40,6 +40,13 @@ test("WP9 host files keep Secure cookies, isolated stores, and a non-official ac
   assert.equal(accessForm.toLowerCase().includes("sign in with"), false);
   assert.match(middleware, /WG_ACCESS_COOKIE/);
   assert.match(middleware, /\/access/);
+  assert.match(middleware, /process\.env\.WG_ACCESS_SECRET/);
+  assert.match(persist, /blobSdkOptions/);
+  assert.match(persist, /BLOB_READ_WRITE_TOKEN/);
+  assert.match(persist, /class PersistError/);
+  assert.match(readRepoFile("app/page.tsx"), /requireWgAccess/);
+  assert.match(readRepoFile("app/guide/page.tsx"), /requireWgAccess/);
+  assert.match(readRepoFile("lib/require-wg-access.ts"), /redirect\(`\/access/);
 
   assert.match(envExample, /BLOB_READ_WRITE_TOKEN=/);
   assert.match(envExample, /KV_REST_API_URL=/);
@@ -50,6 +57,7 @@ test("WP9 host files keep Secure cookies, isolated stores, and a non-official ac
   assert.match(readme, /Password Protection/);
   assert.match(readme, /BLOB_READ_WRITE_TOKEN/);
   assert.match(vercel, /"framework": "nextjs"/);
+  assert.match(readRepoFile("next.config.ts"), /@vercel\/blob/);
 
   assert.match(brand, /headerDraftMark/);
   assert.match(brand, /Never seals alone/);

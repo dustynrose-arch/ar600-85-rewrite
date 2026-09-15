@@ -4,9 +4,12 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, test } from "node:test";
 import {
+  blobSdkOptions,
   blobUploadPath,
   blobWorkspacePath,
   isAllowedBlobUploadPath,
+  parseKvPipelineFirst,
+  PersistError,
   persistKind,
   readUploadBytes,
   readWorkspaceJson,
@@ -84,9 +87,11 @@ test("Vercel runtime refuses ephemeral disk when Blob is not configured", () => 
     delete process.env.BLOB_READ_WRITE_TOKEN;
     delete process.env.BLOB_STORE_ID;
     delete process.env.VERCEL_OIDC_TOKEN;
+    assert.throws(() => persistKind(), PersistError);
     assert.throws(() => persistKind(), /private Blob store/);
     process.env.BLOB_READ_WRITE_TOKEN = "vercel_blob_rw_test";
     assert.equal(persistKind(), "blob");
+    assert.deepEqual(blobSdkOptions(), { token: "vercel_blob_rw_test" });
   } finally {
     if (previousVercel == null) delete process.env.VERCEL;
     else process.env.VERCEL = previousVercel;
@@ -99,6 +104,28 @@ test("Vercel runtime refuses ephemeral disk when Blob is not configured", () => 
     if (previousOidc == null) delete process.env.VERCEL_OIDC_TOKEN;
     else process.env.VERCEL_OIDC_TOKEN = previousOidc;
   }
+});
+
+test("blobSdkOptions prefers BLOB_READ_WRITE_TOKEN over empty OIDC fallback", () => {
+  const previous = process.env.BLOB_READ_WRITE_TOKEN;
+  try {
+    delete process.env.BLOB_READ_WRITE_TOKEN;
+    assert.deepEqual(blobSdkOptions(), {});
+    process.env.BLOB_READ_WRITE_TOKEN = " vercel_blob_rw_store_secret ";
+    assert.deepEqual(blobSdkOptions(), { token: "vercel_blob_rw_store_secret" });
+  } finally {
+    if (previous == null) delete process.env.BLOB_READ_WRITE_TOKEN;
+    else process.env.BLOB_READ_WRITE_TOKEN = previous;
+  }
+});
+
+test("parseKvPipelineFirst reads Upstash and Redis pipeline shapes", () => {
+  assert.equal(parseKvPipelineFirst({ result: [{ result: "OK" }] }), "OK");
+  assert.equal(parseKvPipelineFirst({ result: [{ result: null }] }), null);
+  assert.equal(parseKvPipelineFirst({ result: ["OK"] }), "OK");
+  assert.equal(parseKvPipelineFirst({ result: [["OK", null]] }), "OK");
+  assert.equal(parseKvPipelineFirst({ result: [null] }), null);
+  assert.equal(parseKvPipelineFirst(null), null);
 });
 
 test("WG access cookie HMAC accepts only the matching secret", async () => {

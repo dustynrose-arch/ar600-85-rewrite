@@ -5,6 +5,13 @@ import { storePaths } from "./store-paths.ts";
 
 export type PersistKind = "filesystem" | "blob" | "memory";
 
+export class PersistError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "PersistError";
+  }
+}
+
 /** Hard error: Vercel serverless disk is ephemeral. Drafts must live in Blob. */
 export const VERCEL_REQUIRES_BLOB =
   "Vercel deploys require a private Blob store (BLOB_READ_WRITE_TOKEN, or BLOB_STORE_ID plus VERCEL_OIDC_TOKEN). data/runtime/ is ephemeral and must not hold Live or Training drafts.";
@@ -36,7 +43,7 @@ export function persistKind(): PersistKind {
   if (blobConfigured()) return "blob";
   // Never fall back to serverless disk. Cold start would wipe WG drafts.
   if (onVercelRuntime()) {
-    throw new Error(VERCEL_REQUIRES_BLOB);
+    throw new PersistError(VERCEL_REQUIRES_BLOB);
   }
   return "filesystem";
 }
@@ -44,6 +51,23 @@ export function persistKind(): PersistKind {
 export function blobConfigured(): boolean {
   if (process.env.BLOB_READ_WRITE_TOKEN?.trim()) return true;
   return Boolean(process.env.BLOB_STORE_ID?.trim() && process.env.VERCEL_OIDC_TOKEN?.trim());
+}
+
+/**
+ * Prefer the static RW token. On Vercel the SDK otherwise picks OIDC whenever
+ * BLOB_STORE_ID + VERCEL_OIDC_TOKEN exist; a 403 there becomes Application error.
+ */
+export function blobSdkOptions(): { token: string } | Record<string, never> {
+  const token = process.env.BLOB_READ_WRITE_TOKEN?.trim();
+  return token ? { token } : {};
+}
+
+function wrapBlobError(op: string, error: unknown): PersistError {
+  if (error instanceof PersistError) return error;
+  const message = error instanceof Error ? error.message : String(error);
+  return new PersistError(
+    `Private Blob ${op} failed. Confirm BLOB_READ_WRITE_TOKEN matches this private store. ${message}`,
+  );
 }
 
 function onVercelRuntime(): boolean {
@@ -93,13 +117,18 @@ export async function writeWorkspaceJson(mode: WorkspaceMode, json: string): Pro
   }
   if (kind === "blob") {
     const { put } = await import("@vercel/blob");
-    await put(blobWorkspacePath(mode), json, {
-      access: "private",
-      addRandomSuffix: false,
-      allowOverwrite: true,
-      cacheControlMaxAge: BLOB_CACHE_SECONDS,
-      contentType: "application/json; charset=utf-8",
-    });
+    try {
+      await put(blobWorkspacePath(mode), json, {
+        access: "private",
+        addRandomSuffix: false,
+        allowOverwrite: true,
+        cacheControlMaxAge: BLOB_CACHE_SECONDS,
+        contentType: "application/json; charset=utf-8",
+        ...blobSdkOptions(),
+      });
+    } catch (error) {
+      throw wrapBlobError("PUT workspace", error);
+    }
     return;
   }
   const { dataDir, storePath } = storePaths(mode);
@@ -133,13 +162,18 @@ export async function writeUploadBytes(mode: WorkspaceMode, storedAs: string, bu
   }
   if (kind === "blob") {
     const { put } = await import("@vercel/blob");
-    await put(blobUploadPath(mode, storedAs), buffer, {
-      access: "private",
-      addRandomSuffix: false,
-      allowOverwrite: true,
-      cacheControlMaxAge: BLOB_CACHE_SECONDS,
-      multipart: buffer.length > 4 * 1024 * 1024,
-    });
+    try {
+      await put(blobUploadPath(mode, storedAs), buffer, {
+        access: "private",
+        addRandomSuffix: false,
+        allowOverwrite: true,
+        cacheControlMaxAge: BLOB_CACHE_SECONDS,
+        multipart: buffer.length > 4 * 1024 * 1024,
+        ...blobSdkOptions(),
+      });
+    } catch (error) {
+      throw wrapBlobError("PUT upload", error);
+    }
     return;
   }
   const { uploadsDir } = storePaths(mode);
@@ -156,14 +190,19 @@ export async function wipeUploads(mode: WorkspaceMode): Promise<void> {
   if (kind === "blob") {
     const { list, del } = await import("@vercel/blob");
     const prefix = blobUploadPrefix(mode);
+    const auth = blobSdkOptions();
     let cursor: string | undefined;
-    do {
-      const page = await list({ prefix, cursor, limit: 200 });
-      if (page.blobs.length > 0) {
-        await del(page.blobs.map((blob) => blob.url));
-      }
-      cursor = page.hasMore ? page.cursor : undefined;
-    } while (cursor);
+    try {
+      do {
+        const page = await list({ prefix, cursor, limit: 200, ...auth });
+        if (page.blobs.length > 0) {
+          await del(page.blobs.map((blob) => blob.url), auth);
+        }
+        cursor = page.hasMore ? page.cursor : undefined;
+      } while (cursor);
+    } catch (error) {
+      throw wrapBlobError("delete training uploads", error);
+    }
     return;
   }
   const { uploadsDir } = storePaths(mode);
@@ -177,8 +216,15 @@ async function readBlobText(pathname: string): Promise<string | null> {
 
 async function readBlobBuffer(pathname: string): Promise<Buffer | null> {
   const { get } = await import("@vercel/blob");
-  const result = await get(pathname, { access: "private", useCache: false });
-  if (!result || result.statusCode !== 200) return null;
+  let result: Awaited<ReturnType<typeof get>>;
+  try {
+    result = await get(pathname, { access: "private", useCache: false, ...blobSdkOptions() });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (/\b404\b|not found/i.test(message)) return null;
+    throw wrapBlobError("GET", error);
+  }
+  if (!result || result.statusCode !== 200 || !result.stream) return null;
   return Buffer.from(await new Response(result.stream).arrayBuffer());
 }
 
@@ -186,10 +232,13 @@ export async function withWorkspaceLock<T>(mode: WorkspaceMode, fn: () => Promis
   if (!kvLockConfigured()) return fn();
   const key = `ar60085:lock:${mode}`;
   const acquired = await kvSetNx(key, 12);
+  if (acquired === "unavailable") return fn();
   if (!acquired) {
     for (let attempt = 0; attempt < 24; attempt += 1) {
       await sleep(50 + attempt * 20);
-      if (await kvSetNx(key, 12)) {
+      const retry = await kvSetNx(key, 12);
+      if (retry === "unavailable") return fn();
+      if (retry) {
         try {
           return await fn();
         } finally {
@@ -197,7 +246,7 @@ export async function withWorkspaceLock<T>(mode: WorkspaceMode, fn: () => Promis
         }
       }
     }
-    throw new Error("Workspace is busy. Retry the save.");
+    throw new PersistError("Workspace is busy. Retry the save.");
   }
   try {
     return await fn();
@@ -206,8 +255,9 @@ export async function withWorkspaceLock<T>(mode: WorkspaceMode, fn: () => Promis
   }
 }
 
-async function kvSetNx(key: string, ttlSeconds: number): Promise<boolean> {
+async function kvSetNx(key: string, ttlSeconds: number): Promise<boolean | "unavailable"> {
   const result = await kvPipeline([["SET", key, "1", "NX", "EX", String(ttlSeconds)]]);
+  if (result === "unavailable") return "unavailable";
   return result === "OK";
 }
 
@@ -215,25 +265,42 @@ async function kvDel(key: string): Promise<void> {
   await kvPipeline([["DEL", key]]);
 }
 
-async function kvPipeline(commands: string[][]): Promise<string | null> {
-  const url = process.env.KV_REST_API_URL?.trim();
-  const token = process.env.KV_REST_API_TOKEN?.trim();
-  if (!url || !token) return null;
-  const response = await fetch(`${url.replace(/\/$/, "")}/pipeline`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(commands),
-  });
-  if (!response.ok) return null;
-  const payload = (await response.json()) as { result?: unknown[] };
-  const first = payload.result?.[0];
-  if (Array.isArray(first)) return first[1] == null ? (first[0] as string | null) : String(first[1]);
+/** Upstash/Vercel KV pipeline: `{"result":[{"result":"OK"}]}` or `["OK"]`. */
+export function parseKvPipelineFirst(payload: unknown): string | null {
+  if (!payload || typeof payload !== "object") return null;
+  const result = (payload as { result?: unknown }).result;
+  const first = Array.isArray(result) ? result[0] : result;
   if (first == null) return null;
   if (typeof first === "string") return first;
+  if (Array.isArray(first)) {
+    const value = first.find((item) => item != null);
+    return value == null ? null : String(value);
+  }
+  if (typeof first === "object" && "result" in first) {
+    const inner = (first as { result?: unknown }).result;
+    return inner == null ? null : String(inner);
+  }
   return null;
+}
+
+async function kvPipeline(commands: string[][]): Promise<string | null | "unavailable"> {
+  const url = process.env.KV_REST_API_URL?.trim();
+  const token = process.env.KV_REST_API_TOKEN?.trim();
+  if (!url || !token) return "unavailable";
+  try {
+    const response = await fetch(`${url.replace(/\/$/, "")}/pipeline`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(commands),
+    });
+    if (!response.ok) return "unavailable";
+    return parseKvPipelineFirst(await response.json());
+  } catch {
+    return "unavailable";
+  }
 }
 
 function sleep(ms: number): Promise<void> {
