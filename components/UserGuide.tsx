@@ -75,15 +75,22 @@ export function UserGuide() {
       <h2 className="text-xl font-bold mt-8">Assist — the right-hand writing helper</h2>
       <p>
         Assist watches the paragraph you have open in the center. It is a reminder list for G–1 editors, not an
-        automatic rewrite tool. When the current wording touches a locked glossary term, Limited Use Policy
-        (self-referral), another legal / adverse-action hint, or a topic another publication already covers, Assist
-        lists those reminders on the right.
+        automatic rewrite tool. When the current wording touches a locked glossary term, another legal /
+        adverse-action hint, or a topic another publication already covers, Assist lists those reminders on the
+        right. Limited Use Policy (self-referral) appears only when the open paragraph or draft hits Limited Use
+        policy (paras 10–12 / 10–13 and related chapter 10), self-referral / self-ID, protected evidence, a
+        commander Limited Use briefing, or a biochemical / test-result path that invokes Limited Use. It stays
+        hidden on Purpose, general ASAP admin, ADAPT/SUDCC how-to, and unrelated chapters. When it appears, cite
+        See para 10-12 / 10-13. Assist does not rewrite the paragraph. Adverse-action language that treats self-ID
+        as open season stays the existing legal chip — not a standing Limited Use panel — with STEER AR 600-8-2 /
+        635-200 where adverse action comes up.
       </p>
       <h3 className="text-lg font-semibold mt-4">How underlined wording appears</h3>
       <p>
         Open a paragraph. If Assist finds matching wording, those terms and topics show up on the Assist tab as
-        underlined reminders (locked glossary terms, Limited Use Policy or legal / adverse-action hints, or overlap
-        with another publication). They are suggestions only. Your draft does not change until you choose an action.
+        underlined reminders (locked glossary terms, legal / adverse-action hints, or overlap with another
+        publication). Limited Use Policy (self-referral) is hidden unless that open paragraph warrants it. They
+        are suggestions only. Your draft does not change until you choose an action.
       </p>
       <h3 className="text-lg font-semibold mt-4">What each action means</h3>
       <ul className="list-disc pl-6 space-y-1">
@@ -127,9 +134,12 @@ export function UserGuide() {
       </p>
       <p>
         <strong>Limited Use Policy (self-referral)</strong> is the AR 600–85 protection for qualifying self-referral
-        cases. The rule is cite-don’t-copy: keep the official definition in paragraphs 10–11 through 10–13, and point
-        separation and flagging actions to AR 600–8–2, AR 635–200, AR 135–175, AR 135–178, and AR 600–8–24. Limited
-        Use is not a shield for later misconduct or for refusing a lawful order to test.
+        cases. Assist hides that chip unless the paragraph you have open or its draft hits the locked trigger list.
+        It does not appear on Purpose, general ASAP admin, ADAPT/SUDCC how-to, or unrelated chapters. The rule is
+        cite-don’t-copy: keep the official definition in paragraphs 10–11 through 10–13, and point separation and
+        flagging actions to AR 600–8–2, AR 635–200, AR 135–175, AR 135–178, and AR 600–8–24. When Limited Use
+        Assist is shown, cite See para 10-12 / 10-13. Limited Use is not a shield for later misconduct or for
+        refusing a lawful order to test. Assist does not auto-rewrite.
       </p>
       <p>
         <strong>Legal / adverse-action hint</strong> covers testing-basis blur, process-skip, Art. 31 / coercion
