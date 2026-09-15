@@ -5,6 +5,10 @@ import { storePaths } from "./store-paths.ts";
 
 export type PersistKind = "filesystem" | "blob" | "memory";
 
+/** Hard error: Vercel serverless disk is ephemeral. Drafts must live in Blob. */
+export const VERCEL_REQUIRES_BLOB =
+  "Vercel deploys require a private Blob store (BLOB_READ_WRITE_TOKEN, or BLOB_STORE_ID plus VERCEL_OIDC_TOKEN). data/runtime/ is ephemeral and must not hold Live or Training drafts.";
+
 type MemoryStore = {
   workspace: Partial<Record<WorkspaceMode, string>>;
   uploads: Record<WorkspaceMode, Map<string, Buffer>>;
@@ -30,12 +34,22 @@ export function setPersistKindForTests(kind: PersistKind | undefined): void {
 export function persistKind(): PersistKind {
   if (testKind) return testKind;
   if (blobConfigured()) return "blob";
+  // Never fall back to serverless disk. Cold start would wipe WG drafts.
+  if (onVercelRuntime()) {
+    throw new Error(VERCEL_REQUIRES_BLOB);
+  }
   return "filesystem";
 }
 
 export function blobConfigured(): boolean {
   if (process.env.BLOB_READ_WRITE_TOKEN?.trim()) return true;
   return Boolean(process.env.BLOB_STORE_ID?.trim() && process.env.VERCEL_OIDC_TOKEN?.trim());
+}
+
+function onVercelRuntime(): boolean {
+  if (process.env.VERCEL !== "1") return false;
+  // Allow `next build` on Vercel to compile before the Blob token is read at request time.
+  return process.env.NEXT_PHASE !== "phase-production-build";
 }
 
 export function kvLockConfigured(): boolean {

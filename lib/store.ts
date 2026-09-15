@@ -177,6 +177,8 @@ function migrateLoadedState(parsed: WorkspaceState): { state: WorkspaceState; ch
 }
 
 async function loadStore(mode: WorkspaceMode): Promise<WorkspaceState> {
+  // Always read the durable backend (Blob on Vercel, disk locally). Never keep
+  // the only copy in process memory — a cold start must reload Live/Training.
   const raw = await readWorkspaceJson(mode);
   if (!raw) {
     const initial = emptyState(mode);

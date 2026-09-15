@@ -71,6 +71,36 @@ test("filesystem persist under a temp root keeps live and training files apart",
   }
 });
 
+test("Vercel runtime refuses ephemeral disk when Blob is not configured", () => {
+  const previousVercel = process.env.VERCEL;
+  const previousPhase = process.env.NEXT_PHASE;
+  const previousToken = process.env.BLOB_READ_WRITE_TOKEN;
+  const previousStore = process.env.BLOB_STORE_ID;
+  const previousOidc = process.env.VERCEL_OIDC_TOKEN;
+  setPersistKindForTests(undefined);
+  try {
+    process.env.VERCEL = "1";
+    delete process.env.NEXT_PHASE;
+    delete process.env.BLOB_READ_WRITE_TOKEN;
+    delete process.env.BLOB_STORE_ID;
+    delete process.env.VERCEL_OIDC_TOKEN;
+    assert.throws(() => persistKind(), /private Blob store/);
+    process.env.BLOB_READ_WRITE_TOKEN = "vercel_blob_rw_test";
+    assert.equal(persistKind(), "blob");
+  } finally {
+    if (previousVercel == null) delete process.env.VERCEL;
+    else process.env.VERCEL = previousVercel;
+    if (previousPhase == null) delete process.env.NEXT_PHASE;
+    else process.env.NEXT_PHASE = previousPhase;
+    if (previousToken == null) delete process.env.BLOB_READ_WRITE_TOKEN;
+    else process.env.BLOB_READ_WRITE_TOKEN = previousToken;
+    if (previousStore == null) delete process.env.BLOB_STORE_ID;
+    else process.env.BLOB_STORE_ID = previousStore;
+    if (previousOidc == null) delete process.env.VERCEL_OIDC_TOKEN;
+    else process.env.VERCEL_OIDC_TOKEN = previousOidc;
+  }
+});
+
 test("WG access cookie HMAC accepts only the matching secret", async () => {
   const value = await wgAccessCookieValue("correct-horse");
   assert.equal(await wgAccessCookieValid(value, "correct-horse"), true);

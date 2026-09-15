@@ -62,11 +62,19 @@ Working-copy state lives in `data/runtime/` locally (created at first run, not c
 
 Private shared deploy for ~20 unclassified WG seats. This URL is a **DRAFT rewrite tool**, not an authenticated AR or official Army system. Dual seals stay paired with the header DRAFT / TRAINING·DRAFT chip; Word export stamps are unchanged.
 
-**Chosen stack:** Vercel (Next.js) + **private Vercel Blob** for workspace JSON and uploads + optional **Vercel KV** write lock. Auth is **Option A: Vercel Deployment Protection / Password Protection** (Pro). An in-app `WG_ACCESS_SECRET` gate is the Hobby / defense-in-depth code hook so a public URL is not world-readable without Pro.
+### Deploy plan (Web Guard)
 
-Vercel serverless **cannot** keep `data/runtime/` on disk. Blob is required in production. Vercel also caps serverless request bodies at ~4.5 MB, so 25 MB uploads go **browser → Blob**, then the API records the audit row. Live keys are `ar60085/live/…`; Training keys are `ar60085/training/…`.
+Persistent store on Vercel is **non-negotiable**. Serverless disk (`data/runtime/`) is ephemeral and **must not** hold drafts. The app **fails closed** at request time if `VERCEL=1` and Blob is not configured — it will not silently write Live or Training state to a filesystem that vanishes on cold start.
 
-A sibling host (Fly.io or Render with a persistent volume) would keep the local filesystem store with almost no Blob wiring. Use that only if Blob/Pro is a blocker. This repo is wired for Vercel.
+| Gate | What Web Guard checks |
+| --- | --- |
+| **Durable Live vs Training** | Private Blob objects `ar60085/live/workspace.json` and `ar60085/training/workspace.json`, plus `ar60085/{live\|training}/uploads/…`. Training **Reset to original** deletes only the training prefix. Cold start: if the Blob object is missing, seed from the embedded baseline and **PUT it to Blob**; later instances **GET with `useCache: false`**. Saves overwrite the same pathname (`allowOverwrite`). Optional KV lock keys `ar60085:lock:live` and `ar60085:lock:training`. |
+| **Auth** | **Option A:** Vercel **Deployment Protection → Password Protection** (Pro, **All Deployments**) before the app. Code hook: `WG_ACCESS_SECRET` sets httpOnly `ar60085-wg` (`Secure; SameSite=Lax` on HTTPS) and `/access` (labeled DRAFT tool — not an official/authenticated AR). Not NextAuth. Unauthenticated `/` redirects to `/access`; `/api/*` returns 401. |
+| **Cookies** | `ar60085-workspace` remembers Live vs Training (`Secure; SameSite=Lax` on HTTPS; no Secure on `http://localhost`). |
+
+**Chosen stack:** Vercel (Next.js) + **private Vercel Blob** (required) + optional **Vercel KV** write lock.
+
+Vercel also caps serverless request bodies at ~4.5 MB, so 25 MB uploads go **browser → Blob**, then the API records the audit row. A sibling host (Fly.io or Render with a volume) is only for leaving Vercel — it is **not** a Vercel plan that keeps drafts on disk.
 
 ### Exact Dustyn steps
 
@@ -91,7 +99,7 @@ A sibling host (Fly.io or Render with a persistent volume) would keep the local 
    - Redeploy.
 
 4. **Env vars** (Settings → Environment Variables). See `.env.example`.
-   - Required on Vercel: `BLOB_READ_WRITE_TOKEN`.
+   - Required on Vercel: `BLOB_READ_WRITE_TOKEN`. Without it the production app **refuses to store drafts** (no ephemeral disk fallback).
    - Optional: `KV_REST_API_URL`, `KV_REST_API_TOKEN`.
    - Optional app password: `WG_ACCESS_SECRET` (long random string). Use this on Hobby, or as a second gate on Pro.
    - Do **not** set NextAuth vars. This path does not use email login.
@@ -113,9 +121,11 @@ Local: `npm run dev` stays on disk; cookies are not Secure on `http://localhost`
 
 ### Web Guard should re-check
 
+- Durable store: Blob configured; Live `ar60085/live/workspace.json` vs Training `ar60085/training/workspace.json`; a save + new instance / cold start still shows the draft (not a re-seed).
+- Missing Blob on Vercel: request fails with the Blob-required error — **not** a successful empty workspace on disk.
+- Auth gate: Vercel Password Protection (Pro, All Deployments) and/or `/access` + `WG_ACCESS_SECRET` before the workbench. No CAC / “official publication” chrome.
 - `ar60085-workspace` (and `ar60085-wg` if the app secret is set) sent as `Secure; SameSite=Lax` on HTTPS; still set on localhost HTTP without Secure.
-- Auth gate: Vercel password page and/or `/access` before the workbench. No CAC / “official publication” chrome.
-- Live vs Training isolation: edits, uploads, and Reset to original in Training must not change `ar60085/live/workspace.json` (or `data/runtime/` locally).
+- Training reset / uploads must not change the live Blob prefix.
 - Header DRAFT / TRAINING·DRAFT chips, dual seals, upload allowlist, roles, and Word stamps unchanged.
 
 

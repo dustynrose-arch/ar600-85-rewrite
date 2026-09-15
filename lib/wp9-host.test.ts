@@ -27,8 +27,11 @@ test("WP9 host files keep Secure cookies, isolated stores, and a non-official ac
   assert.match(workspaceMode, /sessionCookieOptions\(request\)/);
   assert.match(persist, /ar60085\/\$\{mode\}\/workspace\.json/);
   assert.match(persist, /ar60085\/\$\{mode\}\/uploads\//);
+  assert.match(persist, /VERCEL_REQUIRES_BLOB/);
+  assert.match(persist, /useCache: false/);
   assert.match(store, /withWorkspaceLock/);
   assert.match(store, /storage: persistKind\(\) === "blob"/);
+  assert.match(store, /Always read the durable backend/);
 
   assert.match(accessPage, /HeaderBrand/);
   assert.match(accessPage, /NOT AN OFFICIAL ARMY SYSTEM/);
@@ -42,6 +45,8 @@ test("WP9 host files keep Secure cookies, isolated stores, and a non-official ac
   assert.match(envExample, /KV_REST_API_URL=/);
   assert.match(envExample, /WG_ACCESS_SECRET=/);
   assert.match(readme, /## WP9 Shared host/);
+  assert.match(readme, /Deploy plan \(Web Guard\)/);
+  assert.match(readme, /non-negotiable/);
   assert.match(readme, /Password Protection/);
   assert.match(readme, /BLOB_READ_WRITE_TOKEN/);
   assert.match(vercel, /"framework": "nextjs"/);
