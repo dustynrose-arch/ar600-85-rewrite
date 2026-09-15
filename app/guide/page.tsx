@@ -15,13 +15,13 @@ export default async function GuidePage() {
   const state = publicState(mode);
   return (
     <main className="min-h-screen bg-army-black text-army-cream">
-      <header className="shrink-0 bg-army-black text-army-cream px-4 py-1.5 flex items-center gap-3">
+      <header className="shrink-0 bg-army-black text-army-cream px-3 py-1 flex items-center gap-3 flex-nowrap overflow-x-auto">
         <HeaderBrand
           title={`${HEADER_TITLE} — User Guide`}
           detail="How to use your draft"
           training={mode === "training"}
         />
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 ml-auto shrink-0">
           <TrainingSwitch mode={mode} role={state.role} />
           <Link href="/" className="btn-header">
             Return to your draft

@@ -209,9 +209,13 @@ test("darker-but-fun chrome: dark scheme, gold header chip, no leftover light pa
   assert.equal(outline.includes("bg-white"), false);
 
   assert.equal(brand.includes("ring-"), false, "Army seal must not sit in a decorative ring/box");
-  assert.match(brand, /items-baseline gap-2/);
-  assert.equal(brand.includes("max-w-[28rem]"), false, "title and DPRR subtitle must sit on one horizontal row");
+  assert.match(brand, /header-brand/);
+  assert.match(brand, /header-brand-titles/);
   assert.match(brand, /whitespace-nowrap/);
+  assert.match(brand, /shrink-0/);
+  assert.equal(brand.includes("flex-1"), false, "flex-1 squeezed the title into a stacked column between the seals");
+  assert.equal(brand.includes("max-w-[28rem]"), false, "title and DPRR subtitle must sit on one horizontal row");
+  assert.equal(brand.includes("min-w-0"), false);
   assert.match(brand, /src="\/g1-seal\.png"/);
   assert.match(brand, /src="\/army-seal\.png"/);
   assert.match(brand, /className="header-draft-mark"/);
@@ -241,7 +245,8 @@ test("top-bar buttons share one gold fill/border/text scheme; Army seal has no d
   assert.match(header, /Export Word \(Track Changes\)/);
   assert.match(header, /User Guide/);
   assert.match(header, /<label className="btn-header">/);
-  assert.match(header, /py-1\.5/);
+  assert.match(header, /py-1 /);
+  assert.match(header, /flex-nowrap/);
   assert.match(header, /flex items-center gap-3/);
 
   assert.match(guide, /className="btn-header"/);
@@ -270,6 +275,9 @@ test("top-bar buttons share one gold fill/border/text scheme; Army seal has no d
   assert.equal(g1Tag.includes("bg-army-cream"), false);
   assert.match(brand, /className="header-draft-mark"/);
   assert.equal(brand.includes("btn-header"), false);
+  assert.match(brand, /header-brand-titles/);
+  assert.match(brand, /whitespace-nowrap/);
+  assert.equal(brand.includes("flex-1"), false);
   assert.match(brand, /src="\/g1-seal\.png"/);
   assert.match(brand, /src="\/army-seal\.png"/);
 });
