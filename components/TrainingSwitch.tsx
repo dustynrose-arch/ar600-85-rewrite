@@ -76,7 +76,7 @@ export function TrainingSwitch({ mode, role, beforeSwitch, onResetApplied }: Pro
               type="button"
               disabled={busy}
               onClick={() => void switchMode("live")}
-              className="rounded-lg bg-army-gold text-army-black px-3 py-1.5 text-xs font-bold border border-army-cream disabled:opacity-60"
+              className="btn-header"
             >
               Leave Training
             </button>
@@ -88,7 +88,7 @@ export function TrainingSwitch({ mode, role, beforeSwitch, onResetApplied }: Pro
                   setError(null);
                   setConfirmReset(true);
                 }}
-                className="rounded-lg border border-army-gold text-army-cream px-2.5 py-1 text-xs font-semibold"
+                className="btn-header"
               >
                 Reset to original
               </button>
@@ -103,7 +103,7 @@ export function TrainingSwitch({ mode, role, beforeSwitch, onResetApplied }: Pro
             type="button"
             disabled={busy}
             onClick={() => void switchMode("training")}
-            className="rounded-lg bg-army-gold text-army-black px-3 py-1.5 text-xs font-bold"
+            className="btn-header"
           >
             Enter Training
           </button>

@@ -72,9 +72,7 @@ test("training Word footer carries TRAINING and DRAFT; live footer stays DRAFT-o
 test("Leave Training and Reset Cancel use filled high-contrast buttons", () => {
   const leaveIdx = trainingSwitch.indexOf("Leave Training");
   const leaveBlock = trainingSwitch.slice(Math.max(0, leaveIdx - 400), leaveIdx);
-  assert.match(leaveBlock, /bg-army-gold/);
-  assert.match(leaveBlock, /text-army-black/);
-  assert.match(leaveBlock, /border-army-cream/);
+  assert.match(leaveBlock, /btn-header/);
   assert.equal(leaveBlock.includes("bg-army-cream"), false, "Cream fill on the dark header is too pale");
 
   const confirmBlock = trainingSwitch.slice(trainingSwitch.indexOf("CONFIRM RESET"));

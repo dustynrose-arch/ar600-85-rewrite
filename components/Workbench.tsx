@@ -310,12 +310,12 @@ export function Workbench({
               }
             }}
           />
-          <label className="btn-header-ghost">
+          <label className="btn-header">
             Role
             <select
               value={state.role}
               onChange={(event) => void changeRole(event.target.value as Role)}
-              className="bg-transparent text-army-cream border-0 px-1 py-0.5 rounded-lg"
+              className="bg-transparent text-army-black border-0 px-1 py-0.5 rounded-lg"
             >
               {(Object.keys(ROLE_LABEL) as Role[]).map((role) => (
                 <option key={role} value={role}>
@@ -330,10 +330,10 @@ export function Workbench({
           <a href="/api/export?kind=track-changes" className="btn-header">
             Export Word (Track Changes)
           </a>
-          <a href="/api/export?kind=summary" className="btn-header-ghost">
+          <a href="/api/export?kind=summary" className="btn-header">
             Export Summary (DRAFT)
           </a>
-          <a href="/guide" className="btn-header-ghost">
+          <a href="/guide" className="btn-header">
             User Guide
           </a>
         </div>

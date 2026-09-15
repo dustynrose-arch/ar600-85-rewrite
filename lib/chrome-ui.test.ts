@@ -112,15 +112,12 @@ test("rounded-rectangle buttons share one radius; Training gold fill and Reset C
 
   const leaveIdx = trainingSwitch.indexOf("Leave Training");
   const leaveBlock = trainingSwitch.slice(Math.max(0, leaveIdx - 400), leaveIdx);
-  assert.match(leaveBlock, /rounded-lg/);
-  assert.match(leaveBlock, /bg-army-gold/);
-  assert.match(leaveBlock, /text-army-black/);
-  assert.match(leaveBlock, /border-army-cream/);
+  assert.match(leaveBlock, /btn-header/);
+  assert.equal(leaveBlock.includes("bg-army-cream"), false, "Cream fill on the dark header is too pale");
 
   const enterIdx = trainingSwitch.indexOf("Enter Training");
   const enterBlock = trainingSwitch.slice(Math.max(0, enterIdx - 200), enterIdx);
-  assert.match(enterBlock, /rounded-lg/);
-  assert.match(enterBlock, /bg-army-gold/);
+  assert.match(enterBlock, /btn-header/);
 
   const confirmBlock = trainingSwitch.slice(trainingSwitch.indexOf("CONFIRM RESET"));
   assert.match(confirmBlock, /rounded-lg/);
@@ -210,15 +207,66 @@ test("darker-but-fun chrome: dark scheme, gold header chip, no leftover light pa
   assert.equal(assist.includes("bg-white"), false);
   assert.equal(outline.includes("bg-white"), false);
 
-  assert.match(brand, /ring-2 ring-army-gold/);
+  assert.equal(brand.includes("ring-"), false, "seals must not sit in a decorative ring/box");
   assert.match(brand, /src="\/g1-seal\.png"/);
   assert.match(brand, /src="\/army-seal\.png"/);
   assert.match(brand, /className="header-draft-mark"/);
 
   assert.match(training, /training-banner/);
-  assert.match(trainingSwitch, /bg-army-gold/);
+  assert.match(trainingSwitch, /btn-header/);
   assert.match(exportDocx, /draftRun\(wordHeaderMark\(training\)/);
   assert.match(exportDocx, /draftRun\(wordFooterMark\(training\)/);
+});
+
+test("top-bar buttons share one gold fill/border/text scheme; Army seal has no decorative box", () => {
+  const css = readRepoFile("app/globals.css");
+  const workbench = readRepoFile("components/Workbench.tsx");
+  const guide = readRepoFile("app/guide/page.tsx");
+  const brand = readRepoFile("components/HeaderBrand.tsx");
+  const trainingSwitch = readRepoFile("components/TrainingSwitch.tsx");
+  const draft = readRepoFile("components/DraftEditor.tsx");
+
+  assert.match(css, /\.btn-header \{[\s\S]*bg-army-gold[\s\S]*text-army-black[\s\S]*border-army-gold/);
+  assert.match(css, /\.btn-header-ghost \{[\s\S]*btn-header/);
+
+  const headerStart = workbench.indexOf("<header");
+  const headerEnd = workbench.indexOf("</header>");
+  const header = workbench.slice(headerStart, headerEnd);
+  assert.match(header, /className="btn-header"/);
+  assert.equal(header.includes("btn-header-ghost"), false);
+  assert.match(header, /Export Word \(Plain\)/);
+  assert.match(header, /Export Word \(Track Changes\)/);
+  assert.match(header, /User Guide/);
+  assert.match(header, /<label className="btn-header">/);
+
+  assert.match(guide, /className="btn-header"/);
+  assert.equal(guide.includes("btn-header-ghost"), false);
+
+  const leaveIdx = trainingSwitch.indexOf("Leave Training");
+  const leaveBlock = trainingSwitch.slice(Math.max(0, leaveIdx - 250), leaveIdx);
+  assert.match(leaveBlock, /btn-header/);
+  const enterIdx = trainingSwitch.indexOf("Enter Training");
+  const enterBlock = trainingSwitch.slice(Math.max(0, enterIdx - 250), enterIdx);
+  assert.match(enterBlock, /btn-header/);
+
+  assert.match(draft, />Save</);
+
+  const armyIdx = brand.indexOf("army-seal.png");
+  const armyTag = brand.slice(armyIdx, brand.indexOf("/>", armyIdx) + 2);
+  assert.equal(armyTag.includes("ring-"), false);
+  assert.equal(armyTag.includes("border"), false);
+  assert.equal(armyTag.includes("bg-army-cream"), false);
+  assert.equal(armyTag.includes("shadow"), false);
+  assert.match(armyTag, /object-contain/);
+
+  const g1Idx = brand.indexOf("g1-seal.png");
+  const g1Tag = brand.slice(g1Idx, brand.indexOf("/>", g1Idx) + 2);
+  assert.equal(g1Tag.includes("ring-"), false);
+  assert.equal(g1Tag.includes("bg-army-cream"), false);
+  assert.match(brand, /Never seals alone/);
+  assert.match(brand, /className="header-draft-mark"/);
+  assert.match(brand, /src="\/g1-seal\.png"/);
+  assert.match(brand, /src="\/army-seal\.png"/);
 });
 
 test("Your draft delta highlight is gold-on-charcoal; Word export has Plain and Track Changes", () => {

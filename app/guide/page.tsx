@@ -23,7 +23,7 @@ export default async function GuidePage() {
         />
         <div className="flex items-center gap-2">
           <TrainingSwitch mode={mode} role={state.role} />
-          <Link href="/" className="btn-header-ghost">
+          <Link href="/" className="btn-header">
             Return to your draft
           </Link>
         </div>
