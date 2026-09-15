@@ -244,7 +244,7 @@ test("darker-but-fun chrome: dark scheme, gold header chip, no leftover light pa
   assert.match(exportDocx, /draftRun\(wordFooterMark\(training\)/);
 });
 
-test("top-bar buttons share one gold fill/border/text scheme; Army seal has no decorative box", () => {
+test("top-bar chrome wraps instead of scrolling; Role black box; export group is olive", () => {
   const css = readRepoFile("app/globals.css");
   const workbench = readRepoFile("components/Workbench.tsx");
   const guide = readRepoFile("app/guide/page.tsx");
@@ -253,20 +253,51 @@ test("top-bar buttons share one gold fill/border/text scheme; Army seal has no d
 
   assert.match(css, /\.btn-header \{[\s\S]*bg-army-gold[\s\S]*text-army-black[\s\S]*border-army-gold/);
   assert.match(css, /\.btn-header-ghost \{[\s\S]*btn-header/);
+  assert.match(css, /\.btn-header \{[\s\S]*h-7/);
+  assert.match(css, /\.header-role-value \{[\s\S]*bg-army-black[\s\S]*text-army-cream/);
+  assert.match(css, /\.header-export-group \{[\s\S]*border-army-oliveDark/);
+  assert.match(css, /\.btn-header-export \{[\s\S]*bg-army-olive[\s\S]*text-army-cream/);
+  assert.match(css, /\.btn-header-export \{[\s\S]*h-7/);
 
   const headerStart = workbench.indexOf("<header");
   const headerEnd = workbench.indexOf("</header>");
   const header = workbench.slice(headerStart, headerEnd);
-  assert.match(header, /className="btn-header"/);
-  assert.equal(header.includes("btn-header-ghost"), false);
+  assert.match(header, /flex-wrap/);
+  assert.match(header, /justify-between/);
+  assert.equal(header.includes("overflow-x-auto"), false, "horizontal scroll hid seals/chip");
+  assert.equal(header.includes("flex-nowrap"), false);
+  assert.match(header, /className="header-role"/);
+  assert.match(header, /className="header-role-value"/);
+  assert.match(header, /className="header-role-select"/);
+  assert.match(header, /header-export-group/);
+  assert.match(header, /btn-header-export/);
   assert.match(header, /Export Word \(Plain\)/);
   assert.match(header, /Export Word \(Track Changes\)/);
+  assert.match(header, /Export Summary \(DRAFT\)/);
   assert.match(header, /User Guide/);
-  assert.match(header, /<label className="btn-header">/);
-  assert.match(header, /py-1 /);
-  assert.match(header, /flex-nowrap/);
-  assert.match(header, /flex items-center gap-3/);
+  assert.match(header, /className="btn-header"/);
+  assert.equal(header.includes("btn-header-ghost"), false);
 
+  const exportGroupStart = header.indexOf("header-export-group");
+  const exportGroupEnd = header.indexOf("</div>", exportGroupStart);
+  const exportGroup = header.slice(exportGroupStart, exportGroupEnd);
+  assert.match(exportGroup, /Export Word \(Plain\)/);
+  assert.match(exportGroup, /Export Word \(Track Changes\)/);
+  assert.match(exportGroup, /Export Summary \(DRAFT\)/);
+  assert.equal(exportGroup.includes('className="btn-header"'), false, "export buttons must not share gold chrome scheme");
+  assert.equal((exportGroup.match(/btn-header-export/g) ?? []).length, 3);
+
+  const roleStart = header.indexOf("header-role");
+  const roleBlock = header.slice(roleStart, header.indexOf("header-export-group"));
+  assert.match(roleBlock, /Role/);
+  assert.match(roleBlock, /header-role-value/);
+  assert.equal(roleBlock.includes("<button"), false);
+
+  const guideHeaderStart = guide.indexOf("<header");
+  const guideHeader = guide.slice(guideHeaderStart, guide.indexOf("</header>"));
+  assert.match(guideHeader, /flex-wrap/);
+  assert.equal(guideHeader.includes("overflow-x-auto"), false);
+  assert.equal(guideHeader.includes("flex-nowrap"), false);
   assert.match(guide, /className="btn-header"/);
   assert.equal(guide.includes("btn-header-ghost"), false);
 
@@ -298,6 +329,7 @@ test("top-bar buttons share one gold fill/border/text scheme; Army seal has no d
   assert.equal(brand.includes("flex-1"), false);
   assert.match(brand, /src="\/g1-seal\.png"/);
   assert.match(brand, /src="\/army-seal\.png"/);
+  assert.match(brand, /never overflow-x scroll/);
 });
 
 test("Your draft delta highlight is gold-on-charcoal; Word export has Plain and Track Changes", () => {

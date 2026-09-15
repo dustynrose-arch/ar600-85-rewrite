@@ -1,7 +1,9 @@
 /** Always render both seals with the header DRAFT chip. Never seals alone. No hide control.
  *  Army seal has no decorative box/ring. Do not crop or recolor the emblem files.
  *  Brand cluster is shrink-0: title + DPRR stay one horizontal row between the seals.
- *  Never a stacked narrow column — that is what puffed Dustyn’s Training header. */
+ *  Never a stacked narrow column — that is what puffed Dustyn’s Training header.
+ *  Dual seals + DRAFT / TRAINING / DRAFT chip stay visible; wrap or compress actions,
+ *  never overflow-x scroll the brand off-screen. */
 
 export const HEADER_TITLE = "AR 600-85 Rewrite";
 export const HEADER_SUBTITLE = "Directorate of Prevention, Resilience and Readiness";

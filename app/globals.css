@@ -43,13 +43,47 @@ option {
     @apply btn border border-army-gold/40 bg-army-raised text-army-cream px-3 py-1.5 text-xs hover:bg-army-gold/20;
   }
 
-  /* One header scheme: gold fill, gold border, black text. Ghost is an alias so leftovers match. */
+  /* Chrome actions (Training, Role, User Guide): gold fill, gold border, black text.
+     Ghost is an alias so leftovers match. Export uses .btn-header-export instead. */
   .btn-header {
-    @apply btn bg-army-gold text-army-black border border-army-gold px-2.5 py-1 text-[11px] hover:bg-army-goldDark;
+    @apply btn h-7 bg-army-gold text-army-black border border-army-gold px-2.5 py-0 text-[11px] hover:bg-army-goldDark;
   }
 
   .btn-header-ghost {
     @apply btn-header;
+  }
+
+  /* Role: same 28px gold button; selected value sits in a black box inside. */
+  .header-role {
+    @apply btn-header gap-1.5;
+  }
+
+  .header-role-value {
+    @apply inline-flex items-center rounded-md bg-army-black text-army-cream px-1.5 h-5;
+  }
+
+  .header-role-select {
+    @apply bg-transparent text-army-cream border-0 p-0 m-0 h-5 text-[11px] font-semibold leading-none;
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 0.85rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='6' viewBox='0 0 8 6'%3E%3Cpath fill='%23f4efe3' d='M0 0h8L4 6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.05rem center;
+    background-size: 0.5rem 0.4rem;
+  }
+
+  .header-role-select::-ms-expand {
+    display: none;
+  }
+
+  /* Export cluster: olive scheme, grouped so it reads apart from gold chrome actions. */
+  .header-export-group {
+    @apply inline-flex flex-wrap items-center gap-1 rounded-lg border border-army-oliveDark/80 bg-army-olive/30 p-0.5;
+  }
+
+  .btn-header-export {
+    @apply btn h-7 bg-army-olive text-army-cream border border-army-oliveDark px-2.5 py-0 text-[11px] hover:bg-army-olive/80;
   }
 
   /* Parent / chapter headings — gold/teal on dark chrome for WCAG-ish contrast. */
