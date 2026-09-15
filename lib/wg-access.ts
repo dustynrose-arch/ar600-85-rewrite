@@ -1,4 +1,5 @@
 import { sessionCookieOptions } from "./cookie-options.ts";
+import { runtimeEnv } from "./runtime-env.ts";
 
 /** HttpOnly session set after the WG shared secret is accepted. */
 export const WG_ACCESS_COOKIE = "ar60085-wg";
@@ -7,7 +8,7 @@ const WG_ACCESS_MAX_AGE = 60 * 60 * 24 * 365;
 const WG_ACCESS_PAYLOAD = "ar60085-wg-v1";
 
 export function wgAccessSecret(): string {
-  return process.env.WG_ACCESS_SECRET?.trim() ?? "";
+  return runtimeEnv("WG_ACCESS_SECRET");
 }
 
 export function wgAccessConfigured(): boolean {
