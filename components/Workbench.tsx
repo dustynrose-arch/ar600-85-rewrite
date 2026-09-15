@@ -294,7 +294,7 @@ export function Workbench({
           applyState(await res.json());
         }}
       />
-      <header className="shrink-0 bg-army-black text-army-cream px-4 py-2 flex items-center gap-4">
+      <header className="shrink-0 bg-army-black text-army-cream px-4 py-2 flex items-center gap-4 box-split-b">
         <HeaderBrand title={HEADER_TITLE} training={state.mode === "training"} />
         <div className="flex items-center gap-2 text-xs">
           <TrainingSwitch

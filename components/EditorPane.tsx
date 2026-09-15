@@ -40,7 +40,7 @@ export function EditorPane({
 
   return (
     <section className="flex flex-col min-h-0 h-full panel-surface">
-      <header className="px-4 py-3 border-b border-army-gold/20">
+      <header className="px-4 py-3 box-split-b">
         <p className="panel-heading">Your draft</p>
         <h2 className="font-doc text-xl font-semibold text-army-cream">
           {working.number}. {working.title}
@@ -50,7 +50,7 @@ export function EditorPane({
         </p>
       </header>
       <div className="grid grid-rows-[minmax(0,2fr)_minmax(14rem,3fr)] min-h-0 flex-1">
-        <div className="min-h-0 border-b border-army-gold/20 flex flex-col">
+        <div className="min-h-0 box-split-b flex flex-col">
           <p className="section-heading px-4 pt-2">
             ORIGINAL REGULATION — READ ONLY
           </p>

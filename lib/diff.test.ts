@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
-import { alignedDiff, insertRanges, mergeAlignOps, wordDiff } from "./diff.ts";
+import { alignedDiff, compareSegments, insertRanges, mergeAlignOps, wordDiff } from "./diff.ts";
 
 test("alignedDiff reconstructs original and draft and tags replacements", () => {
   const before = "Commanders shall test Soldiers monthly.";
@@ -51,6 +51,25 @@ test("mergeAlignOps coalesces consecutive same-type tokens for Word runs", () =>
     { type: "insert", text: "new" },
     { type: "equal", text: " text" },
   ]);
+});
+
+test("compareSegments marks deletions on the original side and insertions on the revised side", () => {
+  const original = "Keep this sentence. Change the next word here.";
+  const revised = "Keep this sentence. Change the next term here.";
+  const left = compareSegments(original, revised, "original");
+  const right = compareSegments(original, revised, "revised");
+  assert.equal(left.filter((op) => op.type !== "insert").map((op) => op.text).join(""), original);
+  assert.equal(right.filter((op) => op.type !== "delete").map((op) => op.text).join(""), revised);
+  assert.ok(left.some((op) => op.type === "delete" && op.text.includes("word")));
+  assert.ok(right.some((op) => op.type === "insert" && op.text.includes("term")));
+  assert.equal(
+    left.some((op) => op.type === "insert"),
+    false,
+  );
+  assert.equal(
+    right.some((op) => op.type === "delete"),
+    false,
+  );
 });
 
 test("Your draft overlay uses insertRanges; original pane stays unmarked", () => {

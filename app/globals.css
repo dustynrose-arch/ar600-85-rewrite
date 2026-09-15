@@ -68,6 +68,23 @@ option {
     @apply bg-army-paper text-army-cream;
   }
 
+  /* Functional-area seams — thicker black than the gold hairlines from #24. */
+  .pane-split-y {
+    border-right: 3px solid #000;
+  }
+
+  .pane-split-x {
+    border-left: 3px solid #000;
+  }
+
+  .box-split {
+    border: 2px solid #000;
+  }
+
+  .box-split-b {
+    border-bottom: 2px solid #000;
+  }
+
   .card-surface {
     @apply border border-army-gold/20 bg-army-raised text-army-cream;
   }
@@ -137,6 +154,23 @@ option {
 .draft-delta {
   background-color: #f4d56a;
   color: #101218;
+  border-radius: 2px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.soc-ins {
+  background-color: #f4d56a;
+  color: #101218;
+  border-radius: 2px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.soc-del {
+  background-color: #c4452f;
+  color: #f4efe3;
+  text-decoration: line-through;
   border-radius: 2px;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;

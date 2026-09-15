@@ -110,6 +110,18 @@ export function insertRanges(before: string, after: string): InsertRange[] {
   return ranges;
 }
 
+export function compareSegments(
+  original: string,
+  revised: string,
+  side: "original" | "revised",
+): AlignOp[] {
+  return mergeAlignOps(alignedDiff(original, revised)).filter((op) => {
+    if (!op.text) return false;
+    if (side === "original") return op.type !== "insert";
+    return op.type !== "delete";
+  });
+}
+
 export function wordDiff(before: string, after: string): { added: string[]; removed: string[] } {
   const added: string[] = [];
   const removed: string[] = [];

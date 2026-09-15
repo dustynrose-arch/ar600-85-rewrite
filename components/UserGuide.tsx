@@ -41,7 +41,7 @@ export function UserGuide() {
         <li>Search looks only at the original regulation (read-only).</li>
         <li>
           Editors reshape the <strong>working-copy</strong> outline from the left pane: Add before / after /
-          child, Split, Delete (confirm), Rename, and drag to reorder. Display numbers renumber inside the parent
+          paragraph, Split, Delete (confirm), Rename, and drag to reorder. Display numbers renumber inside the parent
           (chapter→para). Assist chips and the Process-step highlight stay on each paragraph’s stable id — never
           the display number, and never the original regulation. Reviewers and Approvers cannot change
           structure.
@@ -162,7 +162,7 @@ export function UserGuide() {
           <strong>Add before / after</strong> — insert a titled paragraph next to the selection.
         </li>
         <li>
-          <strong>Add child</strong> — insert under the chapter (last child), or from a chapter heading.
+          <strong>Add paragraph</strong> — insert under the chapter (last child), or from a chapter heading.
         </li>
         <li>
           <strong>Rename</strong> — change the working-copy title. Summary of Change flags it as Revises.

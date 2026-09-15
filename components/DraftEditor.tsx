@@ -201,7 +201,7 @@ export function DraftEditor({ sectionId, value, original, editable, saveState, o
           </div>
         ) : null}
       </div>
-      <div className="relative flex-1 min-h-0 m-2 border border-army-gold/30 bg-army-ink">
+      <div className="relative flex-1 min-h-0 m-2 box-split bg-army-ink">
         <div
           ref={overlayRef}
           aria-hidden
