@@ -294,7 +294,7 @@ export function Workbench({
           applyState(await res.json());
         }}
       />
-      <header className="shrink-0 bg-army-black text-army-cream px-4 py-2 flex items-center gap-4">
+      <header className="shrink-0 bg-army-black text-army-cream px-4 py-2 flex items-center gap-4 box-split-b">
         <HeaderBrand title={HEADER_TITLE} training={state.mode === "training"} />
         <div className="flex items-center gap-2 text-xs">
           <TrainingSwitch
@@ -325,7 +325,10 @@ export function Workbench({
             </select>
           </label>
           <a href="/api/export" className="btn-header">
-            Export Word (DRAFT)
+            Export Word (Plain)
+          </a>
+          <a href="/api/export?kind=track-changes" className="btn-header">
+            Export Word (Track Changes)
           </a>
           <a href="/api/export?kind=summary" className="btn-header-ghost">
             Export Summary (DRAFT)

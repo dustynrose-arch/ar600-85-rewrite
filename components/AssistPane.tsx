@@ -89,12 +89,12 @@ const TABS: { id: Tab; label: string }[] = [
 export function AssistPane(props: Props) {
   const [tab, setTab] = useState<Tab>("assist");
   return (
-    <aside className="flex flex-col min-h-0 h-full border-l border-army-gold/25 panel-surface">
-      <div className="flex items-center justify-between gap-2 px-2 py-1.5 border-b border-army-gold/20">
+    <aside className="flex flex-col min-h-0 h-full pane-split-x panel-surface">
+      <div className="flex items-center justify-between gap-2 px-2 py-1.5 box-split-b">
         <p className="panel-heading">Assist</p>
         <PaneToggle label="Assist" expanded onClick={props.onCollapse} />
       </div>
-      <div className="flex flex-wrap gap-1 p-2 border-b border-army-gold/20">
+      <div className="flex flex-wrap gap-1 p-2 box-split-b">
         {TABS.map((item) => (
           <button
             key={item.id}

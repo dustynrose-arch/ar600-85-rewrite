@@ -153,7 +153,7 @@ export function GuideWalkthrough() {
           </li>
           <li>
             Editors can reshape the working-copy outline from the left pane: <strong>Add before</strong>,{" "}
-            <strong>Add after</strong>, <strong>Add child</strong> under the chapter, <strong>Split</strong>{" "}
+            <strong>Add after</strong>, <strong>Add paragraph</strong> under the chapter, <strong>Split</strong>{" "}
             (empty paragraph after this one), <strong>Rename</strong>, <strong>Delete</strong> (you will be
             asked to confirm), or drag <strong>::</strong> to reorder — including into another chapter.
             Right-click a paragraph for the same actions. Display numbers update automatically (1–1, 1–2… or

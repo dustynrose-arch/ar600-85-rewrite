@@ -157,8 +157,8 @@ export function OutlinePane({
   };
 
   return (
-    <aside className="flex flex-col min-h-0 h-full border-r border-army-gold/25 panel-surface">
-      <div className="p-3 border-b border-army-gold/20">
+    <aside className="flex flex-col min-h-0 h-full pane-split-y panel-surface">
+      <div className="p-3 box-split-b">
         <div className="flex items-center justify-between gap-2 mb-2">
           <p className="panel-heading">Outline</p>
           <PaneToggle label="outline" expanded onClick={onCollapse} />
@@ -202,7 +202,7 @@ export function OutlinePane({
                 onClick={() => selectedChapter && openAdd(selectedChapter.id, "child")}
                 className="rounded-lg text-[10px] px-1.5 py-0.5 btn-secondary !px-1.5 !py-0.5 disabled:opacity-40"
               >
-                Add child
+                Add paragraph
               </button>
               <button
                 type="button"
@@ -267,15 +267,12 @@ export function OutlinePane({
               <button
                 type="button"
                 onClick={() => onSelect(SUMMARY_VIEW_ID)}
-                className={`w-full text-left px-2 py-2 text-[12px] leading-snug border ${
+                className={`w-full text-left px-2 py-2 text-[12px] leading-snug box-split ${
                   selectedId === SUMMARY_VIEW_ID
-                    ? "bg-army-gold/30 font-semibold border-army-gold"
-                    : "card-surface hover:bg-army-gold/15"
+                    ? "bg-army-gold/30 font-semibold"
+                    : "bg-army-raised hover:bg-army-gold/15"
                 }`}
               >
-                <span className="section-heading block text-army-gold">
-                  Front matter
-                </span>
                 Summary of Change
                 <span className="ml-1 text-[10px] text-army-rust font-bold">DRAFT</span>
                 <span className="block text-[10px] text-army-slate font-normal mt-0.5">
@@ -323,7 +320,7 @@ export function OutlinePane({
                           openAdd(chapter.id, "child");
                         }}
                       >
-                        Add child
+                        Add paragraph
                       </button>
                     ) : null}
                   </summary>
@@ -421,7 +418,7 @@ export function OutlinePane({
                 Add after
               </button>
               <button type="button" className="block w-full text-left px-3 py-1.5 hover:bg-army-gold/20" onClick={() => openAdd(menu.targetId, "child")}>
-                Add child under chapter
+                Add paragraph under chapter
               </button>
               <button
                 type="button"
@@ -442,7 +439,7 @@ export function OutlinePane({
             </>
           ) : (
             <button type="button" className="block w-full text-left px-3 py-1.5 hover:bg-army-gold/20" onClick={() => openAdd(menu.targetId, "child")}>
-              Add child paragraph
+              Add paragraph
             </button>
           )}
         </div>

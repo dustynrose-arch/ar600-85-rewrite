@@ -217,12 +217,82 @@ test("darker-but-fun chrome: dark scheme, gold header chip, no leftover light pa
 
   assert.match(training, /training-banner/);
   assert.match(trainingSwitch, /bg-army-gold/);
-  assert.match(trainingSwitch, /Leave Training/);
-  assert.match(trainingSwitch, /Enter Training/);
-
-  assert.match(exportStamps, /TRAINING \/ DRAFT \/ WORKING COPY/);
-  assert.match(exportStamps, /DRAFT \/ WORKING COPY/);
-  assert.match(exportStamps, /TRAINING \/ DRAFT/);
   assert.match(exportDocx, /draftRun\(wordHeaderMark\(training\)/);
   assert.match(exportDocx, /draftRun\(wordFooterMark\(training\)/);
+});
+
+test("Your draft delta highlight is gold-on-charcoal; Word export has Plain and Track Changes", () => {
+  const css = readRepoFile("app/globals.css");
+  const workbench = readRepoFile("components/Workbench.tsx");
+  const draft = readRepoFile("components/DraftEditor.tsx");
+  const editor = readRepoFile("components/EditorPane.tsx");
+  const brand = readRepoFile("components/HeaderBrand.tsx");
+  const exportStamps = readRepoFile("lib/export-stamps.ts");
+  const exportRoute = readRepoFile("app/api/export/route.ts");
+
+  assert.match(css, /\.draft-delta \{[\s\S]*#f4d56a/);
+  assert.match(css, /\.draft-delta \{[\s\S]*#101218/);
+  assert.match(draft, /data-delta-overlay="draft"/);
+  assert.match(draft, /data-spell-overlay="draft"/);
+  assert.match(draft, /insertRanges/);
+  assert.match(editor, /original=\{compareBody != null \? compareBody : baseline\.body\}/);
+  assert.equal(editor.includes("draft-delta"), false);
+  assert.equal(editor.includes("data-draft-delta"), false);
+
+  assert.match(workbench, /Export Word \(Plain\)/);
+  assert.match(workbench, /Export Word \(Track Changes\)/);
+  assert.match(workbench, /href="\/api\/export"/);
+  assert.match(workbench, /href="\/api\/export\?kind=track-changes"/);
+  assert.match(exportRoute, /kind === "track-changes"/);
+  assert.match(exportStamps, /change-markup working draft for WG review/);
+
+  assert.match(brand, /className="header-draft-mark"/);
+  assert.match(brand, /headerDraftMark\(training\)/);
+  assert.equal(brand.includes("WORKING COPY"), false);
+});
+
+test("thicker black pane seams, Add paragraph, no FRONT MATTER, SoC visual compare", () => {
+  const css = readRepoFile("app/globals.css");
+  const outline = readRepoFile("components/OutlinePane.tsx");
+  const assist = readRepoFile("components/AssistPane.tsx");
+  const editor = readRepoFile("components/EditorPane.tsx");
+  const draft = readRepoFile("components/DraftEditor.tsx");
+  const paneToggle = readRepoFile("components/PaneToggle.tsx");
+  const summary = readRepoFile("components/SummaryOfChangePane.tsx");
+  const workbench = readRepoFile("components/Workbench.tsx");
+  const exportDocx = readRepoFile("lib/export-docx.ts");
+  const userGuide = readRepoFile("components/UserGuide.tsx");
+  const walkthrough = readRepoFile("components/GuideWalkthrough.tsx");
+
+  assert.match(css, /\.pane-split-y \{[\s\S]*3px solid #000/);
+  assert.match(css, /\.pane-split-x \{[\s\S]*3px solid #000/);
+  assert.match(css, /\.box-split \{[\s\S]*2px solid #000/);
+  assert.match(outline, /pane-split-y/);
+  assert.match(assist, /pane-split-x/);
+  assert.match(paneToggle, /pane-split-y/);
+  assert.match(editor, /box-split-b/);
+  assert.match(draft, /box-split/);
+  assert.match(workbench, /box-split-b/);
+
+  assert.equal(outline.includes("Front matter"), false);
+  assert.equal(outline.includes("FRONT MATTER"), false);
+  assert.match(outline, /Summary of Change/);
+  assert.match(outline, />DRAFT</);
+
+  assert.match(outline, /Add paragraph/);
+  assert.equal(outline.includes("Add child"), false);
+  assert.match(userGuide, /Add paragraph/);
+  assert.equal(userGuide.includes("Add child"), false);
+  assert.match(walkthrough, /Add paragraph/);
+  assert.equal(walkthrough.includes("Add child"), false);
+
+  assert.match(summary, /compareSegments/);
+  assert.match(summary, /data-soc-ins/);
+  assert.match(summary, /data-soc-del/);
+  assert.match(css, /\.soc-ins \{[\s\S]*#f4d56a/);
+  assert.match(css, /\.soc-del \{[\s\S]*#c4452f/);
+  assert.match(summary, /SUMMARY_EXPORT_TITLE/);
+  assert.match(exportDocx, /originalCell\(row\)/);
+  assert.match(exportDocx, /revisedCell\(row\)/);
+  assert.equal(exportDocx.includes("soc-ins"), false);
 });

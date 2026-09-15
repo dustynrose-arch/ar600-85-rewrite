@@ -2,6 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
 import { loadDraftSpellEngine, type DraftSpellEngine } from "@/lib/draft-spell-engine";
+import { insertRanges } from "@/lib/diff";
 import {
   iterateWords,
   preserveWordShape,
@@ -12,6 +13,7 @@ import {
 type Props = {
   sectionId: string;
   value: string;
+  original: string;
   editable: boolean;
   saveState: "saved" | "saving" | "dirty" | "blocked";
   onChange: (value: string) => void;
@@ -27,7 +29,7 @@ type SpellMenu = {
   suggestions: string[];
 };
 
-export function DraftEditor({ sectionId, value, editable, saveState, onChange, onSave }: Props) {
+export function DraftEditor({ sectionId, value, original, editable, saveState, onChange, onSave }: Props) {
   const ref = useRef<HTMLTextAreaElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const historyRef = useRef<string[]>([]);
@@ -69,7 +71,7 @@ export function DraftEditor({ sectionId, value, editable, saveState, onChange, o
 
   useLayoutEffect(() => {
     syncOverlayBox();
-  }, [liveText, engine]);
+  }, [liveText, engine, original]);
 
   useEffect(() => {
     const el = ref.current;
@@ -199,14 +201,15 @@ export function DraftEditor({ sectionId, value, editable, saveState, onChange, o
           </div>
         ) : null}
       </div>
-      <div className="relative flex-1 min-h-0 m-2 border border-army-gold/30 bg-army-ink">
+      <div className="relative flex-1 min-h-0 m-2 box-split bg-army-ink">
         <div
           ref={overlayRef}
           aria-hidden
           className="draft-spell-overlay absolute top-0 left-0 overflow-hidden p-3 font-doc text-[14px] leading-relaxed pointer-events-none"
           data-spell-overlay="draft"
+          data-delta-overlay="draft"
         >
-          <SpellMarks text={liveText} engine={engine} />
+          <DraftMarks text={liveText} original={original} engine={engine} />
         </div>
         <textarea
           key={sectionId}
@@ -271,24 +274,55 @@ export function DraftEditor({ sectionId, value, editable, saveState, onChange, o
   );
 }
 
-function SpellMarks({ text, engine }: { text: string; engine: DraftSpellEngine | null }) {
-  if (!engine) return <>{text}</>;
+function DraftMarks({
+  text,
+  original,
+  engine,
+}: {
+  text: string;
+  original: string;
+  engine: DraftSpellEngine | null;
+}) {
+  const ranges = insertRanges(original, text);
+  const misspelled: { start: number; end: number; word: string }[] = [];
+  if (engine) {
+    for (const span of iterateWords(text)) {
+      if (engine.isMisspelled(span.word)) misspelled.push(span);
+    }
+  }
+  const points = new Set<number>([0, text.length]);
+  for (const range of ranges) {
+    points.add(range.start);
+    points.add(range.end);
+  }
+  for (const span of misspelled) {
+    points.add(span.start);
+    points.add(span.end);
+  }
+  const sorted = [...points].sort((a, b) => a - b);
   const nodes: ReactNode[] = [];
-  let last = 0;
-  let index = 0;
-  for (const span of iterateWords(text)) {
-    if (span.start > last) nodes.push(text.slice(last, span.start));
-    if (engine.isMisspelled(span.word)) {
+  for (let i = 0; i < sorted.length - 1; i += 1) {
+    const start = sorted[i];
+    const end = sorted[i + 1];
+    if (start >= end) continue;
+    const slice = text.slice(start, end);
+    const delta = ranges.some((range) => start >= range.start && end <= range.end);
+    const miss = misspelled.find((span) => start >= span.start && end <= span.end);
+    const className = [delta ? "draft-delta" : "", miss ? "draft-misspelled" : ""].filter(Boolean).join(" ");
+    if (className) {
       nodes.push(
-        <span key={`${span.start}-${index++}`} className="draft-misspelled" data-misspelled={span.word}>
-          {span.word}
+        <span
+          key={`${start}-${end}`}
+          className={className}
+          data-draft-delta={delta ? slice : undefined}
+          data-misspelled={miss ? miss.word : undefined}
+        >
+          {slice}
         </span>,
       );
     } else {
-      nodes.push(span.word);
+      nodes.push(slice);
     }
-    last = span.end;
   }
-  if (last < text.length) nodes.push(text.slice(last));
   return <>{nodes}</>;
 }
