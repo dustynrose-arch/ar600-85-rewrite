@@ -1,15 +1,16 @@
-/** Always render both seals with the header DRAFT chip. Never seals alone. No hide control.
- *  Army seal has no decorative box/ring. Do not crop or recolor the emblem files.
+/** Always render both seals with the header DRAFT / TRAINING·DRAFT mark. Never seals alone.
+ *  No hide control. Army seal has no decorative box/ring. Do not crop or recolor the emblem files.
  *  Brand cluster is shrink-0: title + DPRR stay one horizontal row between the seals.
- *  Never a stacked narrow column — that is what puffed Dustyn’s Training header.
- *  Dual seals + DRAFT / TRAINING / DRAFT chip stay visible; wrap or compress actions,
- *  never overflow-x scroll the brand off-screen. */
+ *  Dual seals + the plain-text DRAFT / TRAINING·DRAFT mark stay visible; wrap or compress actions
+ *  to the right — never overflow-x scroll the brand off-screen.
+ *  Justice: on-screen mark is plain text (no fill). High-contrast on the dark bar. Never a
+ *  button, never an authenticated-AR look. Word export stamps stay in lib/export-stamps.ts. */
 
 export const HEADER_TITLE = "AR 600-85 Rewrite";
 export const HEADER_SUBTITLE = "Directorate of Prevention, Resilience and Readiness";
 
 export function headerDraftMark(training: boolean): string {
-  return training ? "TRAINING / DRAFT" : "DRAFT";
+  return training ? "TRAINING·DRAFT" : "DRAFT";
 }
 
 export function HeaderBrand({
@@ -42,7 +43,11 @@ export function HeaderBrand({
       <span
         data-draft-mark=""
         role="status"
-        aria-label={training ? "Training draft" : "Draft"}
+        aria-label={
+          training
+            ? "Training draft — not an official Army publication"
+            : "Draft — not an official Army publication"
+        }
         className="header-draft-mark"
       >
         {mark}

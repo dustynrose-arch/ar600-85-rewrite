@@ -24,8 +24,8 @@ export function UserGuide() {
           workspace remembers those choices until you close the browser tab.
         </li>
         <li>
-          The header always shows a <strong>DRAFT</strong> chip (or <strong>TRAINING / DRAFT</strong> in
-          Training). The G–1 seal (left) and Army emblem (right) are always paired with that chip — never shown
+          The header always shows a <strong>DRAFT</strong> mark (or <strong>TRAINING·DRAFT</strong> in
+          Training). The G–1 seal (left) and Army emblem (right) are always paired with that mark — never shown
           alone. Word exports stay stamped DRAFT (and WORKING COPY in the Word header); Training exports stay{" "}
           <strong>TRAINING / DRAFT</strong>.
         </li>

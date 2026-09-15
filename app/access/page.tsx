@@ -10,7 +10,7 @@ export default async function AccessPage() {
   const training = parseWorkspaceMode(cookieStore.get(WORKSPACE_MODE_COOKIE)?.value) === "training";
   return (
     <main className="min-h-screen bg-army-black text-army-cream">
-      <header className="shrink-0 bg-army-black text-army-cream px-3 py-1 flex items-center gap-3 flex-nowrap overflow-x-auto">
+      <header className="shrink-0 bg-army-black text-army-cream px-3 py-1 flex flex-wrap items-center gap-3">
         <HeaderBrand title={`${HEADER_TITLE} — WG access`} training={training} />
       </header>
       <div className="max-w-lg mx-auto px-6 py-10">
@@ -22,7 +22,7 @@ export default async function AccessPage() {
           This private URL is for the unclassified G–1 rewrite working group. It is{" "}
           <strong className="text-army-cream">not</strong> an authenticated Army publication or AR 25-30
           system. The G–1 and Army seals always appear with the non-strippable{" "}
-          <strong className="text-army-gold">DRAFT</strong> chip — never seals alone.
+          <strong className="text-army-gold">DRAFT</strong> mark — never seals alone.
         </p>
         <WgAccessForm />
       </div>

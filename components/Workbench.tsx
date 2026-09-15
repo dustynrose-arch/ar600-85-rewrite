@@ -296,9 +296,9 @@ export function Workbench({
           applyState(await res.json());
         }}
       />
-      <header className="shrink-0 bg-army-black text-army-cream px-3 py-1 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 box-split-b">
+      <header className="shrink-0 bg-army-black text-army-cream px-3 py-1 flex flex-wrap items-center gap-x-3 gap-y-1 box-split-b">
         <HeaderBrand title={HEADER_TITLE} training={state.mode === "training"} />
-        <div className="flex flex-wrap items-center justify-end gap-2 text-xs">
+        <div className="header-actions">
           <TrainingSwitch
             mode={state.mode}
             role={state.role}
@@ -329,17 +329,15 @@ export function Workbench({
               </select>
             </span>
           </label>
-          <div className="header-export-group" role="group" aria-label="Exports">
-            <a href="/api/export" className="btn-header-export">
-              Export Word (Plain)
-            </a>
-            <a href="/api/export?kind=track-changes" className="btn-header-export">
-              Export Word (Track Changes)
-            </a>
-            <a href="/api/export?kind=summary" className="btn-header-export">
-              Export Summary (DRAFT)
-            </a>
-          </div>
+          <a href="/api/export" className="btn-header">
+            Export Word (Plain)
+          </a>
+          <a href="/api/export?kind=track-changes" className="btn-header">
+            Export Word (Track Changes)
+          </a>
+          <a href="/api/export?kind=summary" className="btn-header">
+            Export Summary (DRAFT)
+          </a>
           <a href="/guide" className="btn-header">
             User Guide
           </a>

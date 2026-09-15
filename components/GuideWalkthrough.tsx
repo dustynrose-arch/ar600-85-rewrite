@@ -60,8 +60,8 @@ export function GuideWalkthrough() {
       </p>
       <p className="mt-3">
         Everything you write here is a <strong>draft</strong>. It is not Army policy until officially
-        published. The <strong>DRAFT</strong> chip in the header marks it that way (or{" "}
-        <strong>TRAINING / DRAFT</strong> in Training). Use <strong>Enter Training</strong> at the
+        published. The <strong>DRAFT</strong> mark in the header marks it that way (or{" "}
+        <strong>TRAINING·DRAFT</strong> in Training). Use <strong>Enter Training</strong> at the
         top of the page for a separate practice copy; <strong>Reset to original</strong> restores that
         training copy only.
       </p>
@@ -125,7 +125,7 @@ export function GuideWalkthrough() {
             <td className={tdClass}>
               <strong>Top</strong>
             </td>
-            <td className={tdClass}>Save status, your role, Guide, Word export, G–1 and Army seals, persistent DRAFT chip (TRAINING / DRAFT in Training)</td>
+            <td className={tdClass}>Save status, your role, Guide, Word export, G–1 and Army seals, persistent DRAFT mark (TRAINING·DRAFT in Training)</td>
           </tr>
         </tbody>
       </table>
@@ -194,7 +194,7 @@ export function GuideWalkthrough() {
             text for reference only.
           </li>
         </ol>
-        <p className="mt-3">You’re always drafting. The DRAFT chip in the header is there on purpose.</p>
+        <p className="mt-3">You’re always drafting. The DRAFT mark in the header is there on purpose.</p>
         <GuideCallout kind="Doctrine tip" title="Original regulation vs your draft">
           The left outline and search show the original regulation (read-only). Only edit your draft in the
           center.
