@@ -12,6 +12,7 @@ import {
   LIMITED_USE_SEE_CITE,
   chipsInCategory,
   legalChipsFromWorkingText,
+  sectionHidesLimitedUseAssist,
   sectionWarrantsLimitedUseAssist,
 } from "./legal-chips.ts";
 
@@ -152,14 +153,33 @@ test("seed paragraphs show the five Justice titles without relabeling 10–3 or 
   assert.ok(art31.includes(LIMITED_USE_CHIP_TITLE));
 });
 
-test("warranted Limited Use ids cover chapter 10 cluster, self-referral, briefing, and biochemical ID", () => {
-  for (const id of ["10-11", "10-12", "10-13", "7-3", "7-4", "7-5", "7-6", "7-7", "9-11", "B-5", "B-10"]) {
+test("warranted Limited Use ids cover policy cluster, self-referral, briefing, and biochemical ID", () => {
+  for (const id of [
+    "10-11",
+    "10-12",
+    "10-13",
+    "10-15",
+    "7-1",
+    "7-2",
+    "7-3",
+    "7-4",
+    "7-5",
+    "7-6",
+    "7-7",
+    "9-11",
+    "B-5",
+    "B-10",
+  ]) {
     assert.equal(sectionWarrantsLimitedUseAssist(id), true, id);
+    assert.equal(sectionHidesLimitedUseAssist(id), false, id);
   }
   assert.deepEqual([...LIMITED_USE_ASSIST_SECTION_IDS].sort(), [
     "10-11",
     "10-12",
     "10-13",
+    "10-15",
+    "7-1",
+    "7-2",
     "7-3",
     "7-4",
     "7-5",
@@ -169,6 +189,47 @@ test("warranted Limited Use ids cover chapter 10 cluster, self-referral, briefin
     "B-10",
     "B-5",
   ]);
+});
+
+test("Limited Use standing panel stays hidden on Purpose, ASAP admin, ADAPT/SUDCC how-to, and unrelated chapters", () => {
+  const lupDraft = "Limited Use Policy and self-referral protected evidence.";
+  for (const id of ["1-1", "1-7", "2-1", "4-5", "8-2", "9-14", "12-1"]) {
+    assert.equal(sectionHidesLimitedUseAssist(id), true, id);
+    assert.equal(sectionWarrantsLimitedUseAssist(id, "Purpose", lupDraft), false, id);
+    const chips = legalChipsFromWorkingText("Purpose", lupDraft, true, id);
+    assert.equal(chipsInCategory(chips, LIMITED_USE_CATEGORY).length, 0, id);
+  }
+  assert.ok(!titlesFor(seedSection("1-1")).includes(LIMITED_USE_CHIP_TITLE));
+  assert.ok(!titlesFor(seedSection("9-14")).includes(LIMITED_USE_CHIP_TITLE));
+  assert.ok(!titlesFor(seedSection("8-2")).includes(LIMITED_USE_CHIP_TITLE));
+});
+
+test("draft hits show Limited Use on a new working-copy id, not on hide-family chapters", () => {
+  const moved = legalChipsFromWorkingText(
+    "Self-identification",
+    "Soldier seeks help. Self-referral and protected evidence.",
+    true,
+    "wc-split",
+  );
+  assert.ok(chipsInCategory(moved, LIMITED_USE_CATEGORY).length === 1);
+  const admin = legalChipsFromWorkingText(
+    "Program authority",
+    "Soldier seeks help. Self-referral and protected evidence.",
+    true,
+    "1-6",
+  );
+  assert.equal(chipsInCategory(admin, LIMITED_USE_CATEGORY).length, 0);
+});
+
+test("self-ID treated as open season stays an adverse-action chip, not the Limited Use standing panel", () => {
+  const chips = legalChipsFromWorkingText(
+    "Use of Soldiers’ confirmed positive drug test results",
+    "Self-identification is open season for characterization of service and UCMJ.",
+    true,
+    "10-3",
+  );
+  assert.equal(chipsInCategory(chips, LIMITED_USE_CATEGORY).length, 0);
+  assert.ok(chips.map((chip) => chip.title).includes("Legal / adverse-action hint — process path"));
 });
 
 test("locked legal body and Guide one-liner stay the accepted copy", () => {

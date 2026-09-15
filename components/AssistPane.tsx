@@ -178,8 +178,10 @@ function AssistTab({
         <p className="text-xs text-army-slate mt-1">
           Assist watches the paragraph open in the center. When it finds locked glossary wording, other legal /
           adverse-action hints, or overlap with another publication, it lists those reminders here. Limited Use
-          Policy (self-referral) appears only when this open paragraph warrants it. Nothing in your draft
-          changes unless you choose an action below.
+          Policy (self-referral) appears only when this open paragraph or draft hits Limited Use, self-referral,
+          protected evidence, a commander Limited Use briefing, or a biochemical ID path that invokes it. It stays
+          hidden on Purpose, general ASAP admin, ADAPT/SUDCC how-to, and unrelated chapters. Nothing in your
+          draft changes unless you choose an action below.
         </p>
       </section>
       <section>
@@ -239,7 +241,7 @@ function AssistTab({
           <p className="text-xs mt-2">No legal / adverse-action hints in the current paragraph.</p>
         )}
       </section>
-      {chips.limitedUse ? (
+      {adverseChips.length || chips.limitedUse ? (
         <div className="flex flex-wrap gap-1">
           {LEGAL_CITE_PUBS.map((pub) => (
             <button

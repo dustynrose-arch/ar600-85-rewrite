@@ -18,19 +18,24 @@ export const LIMITED_USE_SEE_CITE = "See para 10-12 / 10-13";
 export const LIMITED_USE_CHIP_TITLE = "Limited Use Policy (self-referral)";
 
 /**
- * Stable outline ids that warrant Limited Use Assist. Hidden for every other
- * open section, including unrelated chapters and display-number lookalikes.
+ * Cheech + Justice locked trigger list (stable outline ids).
  *
- * Chapter 10 cluster: 10-11 through 10-13 (definition / implementation).
- * Self-referral: 7-3, B-5.
- * Protected evidence: 10-12.
+ * Limited Use policy: 10-11 through 10-13, plus related ch.10 that invokes it (10-15).
+ * Self-referral / self-ID: chapter 7 identification path (especially 7-1, 7-3).
+ * Protected evidence / results under Limited Use: 10-12.
  * Commander Limited Use briefing: B-5, B-10, 9-11.
- * Biochemical (and other) ID paths that invoke Limited Use: 7-4, 7-5, 7-6, 7-7.
+ * Biochemical / test-result paths that invoke Limited Use: 7-4, 7-5 (and 7-6, 7-7).
+ *
+ * Adverse-action language that treats self-ID as open season stays the existing
+ * adverse-action chip — not this standing Limited Use panel.
  */
 export const LIMITED_USE_ASSIST_SECTION_IDS: ReadonlySet<string> = new Set([
   "10-11",
   "10-12",
   "10-13",
+  "10-15",
+  "7-1",
+  "7-2",
   "7-3",
   "7-4",
   "7-5",
@@ -40,6 +45,41 @@ export const LIMITED_USE_ASSIST_SECTION_IDS: ReadonlySet<string> = new Set([
   "B-5",
   "B-10",
 ]);
+
+/** Chapters that never show the Limited Use standing panel. */
+const LIMITED_USE_HIDE_CHAPTERS = new Set([
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "8",
+  "11",
+  "12",
+  "13",
+  "14",
+  "15",
+  "16",
+  "17",
+  "18",
+  "A",
+  "C",
+  "D",
+  "E",
+  "F",
+  "G",
+]);
+
+/** Draft hits for Limited Use / self-ID / protected evidence (not characterization / 42 CFR). */
+export const LIMITED_USE_DRAFT_HIT_RE =
+  /\blimited use\b|\bself[- ]?referral\b|\bself[- ]?identification\b|\bself[- ]?id\b|\bprotected evidence\b|\bprotected use\b/i;
+
+export function chapterKeyFromSectionId(sectionId: string | null | undefined): string | null {
+  if (!sectionId) return null;
+  const match = sectionId.match(/^(\d+|[A-G])(?=-|$)/i);
+  return match ? match[1]!.toUpperCase() : null;
+}
 
 export type LegalChipCategory = typeof LIMITED_USE_CATEGORY | typeof ADVERSE_ACTION_CATEGORY;
 
@@ -89,8 +129,26 @@ const LEGAL_CHIP_SPECS: {
   },
 ];
 
-export function sectionWarrantsLimitedUseAssist(sectionId: string | null | undefined): boolean {
-  return Boolean(sectionId && LIMITED_USE_ASSIST_SECTION_IDS.has(sectionId));
+export function sectionHidesLimitedUseAssist(sectionId: string | null | undefined): boolean {
+  if (!sectionId) return true;
+  if (LIMITED_USE_ASSIST_SECTION_IDS.has(sectionId)) return false;
+  const chapter = chapterKeyFromSectionId(sectionId);
+  if (!chapter) return false;
+  if (chapter === "7") return false;
+  if (chapter === "9") return sectionId !== "9-11";
+  if (chapter === "10" || chapter === "B") return true;
+  return LIMITED_USE_HIDE_CHAPTERS.has(chapter);
+}
+
+export function sectionWarrantsLimitedUseAssist(
+  sectionId?: string | null,
+  title = "",
+  body = "",
+): boolean {
+  if (sectionHidesLimitedUseAssist(sectionId)) return false;
+  if (sectionId && LIMITED_USE_ASSIST_SECTION_IDS.has(sectionId)) return true;
+  if (chapterKeyFromSectionId(sectionId) === "7") return true;
+  return LIMITED_USE_DRAFT_HIT_RE.test(`${title} ${body}`);
 }
 
 export function limitedUseAssistChip(): LegalChip {
@@ -103,9 +161,11 @@ export function limitedUseAssistChip(): LegalChip {
 }
 
 /**
- * Adverse-action titles still follow the existing `limitedUse` text/binding gate.
- * Limited Use chips are gated on the open outline section’s stable id (hidden
- * by default; never inferred from display numbers or unrelated-chapter text).
+ * Adverse-action titles still follow the existing `limitedUse` text/binding gate
+ * (including self-ID treated as open season — chip only, not the Limited Use panel).
+ * Limited Use standing chips follow the locked Cheech/Justice trigger list:
+ * open section id and/or draft hits, hidden on Purpose / ASAP admin / ADAPT–SUDCC
+ * how-to / unrelated chapters.
  */
 export function legalChipsFromWorkingText(
   title: string,
@@ -124,7 +184,7 @@ export function legalChipsFromWorkingText(
       }))
     : [];
   const chips: LegalChip[] = [];
-  if (sectionWarrantsLimitedUseAssist(sectionId)) chips.push(limitedUseAssistChip());
+  if (sectionWarrantsLimitedUseAssist(sectionId, title, body)) chips.push(limitedUseAssistChip());
   chips.push(...adverse);
   if (chips.length) return chips;
   if (!limitedUse) return [];
