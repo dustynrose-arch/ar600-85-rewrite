@@ -1,5 +1,5 @@
 import baselineJson from "./seed/baseline-document.json";
-import type { BaselineDocument, Chapter, Section } from "./types";
+import type { BaselineDocument, Chapter, Section } from "./types.ts";
 
 export const baselineDocument = baselineJson as BaselineDocument;
 

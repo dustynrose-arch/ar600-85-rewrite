@@ -1,4 +1,4 @@
-import type { Role } from "./types";
+import type { Role } from "./types.ts";
 
 export const ROLE_LABEL: Record<Role, string> = {
   editor: "Editor",

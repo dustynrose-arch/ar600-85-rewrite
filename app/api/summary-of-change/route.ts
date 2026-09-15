@@ -7,9 +7,9 @@ import { modeFromRequest } from "@/lib/workspace-mode";
 
 export const runtime = "nodejs";
 
-export function GET(request: Request) {
+export async function GET(request: Request) {
   const mode = modeFromRequest(request);
   return NextResponse.json(
-    buildSummaryFromWorkspace(readState(mode), sectionMap(), parentIndexFromDocument(baselineDocument)),
+    buildSummaryFromWorkspace(await readState(mode), sectionMap(), parentIndexFromDocument(baselineDocument)),
   );
 }

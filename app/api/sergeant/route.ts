@@ -6,9 +6,9 @@ import { modeFromRequest } from "@/lib/workspace-mode";
 
 export const runtime = "nodejs";
 
-export function GET(request: Request) {
+export async function GET(request: Request) {
   const mode = modeFromRequest(request);
-  const state = readState(mode);
+  const state = await readState(mode);
   return NextResponse.json({ findings: runSergeant(state.workingSections, state.sergeant) });
 }
 
@@ -21,10 +21,10 @@ export async function POST(request: Request) {
       citeTo?: string;
       role: Role;
     };
-    setSergeantDecision(body.laneId, body.decision, body.citeTo, body.role, mode);
-    const state = readState(mode);
+    await setSergeantDecision(body.laneId, body.decision, body.citeTo, body.role, mode);
+    const state = await readState(mode);
     return NextResponse.json({
-      ...publicState(mode),
+      ...(await publicState(mode)),
       findings: runSergeant(state.workingSections, state.sergeant),
     });
   } catch (error) {

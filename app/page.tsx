@@ -9,6 +9,6 @@ export const dynamic = "force-dynamic";
 export default async function HomePage() {
   const cookieStore = await cookies();
   const mode = parseWorkspaceMode(cookieStore.get(WORKSPACE_MODE_COOKIE)?.value);
-  const state = publicState(mode);
+  const state = await publicState(mode);
   return <Workbench baseline={baselineDocument} initialState={state} />;
 }

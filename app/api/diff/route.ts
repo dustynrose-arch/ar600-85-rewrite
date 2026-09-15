@@ -6,12 +6,12 @@ import { modeFromRequest } from "@/lib/workspace-mode";
 
 export const runtime = "nodejs";
 
-export function GET(request: Request) {
+export async function GET(request: Request) {
   const mode = modeFromRequest(request);
   const { searchParams } = new URL(request.url);
   const against = searchParams.get("against") ?? "baseline";
   const changedOnly = searchParams.get("changed") !== "0";
-  const state = readState(mode);
+  const state = await readState(mode);
   const compare =
     against === "baseline"
       ? sectionMap()

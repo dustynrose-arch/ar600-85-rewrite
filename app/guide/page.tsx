@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 export default async function GuidePage() {
   const cookieStore = await cookies();
   const mode = parseWorkspaceMode(cookieStore.get(WORKSPACE_MODE_COOKIE)?.value);
-  const state = publicState(mode);
+  const state = await publicState(mode);
   return (
     <main className="min-h-screen bg-army-black text-army-cream">
       <header className="shrink-0 bg-army-black text-army-cream px-3 py-1 flex items-center gap-3 flex-nowrap overflow-x-auto">

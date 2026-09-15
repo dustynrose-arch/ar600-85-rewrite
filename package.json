@@ -2,16 +2,17 @@
   "name": "ar600-85-rewrite",
   "version": "1.0.0",
   "private": true,
-  "description": "Internal G-1 working-copy editor for the AR 600-85 rewrite (WP1–WP8).",
+  "description": "Internal G-1 working-copy editor for the AR 600-85 rewrite (WP1–WP9).",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "node --experimental-strip-types --test lib/*.test.ts",
+    "test": "node --experimental-strip-types --test --test-concurrency=1 lib/*.test.ts",
     "sync-spellcheck-dict": "node scripts/sync-spellcheck-dict.mjs"
   },
   "dependencies": {
+    "@vercel/blob": "^2.8.0",
     "docx": "^9.5.0",
     "jszip": "^3.10.1",
     "next": "^15.5.2",
