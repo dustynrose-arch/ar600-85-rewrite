@@ -26,7 +26,7 @@ export function CrossmatchRows({ rows, onSelect }: Props) {
   return (
     <ul className="space-y-2">
       {rows.map((row) => (
-        <li key={row.id} className="border border-army-black/10 bg-white p-2 text-[11px]">
+        <li key={row.id} className="card-surface p-2 text-[11px]">
           <div className="flex flex-wrap items-center gap-1.5">
             <span className={`px-1.5 py-0.5 font-bold ${VERDICT_STYLE[row.verdict]}`}>
               {VERDICT_LABEL[row.verdict]}

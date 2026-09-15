@@ -26,10 +26,10 @@ function ActionBadge({ action }: { action: ChangeAction }) {
     action === "revises"
       ? "bg-army-gold/25 text-army-goldDark"
       : action === "adds"
-        ? "bg-army-olive/15 text-army-oliveDark"
+        ? "bg-army-olive/30 text-army-oliveDark"
         : action === "moves"
-          ? "bg-army-slate/15 text-army-slate"
-          : "bg-army-rust/15 text-army-rust";
+          ? "bg-army-raised text-army-slate"
+          : "bg-army-rust/30 text-army-cream";
   return (
     <span className={`inline-block px-1.5 py-0.5 text-[10px] font-bold tracking-wide uppercase ${tone}`}>
       {actionLabel(action)}
@@ -47,8 +47,8 @@ export function SummaryOfChangePane({
   const visible = filter === "all" ? summary.rows : summary.rows.filter((row) => row.action === filter);
 
   return (
-    <section className="flex flex-col min-h-0 h-full bg-army-paper">
-      <header className="px-4 py-3 border-b border-army-black/10 flex items-start justify-between gap-3">
+    <section className="flex flex-col min-h-0 h-full panel-surface">
+      <header className="px-4 py-3 border-b border-army-gold/20 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="panel-heading">Summary of Change</p>
           <h2 className="font-doc text-xl font-semibold leading-snug">{SUMMARY_EXPORT_TITLE}</h2>
@@ -67,11 +67,11 @@ export function SummaryOfChangePane({
           </a>
         </div>
       </header>
-      <div className="px-4 py-2 border-b border-army-black/10 flex flex-wrap items-center gap-2 text-[11px]">
+      <div className="px-4 py-2 border-b border-army-gold/20 flex flex-wrap items-center gap-2 text-[11px]">
         <button
           type="button"
           onClick={() => onFilter("all")}
-          className={`rounded-lg px-2 py-1 border ${filter === "all" ? "bg-army-olive text-army-cream" : "bg-white"}`}
+          className={`rounded-lg px-2 py-1 border ${filter === "all" ? "bg-army-olive text-army-cream border-army-olive" : "btn-secondary !px-2 !py-1"}`}
         >
           All {summary.counts.total}
         </button>
@@ -80,7 +80,7 @@ export function SummaryOfChangePane({
             key={action}
             type="button"
             onClick={() => onFilter(action)}
-            className={`rounded-lg px-2 py-1 border ${filter === action ? "bg-army-olive text-army-cream" : "bg-white"}`}
+            className={`rounded-lg px-2 py-1 border ${filter === action ? "bg-army-olive text-army-cream border-army-olive" : "btn-secondary !px-2 !py-1"}`}
           >
             {actionLabel(action)} {summary.counts[action]}
           </button>
@@ -99,12 +99,12 @@ export function SummaryOfChangePane({
               : "No rows in this filter."}
           </p>
         ) : (
-          <table className="w-full min-w-[720px] border-collapse text-[13px] font-doc bg-white">
+          <table className="w-full min-w-[720px] border-collapse text-[13px] font-doc bg-army-ink">
             <caption className="sr-only">{SUMMARY_EXPORT_TITLE}</caption>
             <thead>
               <tr className="bg-army-olive text-army-cream text-left text-[11px] font-ui">
                 {SUMMARY_TABLE_COLUMNS.map((label) => (
-                  <th key={label} className="border border-army-black/20 px-2 py-1.5 font-semibold">
+                  <th key={label} className="border border-army-gold/25 px-2 py-1.5 font-semibold">
                     {label}
                   </th>
                 ))}
@@ -113,10 +113,10 @@ export function SummaryOfChangePane({
             <tbody>
               {visible.map((row: SummaryOfChangeRow) => (
                 <tr key={row.id} className="align-top">
-                  <td className="border border-army-black/15 px-2 py-2 whitespace-nowrap">
+                  <td className="border border-army-gold/20 px-2 py-2 whitespace-nowrap">
                     <ActionBadge action={row.action} />
                   </td>
-                  <td className="border border-army-black/15 px-2 py-2">
+                  <td className="border border-army-gold/20 px-2 py-2">
                     <button
                       type="button"
                       onClick={() => onOpenSection(row.sectionId)}
@@ -128,10 +128,10 @@ export function SummaryOfChangePane({
                       {row.sectionNumber} {row.sectionTitle}
                     </div>
                   </td>
-                  <td className="border border-army-black/15 px-2 py-2 whitespace-pre-wrap max-w-[28rem]">
+                  <td className="border border-army-gold/20 px-2 py-2 whitespace-pre-wrap max-w-[28rem]">
                     {originalCell(row)}
                   </td>
-                  <td className="border border-army-black/15 px-2 py-2 whitespace-pre-wrap max-w-[28rem]">
+                  <td className="border border-army-gold/20 px-2 py-2 whitespace-pre-wrap max-w-[28rem]">
                     {revisedCell(row)}
                   </td>
                 </tr>

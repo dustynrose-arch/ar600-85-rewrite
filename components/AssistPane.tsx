@@ -88,19 +88,19 @@ const TABS: { id: Tab; label: string }[] = [
 export function AssistPane(props: Props) {
   const [tab, setTab] = useState<Tab>("assist");
   return (
-    <aside className="flex flex-col min-h-0 h-full border-l border-army-black/15 bg-[#f7f2e6]">
-      <div className="flex items-center justify-between gap-2 px-2 py-1.5 border-b border-army-black/10">
+    <aside className="flex flex-col min-h-0 h-full border-l border-army-gold/25 panel-surface">
+      <div className="flex items-center justify-between gap-2 px-2 py-1.5 border-b border-army-gold/20">
         <p className="panel-heading">Assist</p>
         <PaneToggle label="Assist" expanded onClick={props.onCollapse} />
       </div>
-      <div className="flex flex-wrap gap-1 p-2 border-b border-army-black/10">
+      <div className="flex flex-wrap gap-1 p-2 border-b border-army-gold/20">
         {TABS.map((item) => (
           <button
             key={item.id}
             type="button"
             onClick={() => setTab(item.id)}
             className={`rounded-lg px-2 py-1 text-[11px] font-semibold ${
-              tab === item.id ? "bg-army-olive text-army-cream" : "bg-white text-army-ink border border-army-black/10"
+              tab === item.id ? "bg-army-olive text-army-cream" : "btn-secondary !px-2 !py-1"
             }`}
           >
             {item.label}
@@ -260,7 +260,7 @@ function AssistTab({
         </p>
         <ul className="mt-2 space-y-2">
           {(laneHits.length ? laneHits : findings.slice(0, 6)).map((finding) => (
-            <li key={finding.laneId} className="border border-army-black/10 bg-white p-2">
+            <li key={finding.laneId} className="card-surface p-2">
               <div className="font-semibold text-[12px]">{finding.name}</div>
               <p className="text-[11px] text-army-slate">{finding.rationale}</p>
               <p className="text-[11px] mt-1">
@@ -275,7 +275,7 @@ function AssistTab({
                   disabled={role !== "editor"}
                   onClick={() => onSergeant(finding.laneId, "keep")}
                   className={`rounded-lg text-[11px] px-2 py-1 border ${
-                    finding.decision?.decision === "keep" ? "bg-army-olive text-white" : "bg-army-cream"
+                    finding.decision?.decision === "keep" ? "bg-army-olive text-white" : "bg-army-ink text-army-cream"
                   }`}
                 >
                   Keep wording
@@ -286,7 +286,7 @@ function AssistTab({
                   data-steer-ar=""
                   onClick={() => onSergeant(finding.laneId, "see-cite", sectionId)}
                   className={`rounded-lg text-[11px] px-2 py-1 border cursor-pointer underline decoration-army-gold underline-offset-2 ${
-                    finding.decision?.decision === "see-cite" ? "bg-army-gold" : "bg-army-cream"
+                    finding.decision?.decision === "see-cite" ? "bg-army-gold text-army-black" : "bg-army-ink text-army-cream"
                   }`}
                 >
                   Insert See cite
@@ -324,7 +324,7 @@ function AuthorityTab({
         <h3 className="section-heading text-army-rust">Cite-don’t-copy hot list</h3>
         <ul className="mt-2 space-y-2">
           {CITE_HOT_LIST.map((item) => (
-            <li key={item.id} className="bg-white border border-army-black/10 p-2">
+            <li key={item.id} className="card-surface p-2">
               <div className="font-semibold text-[12px]">{item.topic}</div>
               <div className="text-[11px] font-semibold text-army-goldDark underline decoration-army-gold underline-offset-2">
                 {item.cite}
@@ -338,7 +338,7 @@ function AuthorityTab({
         <h3 className="section-heading">Sister publications</h3>
         <ul className="mt-2 space-y-2">
           {SISTER_PUBS.map((pub) => (
-            <li key={pub.id} className="bg-white border border-army-black/10 p-2">
+            <li key={pub.id} className="card-surface p-2">
               <div className="font-semibold text-[12px]">
                 <span
                   data-steer-ar=""
@@ -397,7 +397,7 @@ function ProcessTab({
           return (
             <li
               key={node.id}
-              className={`border p-2 ${active ? "bg-army-gold/25 border-army-gold" : "bg-white border-army-black/10"}`}
+              className={`p-2 ${active ? "bg-army-gold/25 border border-army-gold" : "card-surface"}`}
             >
               <div className="flex items-center justify-between gap-2">
                 <span className="font-semibold text-[12px]">{node.label}</span>
@@ -449,14 +449,14 @@ function TasksTab({ role, tasks, sectionId, onCreateTask, onCompleteTask, sectio
           onChange={(event) => setTitle(event.target.value)}
           placeholder="Task title"
           disabled={role !== "editor"}
-          className="w-full border border-army-black/15 px-2 py-1 text-sm"
+          className="w-full field px-2 py-1 text-sm"
         />
         <textarea
           value={notes}
           onChange={(event) => setNotes(event.target.value)}
           placeholder="Notes"
           disabled={role !== "editor"}
-          className="w-full border border-army-black/15 px-2 py-1 text-sm h-16"
+          className="w-full field px-2 py-1 text-sm h-16"
         />
         <button
           type="submit"
@@ -468,7 +468,7 @@ function TasksTab({ role, tasks, sectionId, onCreateTask, onCompleteTask, sectio
       </form>
       <ul className="mt-3 space-y-2">
         {tasks.map((task) => (
-          <li key={task.id} className="bg-white border border-army-black/10 p-2">
+          <li key={task.id} className="card-surface p-2">
             <div className="font-semibold text-[12px]">{task.title}</div>
             <p className="text-[11px] text-army-slate">{task.notes}</p>
             <p className="text-[11px] mt-1">
@@ -516,7 +516,7 @@ function VersionsTab({
           onChange={(event) => setLabel(event.target.value)}
           placeholder="Checkpoint name"
           disabled={role !== "editor"}
-          className="flex-1 border border-army-black/15 px-2 py-1 text-sm"
+          className="flex-1 field px-2 py-1 text-sm"
         />
         <button
           type="button"
@@ -535,7 +535,7 @@ function VersionsTab({
         <select
           value={against}
           onChange={(event) => setAgainst(event.target.value)}
-          className="block w-full mt-1 border border-army-black/15 px-2 py-1 text-sm"
+          className="block w-full mt-1 field px-2 py-1 text-sm"
         >
           <option value="baseline">Original regulation (read-only)</option>
           {snapshots.map((snapshot) => (
@@ -572,7 +572,7 @@ function VersionsTab({
         </ul>
       ) : null}
       {hunks.map((hunk) => (
-        <div key={hunk.sectionId} className="border border-army-black/10 bg-white p-2">
+        <div key={hunk.sectionId} className="card-surface p-2">
           <div className="font-semibold text-[12px]">
             {hunk.number} {hunk.title}
           </div>
@@ -622,7 +622,7 @@ function SummaryTab({
       </div>
       <ul className="space-y-2">
         {summary.rows.slice(0, 20).map((row) => (
-          <li key={row.id} className="bg-white border border-army-black/10 p-2">
+          <li key={row.id} className="card-surface p-2">
             <div className="font-semibold text-[12px]">
               {actionLabel(row.action)} · {row.cite}
             </div>
@@ -657,7 +657,7 @@ function TimelineTab({
   return (
     <ol className="space-y-2">
       {timeline.map((event) => (
-        <li key={event.id} className="bg-white border border-army-black/10 p-2">
+        <li key={event.id} className="card-surface p-2">
           <div className="text-[10px] uppercase tracking-wide text-army-slate">
             {new Date(event.at).toLocaleString()} · {event.actor} · {event.kind}
           </div>
@@ -718,7 +718,7 @@ function UploadTab({ uploads, onUpload, onRecompare, onWgMark, role, wgReady, se
       {error ? <p className="text-xs text-army-rust">{error}</p> : null}
       <ul className="space-y-3">
         {uploads.map((row) => (
-          <li key={row.id} className="bg-white border border-army-black/10 p-2 text-[11px]">
+          <li key={row.id} className="card-surface p-2 text-[11px]">
             <div className="font-semibold">{row.filename}</div>
             <div>
               {(row.sizeBytes / 1024).toFixed(1)} KB · SHA-256 {row.sha256}
@@ -755,7 +755,7 @@ function UploadTab({ uploads, onUpload, onRecompare, onWgMark, role, wgReady, se
           </li>
         ))}
       </ul>
-      <div className="border-t border-army-black/10 pt-3">
+      <div className="border-t border-army-gold/20 pt-3">
         <h3 className="section-heading text-army-goldDark">Approver WG-review</h3>
         <p className="text-xs mt-1">{wgReady ? "Working copy is marked ready for WG review." : "Not yet marked ready."}</p>
         <div className="flex flex-wrap gap-2 mt-2">

@@ -3,7 +3,7 @@ import { GuideWalkthrough } from "@/components/GuideWalkthrough";
 
 export function UserGuide() {
   return (
-    <article className="prose prose-slate max-w-none font-doc text-army-ink">
+    <article className="prose prose-slate max-w-none font-doc text-army-cream">
       <p className="panel-heading mt-4">User Guide</p>
       <h1 className="text-3xl font-bold mt-1">AR 600–85 Rewrite — User Guide</h1>
       <p className="text-army-slate">

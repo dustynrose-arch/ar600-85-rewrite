@@ -9,14 +9,14 @@ type RailProps = {
 export function CollapsedRail({ side, label, onExpand }: RailProps) {
   const border = side === "left" ? "border-r" : "border-l";
   return (
-    <div className={`shrink-0 w-11 min-h-0 flex flex-col bg-[#efe8d8] ${border} border-army-black/15`}>
+    <div className={`shrink-0 w-11 min-h-0 flex flex-col panel-surface ${border} border-army-gold/25`}>
       <button
         type="button"
         onClick={onExpand}
         aria-expanded={false}
         aria-label={label}
         title={label}
-        className="flex-1 w-full rounded-none px-1 py-3 text-[11px] font-semibold text-army-oliveDark hover:bg-army-gold/25"
+        className="flex-1 w-full rounded-none px-1 py-3 text-[11px] font-semibold text-army-goldDark hover:bg-army-gold/20"
       >
         <span
           className="inline-block whitespace-nowrap"

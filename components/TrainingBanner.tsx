@@ -1,7 +1,7 @@
 export function TrainingBanner() {
   return (
     <div
-      className="training-banner shrink-0 text-center py-1.5 px-3 border-b border-army-black"
+      className="training-banner shrink-0 text-center py-1.5 px-3 border-b-2 border-army-gold"
       role="status"
       aria-label="Training copy"
     >

@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 html,
@@ -12,7 +12,7 @@ body {
 }
 
 body {
-  @apply bg-army-cream text-army-ink font-ui antialiased;
+  @apply bg-army-black text-army-cream font-ui antialiased;
 }
 
 button:focus-visible,
@@ -20,8 +20,13 @@ a:focus-visible,
 select:focus-visible,
 input:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid #c5a14a;
+  outline: 2px solid #e2b84a;
   outline-offset: 2px;
+}
+
+option {
+  background-color: #161821;
+  color: #f4efe3;
 }
 
 @layer components {
@@ -31,24 +36,24 @@ textarea:focus-visible {
   }
 
   .btn-primary {
-    @apply btn bg-army-olive text-army-cream px-3 py-1.5 text-xs;
+    @apply btn bg-army-olive text-army-cream px-3 py-1.5 text-xs hover:bg-army-olive/90;
   }
 
   .btn-secondary {
-    @apply btn border border-army-black/20 bg-white text-army-ink px-3 py-1.5 text-xs hover:bg-army-gold/15;
+    @apply btn border border-army-gold/40 bg-army-raised text-army-cream px-3 py-1.5 text-xs hover:bg-army-gold/20;
   }
 
   .btn-header {
-    @apply btn bg-army-gold text-army-black border border-transparent px-2.5 py-1 text-[11px];
+    @apply btn bg-army-gold text-army-black border border-transparent px-2.5 py-1 text-[11px] hover:bg-army-goldDark;
   }
 
   .btn-header-ghost {
-    @apply btn border border-army-gold/50 text-army-cream px-2.5 py-1 text-[11px] hover:bg-white/10;
+    @apply btn border border-army-gold/60 text-army-cream px-2.5 py-1 text-[11px] hover:bg-army-gold/15;
   }
 
-  /* Parent / chapter headings — same family, visibly larger than children. */
+  /* Parent / chapter headings — gold/teal on dark chrome for WCAG-ish contrast. */
   .panel-heading {
-    @apply font-ui text-sm font-bold tracking-[0.12em] uppercase text-army-goldDark;
+    @apply font-ui text-sm font-bold tracking-[0.12em] uppercase text-army-gold;
   }
 
   .section-heading {
@@ -56,33 +61,51 @@ textarea:focus-visible {
   }
 
   .chapter-heading {
-    @apply font-ui text-[13px] font-bold tracking-wide text-army-oliveDark;
+    @apply font-ui text-[13px] font-bold tracking-wide text-army-goldDark;
+  }
+
+  .panel-surface {
+    @apply bg-army-paper text-army-cream;
+  }
+
+  .card-surface {
+    @apply border border-army-gold/20 bg-army-raised text-army-cream;
+  }
+
+  .field {
+    @apply border border-army-gold/30 bg-army-ink text-army-cream rounded-lg placeholder:text-army-slate;
+  }
+
+  .menu-surface {
+    @apply border border-army-gold/30 bg-army-raised text-army-cream shadow-lg;
   }
 
   /* Sister-pub / STEER AR suggestions — clearly clickable, no Assist logic change. */
   .steer-ar {
-    @apply inline-flex items-center cursor-pointer rounded-lg border border-army-gold/55 bg-white px-2 py-1 text-[11px] font-semibold text-army-goldDark underline decoration-army-gold underline-offset-2;
-    @apply hover:bg-army-gold/15 hover:decoration-2;
+    @apply inline-flex items-center cursor-pointer rounded-lg border border-army-gold/70 bg-army-ink px-2 py-1 text-[11px] font-semibold text-army-goldDark underline decoration-army-gold underline-offset-2;
+    @apply hover:bg-army-gold/20 hover:decoration-2;
   }
 
   .assist-link {
-    @apply inline-flex items-center cursor-pointer rounded-sm underline decoration-army-goldDark underline-offset-2 text-army-goldDark text-[11px];
-    @apply hover:decoration-2 hover:text-army-oliveDark;
+    @apply inline-flex items-center cursor-pointer rounded-sm underline decoration-army-gold underline-offset-2 text-army-goldDark text-[11px];
+    @apply hover:decoration-2 hover:text-army-gold;
   }
 
-  /* Persistent header legal mark — always on, never with a hide control. */
+  /* Persistent header legal mark — always on, never with a hide control.
+     Army gold fill + cream ring so Live DRAFT and Training TRAINING / DRAFT
+     stay readable against the dark header and never blend into the seals. */
   .header-draft-mark {
-    @apply shrink-0 rounded-lg border border-army-gold bg-army-gold text-army-black px-2 py-1 text-[11px] font-bold tracking-[0.16em] whitespace-nowrap;
+    @apply shrink-0 rounded-lg border-2 border-army-cream bg-army-gold text-army-black px-2 py-1 text-[11px] font-bold tracking-[0.16em] whitespace-nowrap shadow-chip;
   }
 }
 
 .training-banner {
-  background: #8b2e1f;
+  background: #c4452f;
 }
 
 .pane-scroll {
   scrollbar-width: thin;
-  scrollbar-color: #c5a14a transparent;
+  scrollbar-color: #e2b84a transparent;
 }
 
 .pane-scroll::-webkit-scrollbar {
@@ -90,22 +113,22 @@ textarea:focus-visible {
 }
 
 .pane-scroll::-webkit-scrollbar-thumb {
-  background: #c5a14a;
+  background: #e2b84a;
   border-radius: 999px;
 }
 
 .draft-spell-overlay {
-  color: #1c1a14;
+  color: #f4efe3;
   white-space: pre-wrap;
   overflow-wrap: break-word;
   word-wrap: break-word;
 }
 
 .draft-misspelled {
-  text-decoration: underline wavy #c41e3a;
+  text-decoration: underline wavy #ff6b6b;
   text-decoration-skip-ink: none;
   text-underline-offset: 2px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='3' viewBox='0 0 6 3'%3E%3Cpath d='M0 2 Q1.5 0 3 2 Q4.5 4 6 2' fill='none' stroke='%23c41e3a' stroke-width='1.15'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='3' viewBox='0 0 6 3'%3E%3Cpath d='M0 2 Q1.5 0 3 2 Q4.5 4 6 2' fill='none' stroke='%23ff6b6b' stroke-width='1.15'/%3E%3C/svg%3E");
   background-repeat: repeat-x;
   background-position: left bottom;
   background-size: 6px 3px;
@@ -113,10 +136,10 @@ textarea:focus-visible {
 
 #draft-editor {
   color: transparent;
-  caret-color: #1c1a14;
+  caret-color: #f4efe3;
 }
 
 #draft-editor::selection {
   color: transparent;
-  background: rgba(197, 161, 74, 0.4);
+  background: rgba(226, 184, 74, 0.45);
 }

@@ -4,8 +4,8 @@ import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { GUIDE_ANCHORS, type GuideAnchor } from "@/lib/guide";
 
 const tableClass = "mt-3 w-full border-collapse text-sm font-ui";
-const thClass = "border border-army-black/15 bg-army-olive text-army-cream px-3 py-1.5 text-left font-semibold";
-const tdClass = "border border-army-black/15 bg-army-paper px-3 py-1.5 align-top";
+const thClass = "border border-army-gold/25 bg-army-olive text-army-cream px-3 py-1.5 text-left font-semibold";
+const tdClass = "border border-army-gold/20 bg-army-raised px-3 py-1.5 align-top";
 
 function GuideCallout({
   kind,
@@ -17,7 +17,7 @@ function GuideCallout({
   children: ReactNode;
 }) {
   return (
-    <aside className="mt-4 border-l-4 border-army-gold bg-white px-3 py-2 font-ui text-sm text-army-ink">
+    <aside className="mt-4 border-l-4 border-army-gold bg-army-raised px-3 py-2 font-ui text-sm text-army-cream">
       <p className="text-[10px] font-bold tracking-[0.16em] text-army-goldDark">{kind.toUpperCase()}</p>
       <p className="mt-0.5 font-semibold">{title}</p>
       <div className="mt-1 text-army-slate leading-relaxed">{children}</div>
@@ -49,7 +49,7 @@ export function GuideWalkthrough() {
   }, []);
 
   return (
-    <section className="mt-10 font-doc text-army-ink" aria-labelledby="first-session-walkthrough">
+    <section className="mt-10 font-doc text-army-cream" aria-labelledby="first-session-walkthrough">
       <h2 id="first-session-walkthrough" className="text-xl font-bold">
         First session walkthrough
       </h2>
@@ -81,7 +81,7 @@ export function GuideWalkthrough() {
                   className={`inline-flex border px-2.5 py-1.5 text-left text-[12px] font-semibold no-underline ${
                     selected
                       ? "border-army-gold bg-army-gold text-army-black"
-                      : "border-army-black/15 bg-white text-army-ink hover:border-army-gold/60"
+                      : "border-army-gold/40 bg-army-raised text-army-cream hover:border-army-gold"
                   }`}
                 >
                   {anchor.label}
@@ -92,7 +92,7 @@ export function GuideWalkthrough() {
         </ol>
       </nav>
 
-      <hr className="mt-8 border-army-black/15" />
+      <hr className="mt-8 border-army-gold/20" />
 
       <h3 className="text-lg font-bold mt-8">The screen in 10 seconds</h3>
       <table className={tableClass}>
@@ -130,7 +130,7 @@ export function GuideWalkthrough() {
         </tbody>
       </table>
 
-      <hr className="mt-8 border-army-black/15" />
+      <hr className="mt-8 border-army-gold/20" />
 
       <article id="outline" className="scroll-mt-4 mt-8">
         <h3 className="text-lg font-bold">Step 1 — Open a section</h3>
@@ -173,7 +173,7 @@ export function GuideWalkthrough() {
         </ul>
       </article>
 
-      <hr className="mt-8 border-army-black/15" />
+      <hr className="mt-8 border-army-gold/20" />
 
       <article id="working-copy" className="scroll-mt-4 mt-8">
         <h3 className="text-lg font-bold">Step 2 — Edit your draft (not the original regulation)</h3>
@@ -201,7 +201,7 @@ export function GuideWalkthrough() {
         </GuideCallout>
       </article>
 
-      <hr className="mt-8 border-army-black/15" />
+      <hr className="mt-8 border-army-gold/20" />
 
       <article id="assist" className="scroll-mt-4 mt-8">
         <h3 className="text-lg font-bold">Step 3 — Use Assist reminders on the right</h3>
@@ -266,7 +266,7 @@ export function GuideWalkthrough() {
         </GuideCallout>
       </article>
 
-      <hr className="mt-8 border-army-black/15" />
+      <hr className="mt-8 border-army-gold/20" />
 
       <article id="process" className="scroll-mt-4 mt-8">
         <h3 className="text-lg font-bold">Step 4 — Peek at the Process map</h3>
@@ -287,7 +287,7 @@ export function GuideWalkthrough() {
         </GuideCallout>
       </article>
 
-      <hr className="mt-8 border-army-black/15" />
+      <hr className="mt-8 border-army-gold/20" />
 
       <article id="diff-export" className="scroll-mt-4 mt-8">
         <h3 className="text-lg font-bold">Step 5 — Compare, checkpoint, export</h3>
@@ -325,7 +325,7 @@ export function GuideWalkthrough() {
         </GuideCallout>
       </article>
 
-      <hr className="mt-8 border-army-black/15" />
+      <hr className="mt-8 border-army-gold/20" />
 
       <article id="roles" className="scroll-mt-4 mt-8">
         <h3 className="text-lg font-bold">Step 6 — Know your role</h3>
@@ -371,7 +371,7 @@ export function GuideWalkthrough() {
         </p>
       </article>
 
-      <hr className="mt-8 border-army-black/15" />
+      <hr className="mt-8 border-army-gold/20" />
 
       <h3 className="text-lg font-bold mt-8">Tiny tour (one breath)</h3>
       <p className="mt-2">

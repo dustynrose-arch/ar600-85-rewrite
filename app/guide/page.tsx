@@ -14,7 +14,7 @@ export default async function GuidePage() {
   const mode = parseWorkspaceMode(cookieStore.get(WORKSPACE_MODE_COOKIE)?.value);
   const state = publicState(mode);
   return (
-    <main className="min-h-screen bg-army-cream">
+    <main className="min-h-screen bg-army-black text-army-cream">
       <header className="shrink-0 bg-army-black text-army-cream px-4 py-2 flex items-center gap-4">
         <HeaderBrand
           title={`${HEADER_TITLE} — User Guide`}

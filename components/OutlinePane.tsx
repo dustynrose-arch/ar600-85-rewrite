@@ -157,8 +157,8 @@ export function OutlinePane({
   };
 
   return (
-    <aside className="flex flex-col min-h-0 h-full border-r border-army-black/15 bg-[#efe8d8]">
-      <div className="p-3 border-b border-army-black/10">
+    <aside className="flex flex-col min-h-0 h-full border-r border-army-gold/25 panel-surface">
+      <div className="p-3 border-b border-army-gold/20">
         <div className="flex items-center justify-between gap-2 mb-2">
           <p className="panel-heading">Outline</p>
           <PaneToggle label="outline" expanded onClick={onCollapse} />
@@ -170,7 +170,7 @@ export function OutlinePane({
           value={query}
           onChange={(event) => onQuery(event.target.value)}
           placeholder="Search AR 600-85"
-          className="w-full border border-army-black/20 bg-army-paper px-2 py-1.5 text-sm"
+          className="w-full field px-2 py-1.5 text-sm"
         />
         {searching ? <p className="text-[11px] text-army-slate mt-1">Searching…</p> : null}
         {editable && !query.trim() ? (
@@ -184,7 +184,7 @@ export function OutlinePane({
                 type="button"
                 disabled={!selected}
                 onClick={() => selected && openAdd(selected.id, "before")}
-                className="rounded-lg text-[10px] px-1.5 py-0.5 bg-white border border-army-black/15 disabled:opacity-40"
+                className="rounded-lg text-[10px] px-1.5 py-0.5 btn-secondary !px-1.5 !py-0.5 disabled:opacity-40"
               >
                 Add before
               </button>
@@ -192,7 +192,7 @@ export function OutlinePane({
                 type="button"
                 disabled={!selected}
                 onClick={() => selected && openAdd(selected.id, "after")}
-                className="rounded-lg text-[10px] px-1.5 py-0.5 bg-white border border-army-black/15 disabled:opacity-40"
+                className="rounded-lg text-[10px] px-1.5 py-0.5 btn-secondary !px-1.5 !py-0.5 disabled:opacity-40"
               >
                 Add after
               </button>
@@ -200,7 +200,7 @@ export function OutlinePane({
                 type="button"
                 disabled={!selectedChapter}
                 onClick={() => selectedChapter && openAdd(selectedChapter.id, "child")}
-                className="rounded-lg text-[10px] px-1.5 py-0.5 bg-white border border-army-black/15 disabled:opacity-40"
+                className="rounded-lg text-[10px] px-1.5 py-0.5 btn-secondary !px-1.5 !py-0.5 disabled:opacity-40"
               >
                 Add child
               </button>
@@ -208,7 +208,7 @@ export function OutlinePane({
                 type="button"
                 disabled={!selected || busy}
                 onClick={() => selected && void onSplit(selected.id)}
-                className="rounded-lg text-[10px] px-1.5 py-0.5 bg-white border border-army-black/15 disabled:opacity-40"
+                className="rounded-lg text-[10px] px-1.5 py-0.5 btn-secondary !px-1.5 !py-0.5 disabled:opacity-40"
               >
                 Split
               </button>
@@ -216,7 +216,7 @@ export function OutlinePane({
                 type="button"
                 disabled={!selected}
                 onClick={() => selected && openRename(selected.id)}
-                className="rounded-lg text-[10px] px-1.5 py-0.5 bg-white border border-army-black/15 disabled:opacity-40"
+                className="rounded-lg text-[10px] px-1.5 py-0.5 btn-secondary !px-1.5 !py-0.5 disabled:opacity-40"
               >
                 Rename
               </button>
@@ -224,7 +224,7 @@ export function OutlinePane({
                 type="button"
                 disabled={!selected}
                 onClick={() => selected && openDelete(selected.id)}
-                className="rounded-lg text-[10px] px-1.5 py-0.5 bg-white border border-army-rust/40 text-army-rust disabled:opacity-40"
+                className="rounded-lg text-[10px] px-1.5 py-0.5 border border-army-rust/70 bg-army-ink text-army-cream disabled:opacity-40"
               >
                 Delete
               </button>
@@ -249,14 +249,14 @@ export function OutlinePane({
                   type="button"
                   onClick={() => onSelect(hit.sectionId)}
                   className={`w-full text-left px-2 py-1.5 text-xs border ${
-                    selectedId === hit.sectionId ? "bg-army-gold/30 border-army-gold" : "bg-army-paper/80 border-transparent"
+                    selectedId === hit.sectionId ? "bg-army-gold/25 border-army-gold" : "card-surface border-transparent"
                   }`}
                 >
                   <div className="font-semibold">
                     {hit.number} {hit.title}
                   </div>
                   <div className="text-[10px] text-army-slate">{hit.chapterLabel}</div>
-                  <div className="mt-1 text-army-ink/80">{hit.snippet}</div>
+                  <div className="mt-1 text-army-cream/80">{hit.snippet}</div>
                 </button>
               </li>
             ))}
@@ -269,11 +269,11 @@ export function OutlinePane({
                 onClick={() => onSelect(SUMMARY_VIEW_ID)}
                 className={`w-full text-left px-2 py-2 text-[12px] leading-snug border ${
                   selectedId === SUMMARY_VIEW_ID
-                    ? "bg-army-gold/35 font-semibold border-army-gold"
-                    : "bg-army-paper/90 border-army-black/10 hover:bg-army-gold/15"
+                    ? "bg-army-gold/30 font-semibold border-army-gold"
+                    : "card-surface hover:bg-army-gold/15"
                 }`}
               >
-                <span className="section-heading block text-army-goldDark">
+                <span className="section-heading block text-army-gold">
                   Front matter
                 </span>
                 Summary of Change
@@ -317,7 +317,7 @@ export function OutlinePane({
                     {editable ? (
                       <button
                         type="button"
-                        className="rounded-lg text-[10px] font-semibold px-1 border border-army-black/15 bg-white"
+                        className="rounded-lg text-[10px] font-semibold px-1 btn-secondary !px-1 !py-0.5"
                         onClick={(event) => {
                           event.preventDefault();
                           openAdd(chapter.id, "child");
@@ -387,13 +387,13 @@ export function OutlinePane({
                                 });
                               }}
                               className={`flex-1 text-left px-2 py-1 text-[12px] leading-snug ${
-                                selectedId === section.id ? "bg-army-gold/35 font-semibold" : "hover:bg-army-gold/15"
+                                selectedId === section.id ? "bg-army-gold/30 font-semibold" : "hover:bg-army-gold/15"
                               }`}
                             >
                               <span className="text-army-goldDark mr-1">{section.number}</span>
                               {section.title}
                               {changed ? <span className="ml-1 text-[10px] text-army-rust">●</span> : null}
-                              {marked ? <span className="ml-1 text-[10px] text-army-olive">WG</span> : null}
+                              {marked ? <span className="ml-1 text-[10px] text-army-oliveDark">WG</span> : null}
                             </button>
                           </div>
                         </li>
@@ -408,7 +408,7 @@ export function OutlinePane({
       </div>
       {menu && editable ? (
         <div
-          className="fixed z-40 min-w-[10rem] bg-white border border-army-black/20 shadow-lg text-[12px]"
+          className="fixed z-40 min-w-[10rem] menu-surface text-[12px]"
           style={{ left: menu.x, top: menu.y }}
           onClick={(event) => event.stopPropagation()}
         >
@@ -449,7 +449,7 @@ export function OutlinePane({
       ) : null}
       {dialog ? (
         <div className="fixed inset-0 z-50 bg-army-black/40 flex items-center justify-center p-4">
-          <div className="bg-army-paper border border-army-black/20 w-full max-w-sm p-4 space-y-3">
+          <div className="panel-surface border border-army-gold/30 w-full max-w-sm p-4 space-y-3">
             <h2 className="font-semibold text-sm">
               {dialog === "add" ? "Add working-copy paragraph" : dialog === "rename" ? "Rename paragraph title" : "Delete paragraph"}
             </h2>
@@ -465,7 +465,7 @@ export function OutlinePane({
                 <input
                   value={dialogTitle}
                   onChange={(event) => setDialogTitle(event.target.value)}
-                  className="mt-1 w-full border border-army-black/20 px-2 py-1.5 text-sm"
+                  className="mt-1 w-full field px-2 py-1.5 text-sm"
                   autoFocus
                 />
               </label>

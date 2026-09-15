@@ -169,3 +169,60 @@ test("Assist glossary heading is plain language, not GLOSSARY TIP — LOCKED TER
   assert.equal(assist.includes("Cheech"), false);
   assert.match(guide, /Glossary — terms you must keep/);
 });
+
+test("darker-but-fun chrome: dark scheme, gold header chip, no leftover light panes, export stamps untouched", () => {
+  const css = readRepoFile("app/globals.css");
+  const tailwind = readRepoFile("tailwind.config.ts");
+  const outline = readRepoFile("components/OutlinePane.tsx");
+  const assist = readRepoFile("components/AssistPane.tsx");
+  const workbench = readRepoFile("components/Workbench.tsx");
+  const brand = readRepoFile("components/HeaderBrand.tsx");
+  const draft = readRepoFile("components/DraftEditor.tsx");
+  const editor = readRepoFile("components/EditorPane.tsx");
+  const paneToggle = readRepoFile("components/PaneToggle.tsx");
+  const training = readRepoFile("components/TrainingBanner.tsx");
+  const trainingSwitch = readRepoFile("components/TrainingSwitch.tsx");
+  const exportStamps = readRepoFile("lib/export-stamps.ts");
+  const exportDocx = readRepoFile("lib/export-docx.ts");
+
+  assert.match(css, /color-scheme:\s*dark/);
+  assert.match(css, /bg-army-black text-army-cream/);
+  assert.match(css, /\.header-draft-mark \{[\s\S]*bg-army-gold[\s\S]*text-army-black/);
+  assert.match(css, /\.header-draft-mark \{[\s\S]*border-army-cream/);
+  assert.match(css, /\.draft-misspelled \{[\s\S]*#ff6b6b/);
+  assert.match(css, /caret-color: #f4efe3/);
+  assert.equal(css.includes("color-scheme: light"), false);
+  assert.equal(css.includes("bg-white"), false);
+
+  assert.match(tailwind, /raised:\s*"#262a38"/);
+  assert.match(tailwind, /gold:\s*"#e2b84a"/);
+
+  assert.equal(outline.includes("#efe8d8"), false);
+  assert.equal(assist.includes("#f7f2e6"), false);
+  assert.equal(paneToggle.includes("#efe8d8"), false);
+  assert.equal(workbench.includes("bg-army-cream"), false);
+  assert.match(workbench, /bg-army-black/);
+  assert.match(outline, /panel-surface/);
+  assert.match(assist, /panel-surface/);
+  assert.match(editor, /panel-surface/);
+  assert.match(draft, /bg-army-ink/);
+  assert.equal(draft.includes("bg-white"), false);
+  assert.equal(assist.includes("bg-white"), false);
+  assert.equal(outline.includes("bg-white"), false);
+
+  assert.match(brand, /ring-2 ring-army-gold/);
+  assert.match(brand, /src="\/g1-seal\.png"/);
+  assert.match(brand, /src="\/army-seal\.png"/);
+  assert.match(brand, /className="header-draft-mark"/);
+
+  assert.match(training, /training-banner/);
+  assert.match(trainingSwitch, /bg-army-gold/);
+  assert.match(trainingSwitch, /Leave Training/);
+  assert.match(trainingSwitch, /Enter Training/);
+
+  assert.match(exportStamps, /TRAINING \/ DRAFT \/ WORKING COPY/);
+  assert.match(exportStamps, /DRAFT \/ WORKING COPY/);
+  assert.match(exportStamps, /TRAINING \/ DRAFT/);
+  assert.match(exportDocx, /draftRun\(wordHeaderMark\(training\)/);
+  assert.match(exportDocx, /draftRun\(wordFooterMark\(training\)/);
+});

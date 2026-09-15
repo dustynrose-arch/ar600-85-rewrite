@@ -199,7 +199,7 @@ export function DraftEditor({ sectionId, value, editable, saveState, onChange, o
           </div>
         ) : null}
       </div>
-      <div className="relative flex-1 min-h-0 m-2 border border-army-black/15 bg-white">
+      <div className="relative flex-1 min-h-0 m-2 border border-army-gold/30 bg-army-ink">
         <div
           ref={overlayRef}
           aria-hidden
@@ -238,14 +238,14 @@ export function DraftEditor({ sectionId, value, editable, saveState, onChange, o
               undo();
             }
           }}
-          className="absolute inset-0 z-[1] w-full h-full p-3 border-0 bg-transparent font-doc text-[14px] leading-relaxed resize-none overflow-y-auto caret-army-ink"
+          className="absolute inset-0 z-[1] w-full h-full p-3 border-0 bg-transparent font-doc text-[14px] leading-relaxed resize-none overflow-y-auto caret-army-cream"
         />
       </div>
       {menu ? (
         <div
           role="menu"
           data-spell-menu=""
-          className="fixed z-[90] min-w-[12rem] border border-army-black/25 bg-white py-1 shadow-lg"
+          className="fixed z-[90] min-w-[12rem] menu-surface py-1"
           style={{ left: menu.x, top: menu.y }}
           onClick={(event) => event.stopPropagation()}
         >
@@ -258,7 +258,7 @@ export function DraftEditor({ sectionId, value, editable, saveState, onChange, o
                 key={suggestion}
                 type="button"
                 role="menuitem"
-                className="block w-full px-3 py-1 text-left text-sm hover:bg-army-cream"
+                className="block w-full px-3 py-1 text-left text-sm hover:bg-army-gold/20"
                 onClick={() => applySuggestion(suggestion)}
               >
                 {preserveWordShape(menu.word, suggestion)}

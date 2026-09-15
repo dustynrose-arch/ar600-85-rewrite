@@ -70,7 +70,7 @@ export function GuideVideo({ src = GUIDE_VIDEO_SRC }: { src?: string }) {
                     className={`border px-2.5 py-1.5 text-[12px] font-semibold ${
                       selected
                         ? "border-army-gold bg-army-gold text-army-black"
-                        : "border-army-black/15 bg-white text-army-ink"
+                        : "border-army-gold/40 bg-army-raised text-army-cream"
                     }`}
                   >
                     {clip.label}
