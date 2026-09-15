@@ -24,10 +24,10 @@ export function UserGuide() {
           workspace remembers those choices until you close the browser tab.
         </li>
         <li>
-          The header always shows a <strong>DRAFT</strong> mark (or <strong>TRAINING·DRAFT</strong> in
-          Training). The G–1 seal (left) and Army emblem (right) are always paired with that mark — never shown
-          alone. Word exports stay stamped DRAFT (and WORKING COPY in the Word header); Training exports stay{" "}
-          <strong>TRAINING / DRAFT</strong>.
+          The header always shows a <strong>DRAFT</strong> mark (or <strong>TRAINING / DRAFT</strong> in
+          Training). The G–1 seal and Army emblem sit together on the left and are always paired with that
+          mark — never shown alone. Word exports stay stamped DRAFT (and WORKING COPY in the Word header);
+          Training exports stay <strong>TRAINING / DRAFT</strong>.
         </li>
         <li>
           Original regulation (read-only): AR 600–85 (4 Oct 2024, admin revs 27 Feb 2025 / 19 Feb 2026).

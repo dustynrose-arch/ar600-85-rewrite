@@ -15,7 +15,7 @@ export default async function GuidePage() {
   const state = await publicState(mode);
   return (
     <main className="min-h-screen bg-army-black text-army-cream">
-      <header className="shrink-0 bg-army-black text-army-cream px-3 py-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+      <header className="header-bar">
         <HeaderBrand
           title={`${HEADER_TITLE} — User Guide`}
           detail="How to use your draft"

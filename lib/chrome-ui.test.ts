@@ -22,11 +22,11 @@ test("header DRAFT mark is always on; gold DRAFT / WORKING COPY bar is gone; exp
   assert.equal(css.includes("repeating-linear-gradient"), false);
 
   assert.match(brand, /headerDraftMark/);
-  assert.match(brand, /TRAINING·DRAFT/);
+  assert.match(brand, /TRAINING \/ DRAFT/);
   assert.match(brand, /data-draft-mark=""/);
   assert.match(brand, /className="header-draft-mark"/);
   assert.match(brand, /Never seals alone/);
-  assert.equal(brand.includes("btn-header"), false, "DRAFT / TRAINING·DRAFT stay marks, not action buttons");
+  assert.equal(brand.includes("btn-header"), false, "DRAFT / TRAINING / DRAFT stay marks, not action buttons");
   assert.equal(brand.includes("<button"), false);
   assert.match(css, /\.header-draft-mark \{/);
 
@@ -45,7 +45,7 @@ test("header DRAFT mark is always on; gold DRAFT / WORKING COPY bar is gone; exp
   assert.match(exportDocx, /draftRun\(wordFooterMark\(training\)/);
 });
 
-test("header: dual seals flank title, DPRR subtitle, Working Copy dropped from title", () => {
+test("header: G-1 then Army seal, title + DPRR, DRAFT mark, Working Copy dropped from title", () => {
   const brand = readRepoFile("components/HeaderBrand.tsx");
   const workbench = readRepoFile("components/Workbench.tsx");
   const guide = readRepoFile("app/guide/page.tsx");
@@ -82,10 +82,10 @@ test("editable-draft chrome says Your draft; on-screen mark is the header DRAFT 
   assert.match(assist, /Compare your draft against/);
   assert.match(brand, /headerDraftMark\(training\)/);
   assert.match(brand, /"DRAFT"/);
-  assert.match(brand, /"TRAINING·DRAFT"/);
+  assert.match(brand, /"TRAINING \/ DRAFT"/);
   assert.equal(brand.includes("WORKING COPY"), false);
   assert.match(userGuide, /DRAFT<\/strong> mark/);
-  assert.match(userGuide, /TRAINING·DRAFT/);
+  assert.match(userGuide, /TRAINING \/ DRAFT/);
   assert.equal(userGuide.includes("gold-and-black"), false);
   assert.match(walkthrough, /DRAFT<\/strong> mark in the header/);
   assert.equal(walkthrough.includes("gold banner"), false);
@@ -212,7 +212,7 @@ test("darker-but-fun chrome: dark scheme, plain gold DRAFT mark, no leftover lig
   assert.equal(
     /\.header-draft-mark \{[^}]*bg-army-gold/.test(css),
     false,
-    "DRAFT / TRAINING·DRAFT must be plain text, not a filled chip",
+    "DRAFT / TRAINING / DRAFT must be plain text, not a filled chip",
   );
   assert.equal(/\.header-draft-mark \{[^}]*rounded-lg/.test(css), false);
   assert.equal(/\.header-draft-mark \{[^}]*shadow-chip/.test(css), false);
@@ -240,8 +240,8 @@ test("darker-but-fun chrome: dark scheme, plain gold DRAFT mark, no leftover lig
   assert.equal(brand.includes("ring-"), false, "Army seal must not sit in a decorative ring/box");
   assert.match(brand, /header-brand/);
   assert.match(brand, /header-brand-titles/);
-  assert.match(brand, /whitespace-nowrap/);
-  assert.match(brand, /shrink-0/);
+  assert.match(css, /\.header-brand \{[\s\S]*flex-nowrap[\s\S]*shrink-0/);
+  assert.match(css, /\.header-brand-titles \{[\s\S]*whitespace-nowrap/);
   assert.equal(brand.includes("flex-1"), false, "flex-1 squeezed the title into a stacked column between the seals");
   assert.equal(brand.includes("max-w-[28rem]"), false, "title and DPRR subtitle must sit on one horizontal row");
   assert.equal(brand.includes("min-w-0"), false);
@@ -255,7 +255,7 @@ test("darker-but-fun chrome: dark scheme, plain gold DRAFT mark, no leftover lig
   assert.match(exportDocx, /draftRun\(wordFooterMark\(training\)/);
 });
 
-test("top-bar chrome: brand left, gold actions right, plain-text DRAFT mark, wrap instead of scroll", () => {
+test("top-bar chrome: one row G-1 Army title DPRR DRAFT then gold actions; wrap instead of scroll", () => {
   const css = readRepoFile("app/globals.css");
   const workbench = readRepoFile("components/Workbench.tsx");
   const guide = readRepoFile("app/guide/page.tsx");
@@ -266,10 +266,12 @@ test("top-bar chrome: brand left, gold actions right, plain-text DRAFT mark, wra
   assert.match(css, /\.btn-header \{[\s\S]*bg-army-gold[\s\S]*text-army-black[\s\S]*border-army-gold/);
   assert.match(css, /\.btn-header-ghost \{[\s\S]*btn-header/);
   assert.match(css, /\.btn-header \{[\s\S]*h-7/);
-  assert.match(css, /\.header-actions \{[\s\S]*ml-auto[\s\S]*justify-end/);
+  assert.match(css, /\.header-bar \{[\s\S]*flex-wrap[\s\S]*gap-1\.5/);
+  assert.match(css, /\.header-actions \{[\s\S]*ml-auto[\s\S]*justify-end[\s\S]*gap-1\.5/);
   assert.match(css, /\.header-role-value \{[\s\S]*bg-army-black[\s\S]*text-army-cream/);
-  assert.equal(css.includes("header-export-group"), false, "exports share the gold scheme, not an olive cluster");
+  assert.match(css, /\.header-export-group \{[\s\S]*gap-1/);
   assert.equal(css.includes("btn-header-export"), false);
+  assert.equal(/\.header-export-group \{[^}]*bg-army-olive/.test(css), false, "export group stays gold, not an olive cluster");
 
   const headerStart = workbench.indexOf("<header");
   const headerEnd = workbench.indexOf("</header>");
@@ -277,19 +279,29 @@ test("top-bar chrome: brand left, gold actions right, plain-text DRAFT mark, wra
   const brandIdx = header.indexOf("<HeaderBrand");
   const actionsIdx = header.indexOf("header-actions");
   assert.ok(brandIdx >= 0 && actionsIdx > brandIdx, "seals + title/DPRR sit left of top-bar actions");
-  assert.match(header, /flex-wrap/);
+  assert.match(header, /header-bar/);
   assert.match(header, /className="header-actions"/);
   assert.equal(header.includes("overflow-x-auto"), false, "horizontal scroll hid seals/mark");
-  assert.equal(header.includes("flex-nowrap"), false);
   assert.equal(header.includes("justify-between"), false, "justify-between interleaved wrapped actions to the left");
+  const roleIdx = header.indexOf("header-role");
+  const trainingIdx = header.indexOf("<TrainingSwitch");
+  const exportIdx = header.indexOf("header-export-group");
+  const guideBtnIdx = header.indexOf("User Guide");
+  assert.ok(
+    roleIdx >= 0 && trainingIdx > roleIdx && exportIdx > trainingIdx && guideBtnIdx > exportIdx,
+    "locked action order: Role, Training, export group, User Guide",
+  );
   assert.match(header, /className="header-role"/);
   assert.match(header, /className="header-role-value"/);
   assert.match(header, /className="header-role-select"/);
   assert.match(header, /Export Word \(Plain\)/);
   assert.match(header, /Export Word \(Track Changes\)/);
   assert.match(header, /Export Summary \(DRAFT\)/);
+  assert.match(header, />\s*Plain\s*</);
+  assert.match(header, />\s*Track Changes\s*</);
+  assert.match(header, />\s*Summary\s*</);
   assert.match(header, /User Guide/);
-  assert.equal(header.includes("header-export-group"), false);
+  assert.match(header, /header-export-group/);
   assert.equal(header.includes("btn-header-export"), false);
 
   const goldButtons = [...header.matchAll(/className="btn-header"/g)];
@@ -298,10 +310,9 @@ test("top-bar chrome: brand left, gold actions right, plain-text DRAFT mark, wra
 
   const guideHeaderStart = guide.indexOf("<header");
   const guideHeader = guide.slice(guideHeaderStart, guide.indexOf("</header>"));
-  assert.match(guideHeader, /flex-wrap/);
+  assert.match(guideHeader, /header-bar/);
   assert.match(guideHeader, /header-actions/);
   assert.equal(guideHeader.includes("overflow-x-auto"), false);
-  assert.equal(guideHeader.includes("flex-nowrap"), false);
   assert.match(guide, /className="btn-header"/);
   assert.equal(guide.includes("btn-header-ghost"), false);
 
@@ -323,22 +334,26 @@ test("top-bar chrome: brand left, gold actions right, plain-text DRAFT mark, wra
   assert.equal(armyTag.includes("border"), false);
   assert.equal(armyTag.includes("bg-army-cream"), false);
   assert.equal(armyTag.includes("shadow"), false);
-  assert.match(armyTag, /object-contain/);
+  assert.match(armyTag, /header-seal-army/);
+  assert.match(css, /\.header-seal \{[\s\S]*object-contain/);
 
   const g1Idx = brand.indexOf("g1-seal.png");
   const g1Tag = brand.slice(g1Idx, brand.indexOf("/>", g1Idx) + 2);
   assert.equal(g1Tag.includes("ring-"), false);
   assert.equal(g1Tag.includes("bg-army-cream"), false);
+  const titlesIdx = brand.indexOf("header-brand-titles");
+  const markIdx = brand.indexOf("header-draft-mark");
+  assert.ok(g1Idx >= 0 && armyIdx > g1Idx && titlesIdx > armyIdx && markIdx > titlesIdx, "G-1, Army, title/DPRR, then DRAFT — never seals alone");
   assert.match(brand, /className="header-draft-mark"/);
   assert.equal(brand.includes("btn-header"), false);
   assert.match(brand, /header-brand-titles/);
-  assert.match(brand, /whitespace-nowrap/);
+  assert.match(css, /\.header-brand-titles \{[\s\S]*whitespace-nowrap/);
   assert.equal(brand.includes("flex-1"), false);
   assert.match(brand, /src="\/g1-seal\.png"/);
   assert.match(brand, /src="\/army-seal\.png"/);
   assert.match(brand, /never overflow-x scroll/);
-  assert.match(brand, /TRAINING·DRAFT/);
-  assert.equal(brand.includes("TRAINING / DRAFT"), false, "on-screen mark is TRAINING·DRAFT; Word stamps stay slash");
+  assert.match(brand, /return training \? "TRAINING \/ DRAFT" : "DRAFT"/);
+  assert.equal(brand.includes("TRAINING·DRAFT"), false, "on-screen mark is TRAINING / DRAFT; Word stamps stay slash");
 
   assert.match(exportStamps, /TRAINING \/ DRAFT \/ WORKING COPY/);
   assert.match(exportStamps, /TRAINING \/ DRAFT/);
@@ -420,7 +435,7 @@ test("thicker black pane seams, Add paragraph, no FRONT MATTER, SoC visual compa
   assert.equal(exportDocx.includes("soc-ins"), false);
 });
 
-test("Justice: DRAFT / TRAINING·DRAFT is plain high-contrast text with dual seals; Word stamps unchanged", () => {
+test("Justice: DRAFT / TRAINING / DRAFT is plain high-contrast text with dual seals; Word stamps unchanged", () => {
   const brand = readRepoFile("components/HeaderBrand.tsx");
   const css = readRepoFile("app/globals.css");
   const tailwind = readRepoFile("tailwind.config.ts");
@@ -431,7 +446,7 @@ test("Justice: DRAFT / TRAINING·DRAFT is plain high-contrast text with dual sea
   const exportDocx = readRepoFile("lib/export-docx.ts");
   const exportRoute = readRepoFile("app/api/export/route.ts");
 
-  assert.match(brand, /return training \? "TRAINING·DRAFT" : "DRAFT"/);
+  assert.match(brand, /return training \? "TRAINING \/ DRAFT" : "DRAFT"/);
   assert.match(brand, /src="\/g1-seal\.png"/);
   assert.match(brand, /src="\/army-seal\.png"/);
   const g1Idx = brand.indexOf('src="/g1-seal.png"');

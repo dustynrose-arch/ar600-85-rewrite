@@ -68,7 +68,7 @@ export function TrainingSwitch({ mode, role, beforeSwitch, onResetApplied }: Pro
 
   return (
     <>
-      <div className="flex items-center gap-2" title={error ?? undefined}>
+      <div className="flex items-center gap-1.5" title={error ?? undefined}>
         {mode === "training" ? (
           <>
             <button
