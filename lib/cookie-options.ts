@@ -1,3 +1,5 @@
+import { runtimeEnv } from "./runtime-env.ts";
+
 /** Shared cookie flags for workspace mode and WG access. */
 
 export function forwardedProto(request?: Request): string | undefined {
@@ -17,13 +19,13 @@ export function forwardedProto(request?: Request): string | undefined {
  * COOKIE_SECURE=1 / 0 overrides detection.
  */
 export function cookieSecureFromRequest(request?: Request): boolean {
-  const override = process.env.COOKIE_SECURE?.trim().toLowerCase();
+  const override = runtimeEnv("COOKIE_SECURE").toLowerCase();
   if (override === "1" || override === "true" || override === "yes") return true;
   if (override === "0" || override === "false" || override === "no") return false;
   const proto = forwardedProto(request);
   if (proto === "https") return true;
   if (proto === "http") return false;
-  return process.env.VERCEL === "1";
+  return runtimeEnv("VERCEL") === "1";
 }
 
 export function sessionCookieOptions(request?: Request): {

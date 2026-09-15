@@ -5,9 +5,8 @@ import { StoreError } from "@/components/StoreError";
 import { TrainingBanner } from "@/components/TrainingBanner";
 import { TrainingSwitch } from "@/components/TrainingSwitch";
 import { UserGuide } from "@/components/UserGuide";
-import { PersistError } from "@/lib/persist";
 import { requireWgAccess } from "@/lib/require-wg-access";
-import { publicState } from "@/lib/store";
+import { loadPublicStateOrError } from "@/lib/safe-public-state";
 import { parseWorkspaceMode, WORKSPACE_MODE_COOKIE } from "@/lib/workspace-mode";
 
 export const dynamic = "force-dynamic";
@@ -16,15 +15,11 @@ export default async function GuidePage() {
   await requireWgAccess("/guide");
   const cookieStore = await cookies();
   const mode = parseWorkspaceMode(cookieStore.get(WORKSPACE_MODE_COOKIE)?.value);
-  let state;
-  try {
-    state = await publicState(mode);
-  } catch (error) {
-    if (error instanceof PersistError) {
-      return <StoreError training={mode === "training"} message={error.message} />;
-    }
-    throw error;
+  const loaded = await loadPublicStateOrError(mode);
+  if (!loaded.ok) {
+    return <StoreError training={mode === "training"} message={loaded.message} />;
   }
+  const state = loaded.state;
   return (
     <main className="min-h-screen bg-army-black text-army-cream">
       <header className="header-bar">
