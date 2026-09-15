@@ -4,6 +4,12 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, test } from "node:test";
 import {
+  containsBlobSecretMaterial,
+  publicBlobOpErrorMessage,
+  publicStorageErrorMessage,
+  sanitizeBlobReadWriteToken,
+} from "./blob-token.ts";
+import {
   blobSdkOptions,
   blobUploadPath,
   blobWorkspacePath,
@@ -117,6 +123,64 @@ test("blobSdkOptions prefers BLOB_READ_WRITE_TOKEN over empty OIDC fallback", ()
     if (previous == null) delete process.env.BLOB_READ_WRITE_TOKEN;
     else process.env.BLOB_READ_WRITE_TOKEN = previous;
   }
+});
+
+test("blobSdkOptions Bearer token strips pasted .env snippets and store-id fragments", () => {
+  const previous = process.env.BLOB_READ_WRITE_TOKEN;
+  const clean = "vercel_blob_rw_clean_only";
+  const polluted = `BLOB_STORE_ID="store_abc123" BLOB_READ_WRITE_TOKEN="${clean}"`;
+  const multiline = `BLOB_STORE_ID="store_abc123"\nBLOB_READ_WRITE_TOKEN="${clean}"\n`;
+  try {
+    process.env.BLOB_READ_WRITE_TOKEN = polluted;
+    const pollutedOpts = blobSdkOptions();
+    assert.deepEqual(pollutedOpts, { token: clean });
+    const bearerToken = "token" in pollutedOpts ? pollutedOpts.token : "";
+    assert.equal(`Bearer ${bearerToken}`, `Bearer ${clean}`);
+    assert.equal(bearerToken.includes("BLOB_STORE_ID"), false);
+    assert.equal(bearerToken.includes("store_abc123"), false);
+    assert.equal(bearerToken.includes("="), false);
+
+    process.env.BLOB_READ_WRITE_TOKEN = multiline;
+    assert.deepEqual(blobSdkOptions(), { token: clean });
+
+    process.env.BLOB_READ_WRITE_TOKEN = `  ${clean}  `;
+    assert.deepEqual(blobSdkOptions(), { token: clean });
+
+    process.env.BLOB_READ_WRITE_TOKEN = `BLOB_STORE_ID="store_abc123"`;
+    assert.deepEqual(blobSdkOptions(), {});
+  } finally {
+    if (previous == null) delete process.env.BLOB_READ_WRITE_TOKEN;
+    else process.env.BLOB_READ_WRITE_TOKEN = previous;
+  }
+});
+
+test("sanitizeBlobReadWriteToken extracts the raw token and ignores store id", () => {
+  assert.equal(sanitizeBlobReadWriteToken(" vercel_blob_rw_plain "), "vercel_blob_rw_plain");
+  assert.equal(
+    sanitizeBlobReadWriteToken(`BLOB_STORE_ID="store_x" BLOB_READ_WRITE_TOKEN="vercel_blob_rw_y"`),
+    "vercel_blob_rw_y",
+  );
+  assert.equal(sanitizeBlobReadWriteToken(`BLOB_STORE_ID="store_x"`), "");
+  assert.equal(sanitizeBlobReadWriteToken("store_onlyid"), "");
+});
+
+test("storage and Blob errors never echo token material", () => {
+  const leaked = new Error(
+    `Vercel Blob: Access denied. Authorization: Bearer BLOB_STORE_ID="store_x" BLOB_READ_WRITE_TOKEN="vercel_blob_rw_secret"`,
+  );
+  const storage = publicStorageErrorMessage(leaked);
+  const blobOp = publicBlobOpErrorMessage("GET", leaked);
+  assert.equal(containsBlobSecretMaterial(storage), false);
+  assert.equal(containsBlobSecretMaterial(blobOp), false);
+  assert.equal(storage.includes("vercel_blob_rw_"), false);
+  assert.equal(blobOp.includes("vercel_blob_rw_"), false);
+  assert.equal(storage.includes("Bearer"), false);
+  assert.equal(blobOp.includes("Bearer"), false);
+  assert.match(blobOp, /Private Blob GET failed/);
+  assert.equal(
+    publicStorageErrorMessage(new PersistError("Workspace is busy. Retry the save.")),
+    "Workspace is busy. Retry the save.",
+  );
 });
 
 test("parseKvPipelineFirst reads Upstash and Redis pipeline shapes", () => {

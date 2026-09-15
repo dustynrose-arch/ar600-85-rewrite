@@ -1,5 +1,6 @@
 import { mkdirSync, readFileSync, rmSync, writeFileSync, existsSync } from "node:fs";
 import path from "node:path";
+import { publicBlobOpErrorMessage, sanitizeBlobReadWriteToken } from "./blob-token.ts";
 import type { WorkspaceMode } from "./types.ts";
 import { serverEnv } from "./server-env.ts";
 import { storePaths } from "./store-paths.ts";
@@ -49,26 +50,27 @@ export function persistKind(): PersistKind {
   return "filesystem";
 }
 
+export function blobReadWriteToken(): string {
+  return sanitizeBlobReadWriteToken(serverEnv("BLOB_READ_WRITE_TOKEN"));
+}
+
 export function blobConfigured(): boolean {
-  if (serverEnv("BLOB_READ_WRITE_TOKEN")) return true;
+  if (blobReadWriteToken()) return true;
   return Boolean(serverEnv("BLOB_STORE_ID") && serverEnv("VERCEL_OIDC_TOKEN"));
 }
 
 /**
  * Prefer the static RW token. On Vercel the SDK otherwise picks OIDC whenever
  * BLOB_STORE_ID + VERCEL_OIDC_TOKEN exist; a 403 there becomes Application error.
+ * Bearer must be the raw token only — never a pasted .env snippet or store id.
  */
 export function blobSdkOptions(): { token: string } | Record<string, never> {
-  const token = serverEnv("BLOB_READ_WRITE_TOKEN");
+  const token = blobReadWriteToken();
   return token ? { token } : {};
 }
 
 function wrapBlobError(op: string, error: unknown): PersistError {
-  if (error instanceof PersistError) return error;
-  const message = error instanceof Error ? error.message : String(error);
-  return new PersistError(
-    `Private Blob ${op} failed. Confirm BLOB_READ_WRITE_TOKEN matches this private store. ${message}`,
-  );
+  return new PersistError(publicBlobOpErrorMessage(op, error));
 }
 
 function onVercelRuntime(): boolean {

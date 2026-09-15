@@ -1,7 +1,7 @@
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { NextResponse } from "next/server";
-import { isAllowedBlobUploadPath } from "@/lib/persist";
-import { serverEnv } from "@/lib/server-env";
+import { containsBlobSecretMaterial } from "@/lib/blob-token";
+import { blobReadWriteToken, isAllowedBlobUploadPath } from "@/lib/persist";
 import { canUpload } from "@/lib/roles";
 import { readState } from "@/lib/store";
 import { MAX_UPLOAD_BYTES } from "@/lib/types";
@@ -15,7 +15,8 @@ export async function POST(request: Request) {
   if (!canUpload(role)) {
     return NextResponse.json({ error: "Reviewers cannot upload files. Switch to Editor or Approver." }, { status: 403 });
   }
-  if (!serverEnv("BLOB_READ_WRITE_TOKEN")) {
+  const token = blobReadWriteToken();
+  if (!token) {
     return NextResponse.json(
       { error: "BLOB_READ_WRITE_TOKEN is required for browser uploads on Vercel." },
       { status: 500 },
@@ -25,6 +26,7 @@ export async function POST(request: Request) {
   const body = (await request.json()) as HandleUploadBody;
   try {
     const json = await handleUpload({
+      token,
       body,
       request,
       onBeforeGenerateToken: async (pathname, clientPayload) => {
@@ -57,8 +59,9 @@ export async function POST(request: Request) {
     });
     return NextResponse.json(json);
   } catch (error) {
+    const raw = error instanceof Error ? error.message : "Could not start upload.";
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Could not start upload." },
+      { error: containsBlobSecretMaterial(raw) ? "Could not start upload." : raw },
       { status: 400 },
     );
   }
