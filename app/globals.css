@@ -43,14 +43,19 @@ option {
     @apply btn border border-army-gold/40 bg-army-raised text-army-cream px-3 py-1.5 text-xs hover:bg-army-gold/20;
   }
 
-  /* Chrome actions (Training, Role, User Guide): gold fill, gold border, black text.
-     Ghost is an alias so leftovers match. Export uses .btn-header-export instead. */
+  /* All top-bar actions share one gold fill / gold border / black text scheme:
+     Role, exports, Training Leave/Reset, User Guide. Ghost is an alias so leftovers match. */
   .btn-header {
     @apply btn h-7 bg-army-gold text-army-black border border-army-gold px-2.5 py-0 text-[11px] hover:bg-army-goldDark;
   }
 
   .btn-header-ghost {
     @apply btn-header;
+  }
+
+  /* Brand left, controls right — even when the action cluster wraps to a second row. */
+  .header-actions {
+    @apply ml-auto flex flex-wrap items-center justify-end gap-2 text-xs;
   }
 
   /* Role: same 28px gold button; selected value sits in a black box inside. */
@@ -75,15 +80,6 @@ option {
 
   .header-role-select::-ms-expand {
     display: none;
-  }
-
-  /* Export cluster: olive scheme, grouped so it reads apart from gold chrome actions. */
-  .header-export-group {
-    @apply inline-flex flex-wrap items-center gap-1 rounded-lg border border-army-oliveDark/80 bg-army-olive/30 p-0.5;
-  }
-
-  .btn-header-export {
-    @apply btn h-7 bg-army-olive text-army-cream border border-army-oliveDark px-2.5 py-0 text-[11px] hover:bg-army-olive/80;
   }
 
   /* Parent / chapter headings — gold/teal on dark chrome for WCAG-ish contrast. */
@@ -144,10 +140,15 @@ option {
   }
 
   /* Persistent header legal mark — always on, never with a hide control.
-     Army gold fill + cream ring so Live DRAFT and Training TRAINING / DRAFT
-     stay readable against the dark header and never blend into the seals. */
+     Plain gold text only (no fill, no chip/button chrome) so Live DRAFT and
+     Training TRAINING·DRAFT stay high-contrast on the dark header, never look
+     like action buttons, and never leave the dual seals unpaired. */
   .header-draft-mark {
-    @apply shrink-0 rounded-lg border-2 border-army-cream bg-army-gold text-army-black px-2 py-1 text-[11px] font-bold tracking-[0.16em] whitespace-nowrap shadow-chip;
+    @apply shrink-0 text-army-gold text-[11px] font-bold tracking-[0.2em] leading-none whitespace-nowrap;
+    background: none;
+    border: 0;
+    box-shadow: none;
+    pointer-events: none;
   }
 }
 
