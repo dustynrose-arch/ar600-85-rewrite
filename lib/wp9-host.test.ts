@@ -41,6 +41,7 @@ test("WP9 host files keep Secure cookies, isolated stores, and a non-official ac
   assert.match(middleware, /WG_ACCESS_COOKIE/);
   assert.match(middleware, /\/access/);
   assert.match(middleware, /process\.env\.WG_ACCESS_SECRET/);
+  assert.match(middleware, /process\.env\.BLOB_READ_WRITE_TOKEN/);
   assert.match(middleware, /runtimeEnv\("WG_ACCESS_SECRET"\)/);
   assert.match(middleware, /Never 500 the document/);
   assert.match(persist, /blobSdkOptions/);
@@ -54,7 +55,12 @@ test("WP9 host files keep Secure cookies, isolated stores, and a non-official ac
   assert.equal(readRepoFile("app/access/page.tsx").includes("@/lib/store"), false);
   assert.match(readRepoFile("app/guide/page.tsx"), /requireWgAccess/);
   assert.match(readRepoFile("lib/require-wg-access.ts"), /redirect\(`\/access/);
-  assert.match(readRepoFile("lib/runtime-env.ts"), /process\.env as Record/);
+  const runtimeEnvSource = readRepoFile("lib/runtime-env.ts");
+  assert.match(runtimeEnvSource, /process\.env as Record/);
+  assert.match(runtimeEnvSource, /process\.env\.WG_ACCESS_SECRET/);
+  assert.match(runtimeEnvSource, /process\.env\.BLOB_READ_WRITE_TOKEN/);
+  assert.match(runtimeEnvSource, /process\.env\.BLOB_STORE_ID/);
+  assert.match(readRepoFile("app/api/access/route.ts"), /force-dynamic/);
   assert.match(readRepoFile("app/error.tsx"), /\/access/);
   assert.match(readRepoFile("app/global-error.tsx"), /\/access/);
 

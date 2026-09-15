@@ -6,10 +6,12 @@ const PUBLIC_PATHS = new Set(["/access", "/api/access"]);
 const PUBLIC_FILES = new Set(["/g1-seal.png", "/army-seal.png", "/favicon.ico"]);
 
 function middlewareSecret(): string {
-  // Static keys so Next.js lists them for the Edge isolate.
-  process.env.WG_ACCESS_SECRET;
-  process.env.BLOB_READ_WRITE_TOKEN;
-  return runtimeEnv("WG_ACCESS_SECRET");
+  // Static member access keeps these keys in the Edge isolate allowlist.
+  const listed = process.env.WG_ACCESS_SECRET?.trim() ?? "";
+  void process.env.BLOB_READ_WRITE_TOKEN;
+  void process.env.BLOB_STORE_ID;
+  void process.env.VERCEL_OIDC_TOKEN;
+  return listed || runtimeEnv("WG_ACCESS_SECRET");
 }
 
 function redirectToAccess(request: NextRequest, pathname: string): NextResponse {
