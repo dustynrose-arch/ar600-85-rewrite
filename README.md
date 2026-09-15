@@ -4,7 +4,7 @@ Browser-only Next.js application for the internal Army Deputy Chief of Staff, G�
 
 This is the WP1–WP9 build: three-pane chrome with collapsible outline and Writing Assistant panes, automatic save, roles and gates, Assist reminders (glossary, Limited Use Policy (self-referral) vs legal / adverse-action hints, overlap checks), process map, cite-don’t-copy authority, checkpoints, stacked compare (original regulation above your draft), Word export, audited uploads, Editor-only working-copy structure edits, an in-app User Guide with a First session walkthrough plus video placeholder, a Training sandbox (separate saved data, Reset to original), and a private shared-host path (Vercel Blob + optional KV, Secure cookies, WG access).
 
-**Not an official publication.** The header always shows a **DRAFT** mark (or **TRAINING·DRAFT** in Training), paired with the G–1 and Army seals — never seals alone. Word header/footer and title page stay stamped **DRAFT / WORKING COPY** (Training: **TRAINING / DRAFT / WORKING COPY**).
+**Not an official publication.** The header always shows a **DRAFT** mark (or **TRAINING / DRAFT** in Training), paired with the G–1 and Army seals — never seals alone. Word header/footer and title page stay stamped **DRAFT / WORKING COPY** (Training: **TRAINING / DRAFT / WORKING COPY**).
 
 ## Baseline
 
@@ -39,7 +39,7 @@ npm start
 
 | Area | Behavior |
 | --- | --- |
-| Chrome | Outline \| editor \| Writing Assistant / authority. Official G–1 seal (`public/g1-seal.png`, left) and official Department of the Army emblem (`public/army-seal.png`, right) always paired with a persistent header **DRAFT** mark (**TRAINING·DRAFT** in Training) — never seals alone, no hide control. Title *AR 600-85 Rewrite*. Subtitle *Directorate of Prevention, Resilience and Readiness*. The editor pane is labeled **Your draft**. Outline and Writing Assistant collapse so the center editor can widen; the tab remembers that choice for the session. |
+| Chrome | Outline \| editor \| Writing Assistant / authority. Official G–1 seal (`public/g1-seal.png`) then official Department of the Army emblem (`public/army-seal.png`, unframed) on the left, then title *AR 600-85 Rewrite*, DPRR subtitle, and a persistent header **DRAFT** mark (**TRAINING / DRAFT** in Training) — never seals alone, no hide control. Gold actions follow on the same row (Role, Training, Plain / Track Changes / Summary, User Guide). The editor pane is labeled **Your draft**. Outline and Writing Assistant collapse so the center editor can widen; the tab remembers that choice for the session. |
 | Editing | Section edit with automatic save plus an Editor-only **Save** button (timeline: “Manual save”). The original regulation pane is read-only. Your draft has Undo (button and Ctrl+Z / ⌘Z) and browser spellcheck; the original regulation pane is not spellchecked. Hide outline / Hide Writing Assistant live on those side panes only — not in the center chrome. |
 | Structure | Editors only (Reviewer/Approver get 403). Add before/after/child, split, delete (confirm), rename title, drag-reorder including across chapters. Stable node ids stay put; display numbers renumber IAW AR 25-30 / DA Pam 25-40. Every add/delete/move/rename/split is audited. ACTIVE baseline seed is never written. Assist chips, Process highlight, tasks, drafts, and snapshots keep the stable id. Split leaves chips on the source; delete drops assist state for that id. |
 | Search | Queries the original regulation (read-only) only. |
@@ -60,7 +60,7 @@ Working-copy state lives in `data/runtime/` locally (created at first run, not c
 
 ## WP9 Shared host
 
-Private shared deploy for ~20 unclassified WG seats. This URL is a **DRAFT rewrite tool**, not an authenticated AR or official Army system. Dual seals stay paired with the header DRAFT / TRAINING·DRAFT mark; Word export stamps are unchanged.
+Private shared deploy for ~20 unclassified WG seats. This URL is a **DRAFT rewrite tool**, not an authenticated AR or official Army system. Dual seals stay paired with the header DRAFT / TRAINING / DRAFT mark; Word export stamps are unchanged.
 
 ### Deploy plan (Web Guard)
 
@@ -126,7 +126,7 @@ Local: `npm run dev` stays on disk; cookies are not Secure on `http://localhost`
 - Auth gate: Vercel Password Protection (Pro, All Deployments) and/or `/access` + `WG_ACCESS_SECRET` before the workbench. No CAC / “official publication” chrome.
 - `ar60085-workspace` (and `ar60085-wg` if the app secret is set) sent as `Secure; SameSite=Lax` on HTTPS; still set on localhost HTTP without Secure.
 - Training reset / uploads must not change the live Blob prefix.
-- Header DRAFT / TRAINING·DRAFT marks, dual seals, upload allowlist, roles, and Word stamps unchanged.
+- Header DRAFT / TRAINING / DRAFT marks, dual seals, upload allowlist, roles, and Word stamps unchanged.
 
 
 ## Project layout

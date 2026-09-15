@@ -15,4 +15,4 @@ AR 25-30 authenticated publication.
 
 Do not recolor, crop, or otherwise alter the mark.
 Always show this file paired with the persistent header DRAFT mark
-(TRAINING·DRAFT in Training). Never show seals alone.
+(TRAINING / DRAFT in Training). Never show seals alone.

@@ -44,23 +44,68 @@ option {
   }
 
   /* All top-bar actions share one gold fill / gold border / black text scheme:
-     Role, exports, Training Leave/Reset, User Guide. Ghost is an alias so leftovers match. */
+     Role, exports, Training Leave/Reset, User Guide. Ghost is an alias so leftovers match.
+     Same 28px height; slightly tighter padding so Live + Training stay one row. */
   .btn-header {
-    @apply btn h-7 bg-army-gold text-army-black border border-army-gold px-2.5 py-0 text-[11px] hover:bg-army-goldDark;
+    @apply btn h-7 bg-army-gold text-army-black border border-army-gold px-2 py-0 text-[10px] hover:bg-army-goldDark;
   }
 
   .btn-header-ghost {
     @apply btn-header;
   }
 
+  /* One horizontal row: seals + title + DRAFT, then gold actions.
+     Tight even gaps. Wrap actions only if the row cannot shrink further.
+     Brand (seals + DRAFT mark) stays on the first row — never overflow-x scroll. */
+  .header-bar {
+    @apply shrink-0 bg-army-black text-army-cream px-2 py-1 flex flex-wrap items-center gap-1.5;
+  }
+
+  .header-brand {
+    @apply flex flex-nowrap items-center gap-1.5 shrink-0;
+  }
+
+  .header-seal {
+    @apply h-8 w-8 shrink-0 object-contain;
+  }
+
+  .header-seal-g1 {
+    @apply rounded-full;
+  }
+
+  .header-seal-army {
+    @apply rounded-none;
+  }
+
+  .header-brand-titles {
+    @apply flex items-baseline gap-1.5 whitespace-nowrap;
+  }
+
+  .header-title {
+    @apply text-sm font-semibold leading-none text-army-cream;
+  }
+
+  .header-subtitle {
+    @apply text-[10px] leading-none text-army-goldDark;
+  }
+
+  .header-detail {
+    @apply text-[10px] leading-none text-army-cream/80;
+  }
+
   /* Brand left, controls right — even when the action cluster wraps to a second row. */
   .header-actions {
-    @apply ml-auto flex flex-wrap items-center justify-end gap-2 text-xs;
+    @apply ml-auto flex flex-wrap items-center justify-end gap-1.5 text-xs;
+  }
+
+  /* Export cluster: same gold buttons, tighter inner gap so they read as one group. */
+  .header-export-group {
+    @apply flex items-center gap-1;
   }
 
   /* Role: same 28px gold button; selected value sits in a black box inside. */
   .header-role {
-    @apply btn-header gap-1.5;
+    @apply btn-header gap-1;
   }
 
   .header-role-value {
@@ -68,7 +113,7 @@ option {
   }
 
   .header-role-select {
-    @apply bg-transparent text-army-cream border-0 p-0 m-0 h-5 text-[11px] font-semibold leading-none;
+    @apply bg-transparent text-army-cream border-0 p-0 m-0 h-5 text-[10px] font-semibold leading-none;
     appearance: none;
     -webkit-appearance: none;
     padding-right: 0.85rem;
@@ -141,10 +186,10 @@ option {
 
   /* Persistent header legal mark — always on, never with a hide control.
      Justice: plain gold text only (no fill, no chip/button chrome) so Live DRAFT
-     and Training TRAINING·DRAFT stay high-contrast on #101218, never look like
+     and Training TRAINING / DRAFT stay high-contrast on #101218, never look like
      action buttons or an authenticated AR, and never leave the dual seals unpaired. */
   .header-draft-mark {
-    @apply shrink-0 text-army-gold text-[11px] font-bold tracking-[0.22em] leading-none whitespace-nowrap;
+    @apply shrink-0 text-army-gold text-[10px] font-bold tracking-[0.16em] leading-none whitespace-nowrap;
     background: none;
     border: 0;
     box-shadow: none;

@@ -10,7 +10,7 @@ export default async function AccessPage() {
   const training = parseWorkspaceMode(cookieStore.get(WORKSPACE_MODE_COOKIE)?.value) === "training";
   return (
     <main className="min-h-screen bg-army-black text-army-cream">
-      <header className="shrink-0 bg-army-black text-army-cream px-3 py-1 flex flex-wrap items-center gap-3">
+      <header className="header-bar">
         <HeaderBrand title={`${HEADER_TITLE} — WG access`} training={training} />
       </header>
       <div className="max-w-lg mx-auto px-6 py-10">

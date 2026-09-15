@@ -61,7 +61,7 @@ export function GuideWalkthrough() {
       <p className="mt-3">
         Everything you write here is a <strong>draft</strong>. It is not Army policy until officially
         published. The <strong>DRAFT</strong> mark in the header marks it that way (or{" "}
-        <strong>TRAINING·DRAFT</strong> in Training). Use <strong>Enter Training</strong> at the
+        <strong>TRAINING / DRAFT</strong> in Training). Use <strong>Enter Training</strong> at the
         top of the page for a separate practice copy; <strong>Reset to original</strong> restores that
         training copy only.
       </p>
@@ -125,7 +125,7 @@ export function GuideWalkthrough() {
             <td className={tdClass}>
               <strong>Top</strong>
             </td>
-            <td className={tdClass}>Save status, your role, Guide, Word export, G–1 and Army seals, persistent DRAFT mark (TRAINING·DRAFT in Training)</td>
+            <td className={tdClass}>Save status, your role, Guide, Word export, G–1 and Army seals, persistent DRAFT mark (TRAINING / DRAFT in Training)</td>
           </tr>
         </tbody>
       </table>

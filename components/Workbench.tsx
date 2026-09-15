@@ -296,22 +296,9 @@ export function Workbench({
           applyState(await res.json());
         }}
       />
-      <header className="shrink-0 bg-army-black text-army-cream px-3 py-1 flex flex-wrap items-center gap-x-3 gap-y-1 box-split-b">
+      <header className="header-bar box-split-b">
         <HeaderBrand title={HEADER_TITLE} training={state.mode === "training"} />
         <div className="header-actions">
-          <TrainingSwitch
-            mode={state.mode}
-            role={state.role}
-            beforeSwitch={async () => {
-              if (saveTimer.current) {
-                window.clearTimeout(saveTimer.current);
-                saveTimer.current = null;
-              }
-              if (state.role === "editor" && !state.locked && (saveState === "dirty" || saveState === "saving")) {
-                await persistDraft(resolvedEditorId, draft, state.role, "autosave");
-              }
-            }}
-          />
           <label className="header-role">
             Role
             <span className="header-role-value">
@@ -329,15 +316,30 @@ export function Workbench({
               </select>
             </span>
           </label>
-          <a href="/api/export" className="btn-header">
-            Export Word (Plain)
-          </a>
-          <a href="/api/export?kind=track-changes" className="btn-header">
-            Export Word (Track Changes)
-          </a>
-          <a href="/api/export?kind=summary" className="btn-header">
-            Export Summary (DRAFT)
-          </a>
+          <TrainingSwitch
+            mode={state.mode}
+            role={state.role}
+            beforeSwitch={async () => {
+              if (saveTimer.current) {
+                window.clearTimeout(saveTimer.current);
+                saveTimer.current = null;
+              }
+              if (state.role === "editor" && !state.locked && (saveState === "dirty" || saveState === "saving")) {
+                await persistDraft(resolvedEditorId, draft, state.role, "autosave");
+              }
+            }}
+          />
+          <div className="header-export-group">
+            <a href="/api/export" className="btn-header" aria-label="Export Word (Plain)">
+              Plain
+            </a>
+            <a href="/api/export?kind=track-changes" className="btn-header" aria-label="Export Word (Track Changes)">
+              Track Changes
+            </a>
+            <a href="/api/export?kind=summary" className="btn-header" aria-label="Export Summary (DRAFT)">
+              Summary
+            </a>
+          </div>
           <a href="/guide" className="btn-header">
             User Guide
           </a>
