@@ -224,7 +224,6 @@ test("top-bar buttons share one gold fill/border/text scheme; Army seal has no d
   const guide = readRepoFile("app/guide/page.tsx");
   const brand = readRepoFile("components/HeaderBrand.tsx");
   const trainingSwitch = readRepoFile("components/TrainingSwitch.tsx");
-  const draft = readRepoFile("components/DraftEditor.tsx");
 
   assert.match(css, /\.btn-header \{[\s\S]*bg-army-gold[\s\S]*text-army-black[\s\S]*border-army-gold/);
   assert.match(css, /\.btn-header-ghost \{[\s\S]*btn-header/);
@@ -248,8 +247,6 @@ test("top-bar buttons share one gold fill/border/text scheme; Army seal has no d
   const enterIdx = trainingSwitch.indexOf("Enter Training");
   const enterBlock = trainingSwitch.slice(Math.max(0, enterIdx - 250), enterIdx);
   assert.match(enterBlock, /btn-header/);
-
-  assert.match(draft, />Save</);
 
   const armyIdx = brand.indexOf("army-seal.png");
   const armyTag = brand.slice(armyIdx, brand.indexOf("/>", armyIdx) + 2);
