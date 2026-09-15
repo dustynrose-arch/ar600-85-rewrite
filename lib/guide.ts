@@ -15,15 +15,21 @@ export const GUIDE_CLIPS: GuideClip[] = [
 ];
 
 export type GuideAnchor = {
-  id: "outline" | "working-copy" | "assist" | "process" | "diff-export" | "roles";
+  id: string;
   label: string;
 };
 
 export const GUIDE_ANCHORS: GuideAnchor[] = [
-  { id: "outline", label: "Step 1 — Open a section" },
-  { id: "working-copy", label: "Step 2 — Edit your draft (not the original regulation)" },
-  { id: "assist", label: "Step 3 — Use Writing Assistant reminders on the right" },
-  { id: "process", label: "Step 4 — Peek at the Process map" },
-  { id: "diff-export", label: "Step 5 — Compare, checkpoint, export" },
-  { id: "roles", label: "Step 6 — Know your role" },
+  { id: "0-purpose", label: "0. Purpose" },
+  { id: "working-group-access-password-gate", label: "Working-group access" },
+  { id: "part-a-orient-the-workspace", label: "Part A — Orient" },
+  { id: "part-b-edit-your-draft", label: "Part B — Edit" },
+  { id: "part-c-see-what-changed", label: "Part C — Compare" },
+  { id: "part-d-writing-assistant-only-when-warranted", label: "Part D — Writing Assistant" },
+  { id: "part-e-document-crossmatch", label: "Part E — Crossmatch" },
+  { id: "part-f-practice-safely", label: "Part F — Training" },
+  { id: "part-g-hand-off-export", label: "Part G — Export" },
+  { id: "part-h-roles-gates-and-session-safety", label: "Part H — Roles" },
+  { id: "20-first-session-quick-path", label: "20. First-session path" },
+  { id: "21-quick-reference", label: "21. Quick reference" },
 ];

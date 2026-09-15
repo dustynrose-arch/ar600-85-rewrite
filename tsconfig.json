@@ -33,6 +33,7 @@
     "**/*.ts",
     "**/*.tsx",
     "next-env.d.ts",
+    "lib/md-modules.d.ts",
     ".next/types/**/*.ts"
   ],
   "exclude": [
