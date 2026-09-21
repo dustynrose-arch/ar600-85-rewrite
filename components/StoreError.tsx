@@ -1,4 +1,5 @@
 import { HeaderBrand, HEADER_TITLE } from "@/components/HeaderBrand";
+import { LogOutButton } from "@/components/LogOutButton";
 import { publicStorageErrorMessage } from "@/lib/blob-token";
 
 /** Shown when persist fails closed (missing Blob, bad token). Not an official system. */
@@ -14,6 +15,9 @@ export function StoreError({
     <main className="min-h-screen bg-army-black text-army-cream">
       <header className="header-bar">
         <HeaderBrand title={`${HEADER_TITLE} — storage`} training={training} />
+        <div className="header-actions">
+          <LogOutButton />
+        </div>
       </header>
       <div className="max-w-lg mx-auto px-6 py-10">
         <p className="text-[11px] font-bold tracking-[0.28em] text-army-gold">

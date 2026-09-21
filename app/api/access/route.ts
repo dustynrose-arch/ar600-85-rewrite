@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { serverEnv } from "@/lib/server-env";
 import {
   secretsMatch,
+  wgAccessClearCookieOptions,
   wgAccessCookieOptions,
   wgAccessCookieValid,
   wgAccessCookieValue,
@@ -45,5 +46,12 @@ export async function POST(request: Request) {
   }
   const response = NextResponse.json({ ok: true });
   response.cookies.set(WG_ACCESS_COOKIE, await wgAccessCookieValue(secret), wgAccessCookieOptions(request));
+  return response;
+}
+
+/** Idempotent. Clears the WG cookie even when it is already gone. */
+export async function DELETE(request: Request) {
+  const response = NextResponse.json({ ok: true });
+  response.cookies.set(WG_ACCESS_COOKIE, "", wgAccessClearCookieOptions(request));
   return response;
 }
