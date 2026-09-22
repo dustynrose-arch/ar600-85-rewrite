@@ -39,7 +39,7 @@ npm start
 
 | Area | Behavior |
 | --- | --- |
-| Chrome | Outline \| editor \| Writing Assistant / authority. Official G–1 seal (`public/g1-seal.png`) then official Department of the Army emblem (`public/army-seal.png`, unframed) on the left, then title *AR 600-85 Rewrite*, DPRR subtitle, and a persistent header **DRAFT** mark (**TRAINING / DRAFT** in Training) — never seals alone, no hide control. Gold actions follow on the same row (Role, Training, Plain / Track Changes / Summary, User Guide). The editor pane is labeled **Your draft**. Outline and Writing Assistant collapse so the center editor can widen; the tab remembers that choice for the session. |
+| Chrome | Outline \| editor \| Writing Assistant / authority. Official G–1 seal (`public/g1-seal.png`) then official Department of the Army emblem (`public/army-seal.png`, unframed) on the left, then title *AR 600-85 Rewrite*, DPRR subtitle, and a persistent header **DRAFT** mark (**TRAINING / DRAFT** in Training) — never seals alone, no hide control. Gold actions follow on the same row (Role, Training, Plain / Track Changes / Summary, User Guide, Log out). The editor pane is labeled **Your draft**. Outline and Writing Assistant collapse so the center editor can widen; the tab remembers that choice for the session. |
 | Editing | Section edit with automatic save plus an Editor-only **Save** button (timeline: “Manual save”). The original regulation pane is read-only. Your draft has Undo (button and Ctrl+Z / ⌘Z) and browser spellcheck; the original regulation pane is not spellchecked. Hide outline / Hide Writing Assistant live on those side panes only — not in the center chrome. |
 | Structure | Editors only (Reviewer/Approver get 403). Add before/after/child, split, delete (confirm), rename title, drag-reorder including across chapters. Stable node ids stay put; display numbers renumber IAW AR 25-30 / DA Pam 25-40. Every add/delete/move/rename/split is audited. ACTIVE baseline seed is never written. Assist chips, Process highlight, tasks, drafts, and snapshots keep the stable id. Split leaves chips on the source; delete drops assist state for that id. |
 | Search | Queries the original regulation (read-only) only. |
@@ -69,8 +69,8 @@ Persistent store on Vercel is **non-negotiable**. Serverless disk (`data/runtime
 | Gate | What Web Guard checks |
 | --- | --- |
 | **Durable Live vs Training** | Private Blob objects `ar60085/live/workspace.json` and `ar60085/training/workspace.json`, plus `ar60085/{live\|training}/uploads/…`. Training **Reset to original** deletes only the training prefix. Cold start: if the Blob object is missing, seed from the embedded baseline and **PUT it to Blob**; later instances **GET with `useCache: false`**. Saves overwrite the same pathname (`allowOverwrite`). Optional KV lock keys `ar60085:lock:live` and `ar60085:lock:training`. |
-| **Auth** | **Option A:** Vercel **Deployment Protection → Password Protection** (Pro, **All Deployments**) before the app. Code hook: `WG_ACCESS_SECRET` sets httpOnly `ar60085-wg` (`Secure; SameSite=Lax` on HTTPS) and `/access` (labeled DRAFT tool — not an official/authenticated AR). Not NextAuth. Unauthenticated `/` redirects to `/access`; `/api/*` returns 401. |
-| **Cookies** | `ar60085-workspace` remembers Live vs Training (`Secure; SameSite=Lax` on HTTPS; no Secure on `http://localhost`). |
+| **Auth** | **Option A:** Vercel **Deployment Protection → Password Protection** (Pro, **All Deployments**) before the app. Code hook: `WG_ACCESS_SECRET` sets httpOnly session cookie `ar60085-wg` (`Secure; SameSite=Lax` on HTTPS; no Max-Age, so closing the browser asks for the password again). **Log out** clears that cookie and returns to `/access` (labeled DRAFT tool — not an official/authenticated AR). Not NextAuth. Unauthenticated `/` redirects to `/access`; `/api/*` returns 401. |
+| **Cookies** | `ar60085-workspace` remembers Live vs Training (`Secure; SameSite=Lax` on HTTPS; no Secure on `http://localhost`). `ar60085-wg` is a host-only browser session cookie (`HttpOnly; Path=/`; `Secure` only on HTTPS; no Max-Age or Expires). |
 
 **Chosen stack:** Vercel (Next.js) + **private Vercel Blob** (required) + optional **Vercel KV** write lock.
 
@@ -124,7 +124,7 @@ Local: `npm run dev` stays on disk; cookies are not Secure on `http://localhost`
 - Durable store: Blob configured; Live `ar60085/live/workspace.json` vs Training `ar60085/training/workspace.json`; a save + new instance / cold start still shows the draft (not a re-seed).
 - Missing Blob on Vercel: request fails with the Blob-required error — **not** a successful empty workspace on disk.
 - Auth gate: Vercel Password Protection (Pro, All Deployments) and/or `/access` + `WG_ACCESS_SECRET` before the workbench. No CAC / “official publication” chrome.
-- `ar60085-workspace` (and `ar60085-wg` if the app secret is set) sent as `Secure; SameSite=Lax` on HTTPS; still set on localhost HTTP without Secure.
+- `ar60085-workspace` (and `ar60085-wg` if the app secret is set) sent as `Secure; SameSite=Lax` on HTTPS; still set on localhost HTTP without Secure. `ar60085-wg` has no Max-Age (session). **Log out** clears that cookie and returns to `/access`.
 - Training reset / uploads must not change the live Blob prefix.
 - Header DRAFT / TRAINING / DRAFT marks, dual seals, upload allowlist, roles, and Word stamps unchanged.
 

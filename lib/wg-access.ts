@@ -1,11 +1,42 @@
 import { sessionCookieOptions } from "./cookie-options.ts";
 import { runtimeEnv } from "./runtime-env.ts";
 
-/** HttpOnly session set after the WG shared secret is accepted. */
+/** HttpOnly cookie set after the WG shared secret is accepted. */
 export const WG_ACCESS_COOKIE = "ar60085-wg";
-const WG_ACCESS_MAX_AGE = 60 * 60 * 24 * 365;
 
 const WG_ACCESS_PAYLOAD = "ar60085-wg-v1";
+
+/**
+ * Browser session cookie. Omit Max-Age and Expires so quitting the browser
+ * drops WG access. Do not set an 8–12 hour or 1-year Max-Age.
+ */
+export function wgAccessCookieOptions(request?: Request): {
+  path: string;
+  sameSite: "lax";
+  secure: boolean;
+  httpOnly: true;
+} {
+  return {
+    ...sessionCookieOptions(request),
+    httpOnly: true,
+  };
+}
+
+/** Clear ar60085-wg with the same Path / Secure / SameSite / HttpOnly flags. */
+export function wgAccessClearCookieOptions(request?: Request): {
+  path: string;
+  sameSite: "lax";
+  secure: boolean;
+  httpOnly: true;
+  maxAge: 0;
+  expires: Date;
+} {
+  return {
+    ...wgAccessCookieOptions(request),
+    maxAge: 0,
+    expires: new Date(0),
+  };
+}
 
 export function wgAccessSecret(): string {
   return runtimeEnv("WG_ACCESS_SECRET");
@@ -13,20 +44,6 @@ export function wgAccessSecret(): string {
 
 export function wgAccessConfigured(): boolean {
   return wgAccessSecret().length > 0;
-}
-
-export function wgAccessCookieOptions(request?: Request): {
-  path: string;
-  sameSite: "lax";
-  secure: boolean;
-  httpOnly: boolean;
-  maxAge: number;
-} {
-  return {
-    ...sessionCookieOptions(request),
-    httpOnly: true,
-    maxAge: WG_ACCESS_MAX_AGE,
-  };
 }
 
 function bytesEqual(a: Uint8Array, b: Uint8Array): boolean {

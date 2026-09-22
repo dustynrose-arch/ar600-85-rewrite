@@ -25,18 +25,18 @@ Everything you write here is a **draft**. It is not Army policy and not an authe
 The live rewrite site is password-locked for the working group. It is a draft tool, not an official Army publication and not open to the public.
 
 **When to use it**  
-First visit, or any private/incognito window / browser that has never logged in.
+First visit, after **Log out**, after you close the browser, or in a private/incognito window.
 
 **How**
 1. Open the private link you were given.
-2. First visit (or a private/incognito window) shows **Working-group access** — enter the password, then continue into the app.
+2. **Working-group access** asks for the password on a first visit, after **Log out**, and again after you close the browser. Enter the password, then continue into the app.
 3. Keep the password and the site link inside the working group. Do not forward the link widely or paste passwords, storage tokens, or other secrets into chat, email, or screenshots.
 
 **What success looks like**  
-Fresh browser or private window → login page first → draft app after the correct password. Seals appear with the plain gold DRAFT mark.
+After you close the browser, click **Log out**, or open a private window, the login page comes first. The draft app appears after the correct password. Seals appear with the plain gold DRAFT mark.
 
 **Session reminder**  
-Closing the browser often does not log you out. Your browser may open straight into the app next time because it remembered the login — that does not mean the lock is off. To confirm the gate still works: open the site in a private/incognito window or a browser that has never logged in. You should see the login page again before the draft.
+The login lasts only while this browser stays open. Closing the browser clears it, so the next visit asks for the password again. Click **Log out** in the header to end the session immediately and return to **Working-group access**. Refreshing or opening another tab in the same open browser stays signed in until you log out or quit the browser.
 
 **Common mistake**  
 Wrong password keeps you on the login page — try again; do not paste the password into team chat. Edits on this site stay on the password-locked draft. They are not published APD / public domain until official release.
@@ -48,7 +48,7 @@ Wrong password keeps you on the login page — try again; do not paste the passw
 ### 1. Top banner & chrome
 
 **What it is**  
-The dark top bar holds the **G-1 seal** and **Army seal**, the title **AR 600-85 Rewrite**, the subtitle **Directorate of Prevention, Resilience and Readiness**, a plain gold **DRAFT** (or **TRAINING / DRAFT**) mark, Training controls, Role, the three gold export buttons, and **User Guide**. Seals are always paired with the DRAFT mark — never shown alone as if this were an authenticated publication.
+The dark top bar holds the **G-1 seal** and **Army seal**, the title **AR 600-85 Rewrite**, the subtitle **Directorate of Prevention, Resilience and Readiness**, a plain gold **DRAFT** (or **TRAINING / DRAFT**) mark, Training controls, Role, the three gold export buttons, **User Guide**, and **Log out**. Seals are always paired with the DRAFT mark — never shown alone as if this were an authenticated publication.
 
 **When to use it**  
 Any time you need to know live vs Training, change role, export, or open this Guide.
@@ -59,6 +59,7 @@ Any time you need to know live vs Training, change role, export, or open this Gu
 3. **Training controls** (separate from export): **Enter Training** / **Leave Training** (cream-on-dark) / **Reset to original**.
 4. **Gold export buttons:** **Plain** · **Track Changes** · **Summary**, plus **User Guide**.
 5. Set **Role** (`Editor` / `Reviewer` / `Approver`) before gated actions.
+6. **Log out** (same gold header button) clears the working-group session and returns to the password page. Closing the browser does the same.
 
 **What success looks like**  
 You can name seals, DRAFT mark, Training controls, and the three export buttons without hunting. The header is the dark theme (black bar, cream text) — there is no separate theme toggle.
@@ -493,7 +494,8 @@ Thinking a lock means data loss. Lock saves first.
 
 | Need | Go here |
 |---|---|
-| Get in | Working-group access (private window to test gate) |
+| Get in | Working-group access (private window, **Log out**, or a fresh browser to test the gate) |
+| Log out | Header **Log out**, or close the browser |
 | Find a paragraph | Outline / Search original regulation |
 | Write | Center → Your draft |
 | Widen editor | Hide outline / Hide Writing Assistant |

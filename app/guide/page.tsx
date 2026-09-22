@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { HEADER_TITLE, HeaderBrand } from "@/components/HeaderBrand";
+import { LogOutButton } from "@/components/LogOutButton";
 import { StoreError } from "@/components/StoreError";
 import { TrainingBanner } from "@/components/TrainingBanner";
 import { TrainingSwitch } from "@/components/TrainingSwitch";
@@ -33,6 +34,7 @@ export default async function GuidePage() {
           <Link href="/" className="btn-header">
             Return to your draft
           </Link>
+          <LogOutButton />
         </div>
       </header>
       {mode === "training" ? <TrainingBanner /> : null}

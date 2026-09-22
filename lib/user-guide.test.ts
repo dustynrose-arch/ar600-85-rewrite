@@ -39,6 +39,9 @@ test("User Guide copy ships sections 0–21 plus working-group access", () => {
   assert.match(copy, /rust ●/);
   assert.match(copy, /When Limited Use appears/);
   assert.match(copy, /When Limited Use stays hidden/);
+  assert.match(copy, /Closing the browser clears it/);
+  assert.match(copy, /Click \*\*Log out\*\*/);
+  assert.equal(copy.includes("often does not log you out"), false);
 });
 
 test("User Guide copy strips review-file internals and outdated labels", () => {

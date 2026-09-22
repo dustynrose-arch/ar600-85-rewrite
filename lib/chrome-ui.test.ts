@@ -292,9 +292,10 @@ test("top-bar chrome: one row G-1 Army title DPRR DRAFT then gold actions; wrap 
   const trainingIdx = header.indexOf("<TrainingSwitch");
   const exportIdx = header.indexOf("header-export-group");
   const guideBtnIdx = header.indexOf("User Guide");
+  const logoutIdx = header.indexOf("<LogOutButton");
   assert.ok(
-    roleIdx >= 0 && trainingIdx > roleIdx && exportIdx > trainingIdx && guideBtnIdx > exportIdx,
-    "locked action order: Role, Training, export group, User Guide",
+    roleIdx >= 0 && trainingIdx > roleIdx && exportIdx > trainingIdx && guideBtnIdx > exportIdx && logoutIdx > guideBtnIdx,
+    "locked action order: Role, Training, export group, User Guide, Log out",
   );
   assert.match(header, /className="header-role"/);
   assert.match(header, /className="header-role-value"/);
@@ -317,9 +318,19 @@ test("top-bar chrome: one row G-1 Army title DPRR DRAFT then gold actions; wrap 
   const guideHeader = guide.slice(guideHeaderStart, guide.indexOf("</header>"));
   assert.match(guideHeader, /header-bar/);
   assert.match(guideHeader, /header-actions/);
+  assert.match(guideHeader, /<LogOutButton/);
   assert.equal(guideHeader.includes("overflow-x-auto"), false);
   assert.match(guide, /className="btn-header"/);
   assert.equal(guide.includes("btn-header-ghost"), false);
+
+  const logout = readRepoFile("components/LogOutButton.tsx");
+  assert.match(logout, /className="btn-header"/);
+  assert.match(logout, />\s*Log out\s*</);
+  assert.match(logout, /method: "DELETE"/);
+  assert.match(logout, /\/api\/access/);
+  assert.match(logout, /window\.location\.assign\("\/access"\)/);
+  assert.equal(logout.includes("localStorage"), false);
+  assert.equal(logout.includes("sessionStorage"), false);
 
   const leaveIdx = trainingSwitch.indexOf("Leave Training");
   const leaveBlock = trainingSwitch.slice(Math.max(0, leaveIdx - 250), leaveIdx);

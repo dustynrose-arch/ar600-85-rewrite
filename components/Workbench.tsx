@@ -10,6 +10,7 @@ import { CollapsedRail } from "@/components/PaneToggle";
 import { TrainingBanner } from "@/components/TrainingBanner";
 import { TrainingSwitch } from "@/components/TrainingSwitch";
 import { HEADER_TITLE, HeaderBrand } from "@/components/HeaderBrand";
+import { LogOutButton } from "@/components/LogOutButton";
 import { DEFAULT_PANE_STATE, readPaneSession, writePaneSession } from "@/lib/panes";
 import {
   buildSummaryOfChange,
@@ -343,6 +344,7 @@ export function Workbench({
           <a href="/guide" className="btn-header">
             User Guide
           </a>
+          <LogOutButton />
         </div>
       </header>
       {state.mode === "training" ? <TrainingBanner /> : null}
