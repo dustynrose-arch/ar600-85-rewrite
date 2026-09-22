@@ -76,6 +76,7 @@ test("editable-draft chrome says Your draft; on-screen mark is the header DRAFT 
   const assist = readRepoFile("components/AssistPane.tsx");
   const userGuide = readRepoFile("components/UserGuide.tsx");
   const guideCopy = readRepoFile("content/user-guide.md");
+  const walkthrough = readRepoFile("components/GuideWalkthrough.tsx");
 
   assert.match(editor, />Your draft</);
   assert.equal(editor.includes("WORKING COPY"), false);
@@ -93,7 +94,12 @@ test("editable-draft chrome says Your draft; on-screen mark is the header DRAFT 
   assert.equal(guideCopy.includes("gold-and-black"), false);
   assert.equal(guideCopy.includes("gold banner"), false);
   assert.equal(guideCopy.includes("DRAFT / WORKING COPY banner"), false);
-  assert.equal(existsSync(new URL("../components/GuideWalkthrough.tsx", import.meta.url)), false);
+  assert.match(walkthrough, /DRAFT<\/strong> mark/);
+  assert.match(walkthrough, /in the header/);
+  assert.equal(walkthrough.includes("gold banner"), false);
+  assert.equal(walkthrough.includes("DRAFT / WORKING COPY banner"), false);
+  assert.equal(walkthrough.includes("walkthrough + video"), false);
+  assert.equal(walkthrough.toLowerCase().includes("tutorial"), false);
 });
 
 test("Your draft editor uses a modest extra share of the center pane", () => {
@@ -155,6 +161,7 @@ test("right pane chrome is Writing Assistant, not Assist", () => {
   const workbench = readRepoFile("components/Workbench.tsx");
   const guide = readRepoFile("components/UserGuide.tsx");
   const guideCopy = readRepoFile("content/user-guide.md");
+  const walkthrough = readRepoFile("components/GuideWalkthrough.tsx");
 
   assert.match(assist, /className="panel-heading">Writing Assistant</);
   assert.match(assist, /label: "Writing Assistant"/);
@@ -164,6 +171,7 @@ test("right pane chrome is Writing Assistant, not Assist", () => {
   assert.equal(workbench.includes("Show Assist"), false);
   assert.equal(guide.includes("Hide Assist"), false);
   assert.equal(guideCopy.includes("Hide Assist"), false);
+  assert.equal(walkthrough.includes("Hide Assist"), false);
   assert.match(guideCopy, /Writing Assistant\*\* on the right/);
   assert.match(guideCopy, /Open the \*\*Writing Assistant\*\* tab/);
 });
@@ -421,6 +429,7 @@ test("thicker black pane seams, Add paragraph, no FRONT MATTER, SoC visual compa
   const exportDocx = readRepoFile("lib/export-docx.ts");
   const userGuide = readRepoFile("components/UserGuide.tsx");
   const guideCopy = readRepoFile("content/user-guide.md");
+  const walkthrough = readRepoFile("components/GuideWalkthrough.tsx");
 
   assert.match(css, /\.pane-split-y \{[\s\S]*3px solid #000/);
   assert.match(css, /\.pane-split-x \{[\s\S]*3px solid #000/);
@@ -442,6 +451,7 @@ test("thicker black pane seams, Add paragraph, no FRONT MATTER, SoC visual compa
   assert.match(guideCopy, /Add before \/ after \/ paragraph/);
   assert.equal(userGuide.includes("Add child"), false);
   assert.equal(guideCopy.includes("Add child"), false);
+  assert.equal(walkthrough.includes("Add child"), false);
 
   assert.match(summary, /compareSegments/);
   assert.match(summary, /data-soc-ins/);

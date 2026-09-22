@@ -47,8 +47,9 @@ test("User Guide copy ships sections 0–21 plus working-group access", () => {
 test("User Guide copy strips review-file internals and outdated labels", () => {
   const copy = readGuideCopy();
   const userGuide = readFileSync(new URL("../components/UserGuide.tsx", import.meta.url), "utf8");
+  const walkthrough = readFileSync(new URL("../components/GuideWalkthrough.tsx", import.meta.url), "utf8");
   const overlay = readFileSync(new URL("../components/UserGuideOverlay.tsx", import.meta.url), "utf8");
-  const shipped = `${copy}\n${userGuide}\n${overlay}`;
+  const shipped = `${copy}\n${userGuide}\n${walkthrough}\n${overlay}`;
 
   assert.equal(/##\s*22\b/.test(copy), false);
   assert.equal(copy.includes("Related review files"), false);
@@ -60,11 +61,13 @@ test("User Guide copy strips review-file internals and outdated labels", () => {
   assert.equal(copy.includes("gold-and-black"), false);
   assert.equal(/\bHide Assist\b/.test(shipped), false);
   assert.match(copy, /not a gold dot/);
-  assert.equal(userGuide.includes("gold dot"), false);
-  assert.equal(overlay.includes("Word export"), false);
+  assert.equal(walkthrough.includes("gold dot"), false);
+  assert.equal(walkthrough.includes("Word export"), false);
   assert.equal(shipped.toLowerCase().includes("tutorial"), false);
   assert.equal(shipped.includes(".mp4"), false);
-  assert.equal(shipped.toLowerCase().includes("walkthrough"), false);
+  assert.equal(shipped.includes("walkthrough + video"), false);
+  assert.equal(shipped.includes("Short videos coming soon"), false);
+  assert.equal(shipped.includes("Tutorial videos"), false);
 });
 
 test("User Guide contents anchors match shipped headings", () => {
@@ -80,17 +83,20 @@ test("User Guide contents anchors match shipped headings", () => {
   assert.equal(slugifyHeading("16–17. Export: Plain · Track Changes · Summary"), "16-17-export-plain-track-changes-summary");
 });
 
-test("User Guide opens as a workbench overlay and does not mount a player", () => {
+test("User Guide mounts the text guide and First-session walkthrough, not a video player", () => {
   const userGuide = readFileSync(new URL("../components/UserGuide.tsx", import.meta.url), "utf8");
+  const assist = readFileSync(new URL("../components/AssistPane.tsx", import.meta.url), "utf8");
   const overlay = readFileSync(new URL("../components/UserGuideOverlay.tsx", import.meta.url), "utf8");
   const workbench = readFileSync(new URL("../components/Workbench.tsx", import.meta.url), "utf8");
   const guidePage = readFileSync(new URL("../app/guide/page.tsx", import.meta.url), "utf8");
+  assert.match(userGuide, /<GuideWalkthrough \/>/);
   assert.match(userGuide, /<GuideMarkdown source=\{USER_GUIDE_MARKDOWN\} \/>/);
   assert.match(userGuide, /text-army-cream/);
-  assert.match(userGuide, /User Guide contents/);
   assert.equal(userGuide.includes("GuideVideo"), false);
-  assert.equal(userGuide.includes("GuideWalkthrough"), false);
   assert.equal(userGuide.includes("<video"), false);
+  assert.match(assist, />\s*Open User Guide\s*</);
+  assert.equal(assist.includes("walkthrough + video"), false);
+  assert.equal(assist.includes("GuideVideo"), false);
   assert.match(overlay, /role="dialog"/);
   assert.match(overlay, /Escape/);
   assert.match(overlay, />\s*Close\s*</);
@@ -98,7 +104,7 @@ test("User Guide opens as a workbench overlay and does not mount a player", () =
   assert.equal(workbench.includes('href="/guide"'), false);
   assert.match(guidePage, /redirect\("\/\?guide=1"\)/);
   assert.equal(existsSync(new URL("../components/GuideVideo.tsx", import.meta.url)), false);
-  assert.equal(existsSync(new URL("../components/GuideWalkthrough.tsx", import.meta.url)), false);
+  assert.equal(existsSync(new URL("../components/GuideWalkthrough.tsx", import.meta.url)), true);
   assert.equal(existsSync(new URL("../public/guide/tutorial.mp4", import.meta.url)), false);
 });
 
