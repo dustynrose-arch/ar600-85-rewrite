@@ -110,14 +110,26 @@ test("User Guide mounts the text guide and First-session walkthrough, not a vide
   assert.equal(assist.includes("walkthrough + video"), false);
   assert.equal(assist.includes("GuideVideo"), false);
   assert.match(overlay, /role="dialog"/);
+  assert.match(overlay, /aria-modal="false"/);
+  assert.match(overlay, /data-floating-guide=""/);
+  assert.match(overlay, /user-guide-drag/);
+  assert.match(overlay, /user-guide-resize/);
   assert.match(overlay, /Escape/);
   assert.match(overlay, />\s*Close\s*</);
+  assert.match(overlay, /draft stays usable/);
+  assert.equal(overlay.includes("inset-0"), false, "no full-screen blocking shell");
+  assert.equal(overlay.includes('aria-modal="true"'), false);
   assert.match(workbench, /<UserGuideOverlay/);
   assert.equal(workbench.includes('href="/guide"'), false);
   assert.match(guidePage, /redirect\("\/\?guide=1"\)/);
   assert.equal(existsSync(new URL("../components/GuideVideo.tsx", import.meta.url)), false);
   assert.equal(existsSync(new URL("../components/GuideWalkthrough.tsx", import.meta.url)), true);
   assert.equal(existsSync(new URL("../public/guide/tutorial.mp4", import.meta.url)), false);
+
+  const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(css, /\.user-guide-window \{[\s\S]*fixed[\s\S]*z-40/);
+  assert.match(css, /\.user-guide-drag \{[\s\S]*cursor-grab/);
+  assert.match(css, /\.user-guide-resize \{[\s\S]*cursor-se-resize/);
 });
 
 test("export How list keeps live vs Training stamp bullets nested", () => {

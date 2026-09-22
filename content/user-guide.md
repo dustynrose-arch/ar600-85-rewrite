@@ -57,7 +57,7 @@ Any time you need to know live vs Training, change role, export, or open this Gu
 1. Confirm the G-1 seal, left-aligned title and subtitle, and Army seal form a left sandwich, and the plain gold DRAFT mark is centered on the full banner (never seals alone).
 2. Read live (`DRAFT`) vs Training (`TRAINING / DRAFT`). Header plain **DRAFT** is not the same string as Word’s **DRAFT / WORKING COPY** stamp — both are intentional.
 3. **Training controls** (separate from export): **Enter Training** / **Leave Training** (cream-on-dark) / **Reset to original**.
-4. **Gold export buttons:** **Plain** · **Track Changes** · **Summary**, plus **User Guide** (opens over this draft; the draft beside it stays on screen) and **Log out**.
+4. **Gold export buttons:** **Plain** · **Track Changes** · **Summary**, plus **User Guide** (opens a floating window you can drag and resize; the draft stays usable) and **Log out**.
 5. Set **Role** (`Editor` / `Reviewer` / `Approver`) before gated actions.
 6. **Log out** (same gold header button) clears the working-group session and returns to the password page. Closing the browser does the same.
 
@@ -505,5 +505,5 @@ Thinking a lock means data loss. Lock saves first.
 | Sister pub jump | STEER AR … → Authority |
 | Practice | Enter Training → Reset to original if needed |
 | Hand off | Plain · Track Changes · Summary (always DRAFT-stamped) |
-| This Guide | Header **User Guide** — panel over the draft; Close or Escape |
+| This Guide | Header **User Guide** — floating window; drag to move, resize from the corner; Close or Escape |
 | Remove a task | Writing Assistant → Tasks → **Delete** |

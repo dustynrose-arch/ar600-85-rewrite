@@ -185,6 +185,22 @@ option {
     @apply hover:decoration-2 hover:text-army-gold;
   }
 
+  /* Floating User Guide window — movable/resizable; no full-screen backdrop. */
+  .user-guide-window {
+    @apply fixed z-40 flex flex-col border-2 border-black bg-army-black shadow-2xl;
+    min-width: 280px;
+    min-height: 240px;
+  }
+
+  .user-guide-drag {
+    @apply flex shrink-0 cursor-grab items-center justify-between gap-2 border-b-2 border-black px-4 py-2 select-none active:cursor-grabbing;
+  }
+
+  .user-guide-resize {
+    @apply absolute bottom-0 right-0 h-4 w-4 cursor-se-resize;
+    background: linear-gradient(135deg, transparent 50%, #e2b84a 50%);
+  }
+
   /* Persistent header legal mark — always on, never with a hide control.
      True center of .header-bar (not centered inside the seal sandwich).
      Justice: plain gold text only (no fill, no chip/button chrome) so Live DRAFT
