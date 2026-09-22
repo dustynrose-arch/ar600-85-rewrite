@@ -5,6 +5,7 @@ import { PaneToggle } from "@/components/PaneToggle";
 import { chapterDisplayLabel } from "@/lib/outline";
 import { canEditStructure } from "@/lib/roles";
 import { SUMMARY_VIEW_ID } from "@/lib/summary-of-change";
+import { highlightSnippet } from "@/lib/search-highlight";
 import type { Role, SearchHit, StructurePosition, WorkingOutlineChapter, WorkingSection } from "@/lib/types";
 
 type DialogMode = "add" | "rename" | "delete" | null;
@@ -256,7 +257,17 @@ export function OutlinePane({
                     {hit.number} {hit.title}
                   </div>
                   <div className="text-[10px] text-army-slate">{hit.chapterLabel}</div>
-                  <div className="mt-1 text-army-cream/80">{hit.snippet}</div>
+                  <div className="mt-1 text-army-cream/80">
+                    {highlightSnippet(hit.snippet, query).map((part, index) =>
+                      part.match ? (
+                        <mark key={`${hit.sectionId}-${index}`} className="search-hit-mark">
+                          {part.text}
+                        </mark>
+                      ) : (
+                        <span key={`${hit.sectionId}-${index}`}>{part.text}</span>
+                      ),
+                    )}
+                  </div>
                 </button>
               </li>
             ))}

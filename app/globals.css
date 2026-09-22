@@ -237,6 +237,14 @@ option {
   background-size: 6px 3px;
 }
 
+.search-hit-mark {
+  background-color: #f4d56a;
+  color: #101218;
+  border-radius: 2px;
+  padding: 0 0.12em;
+  font-weight: 700;
+}
+
 .draft-delta {
   background-color: #f4d56a;
   color: #101218;
