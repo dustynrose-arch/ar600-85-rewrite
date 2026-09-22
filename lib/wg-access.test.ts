@@ -235,6 +235,14 @@ test("access password field is an uncontrolled native form POST", () => {
   const route = readFileSync(new URL("../app/api/access/route.ts", import.meta.url), "utf8");
   const logout = readFileSync(new URL("../components/LogOutButton.tsx", import.meta.url), "utf8");
   const accessLib = readFileSync(new URL("./wg-access.ts", import.meta.url), "utf8");
+  const layout = readFileSync(new URL("../app/layout.tsx", import.meta.url), "utf8");
+  assert.match(layout, /httpEquiv="X-UA-Compatible"/);
+  assert.match(layout, /content="IE=edge"/);
+  assert.equal(layout.includes("EmulateIE"), false);
+  assert.equal(layout.includes("IE=7"), false);
+  assert.equal(layout.includes("IE=8"), false);
+  assert.equal(layout.includes("IE=9"), false);
+  assert.equal(layout.includes("IE=10"), false);
   for (const source of [form, page, route, logout, accessLib]) {
     assert.equal(source.includes("localStorage"), false);
     assert.equal(source.includes("sessionStorage"), false);
@@ -246,12 +254,19 @@ test("access password field is an uncontrolled native form POST", () => {
   assert.equal(password.includes("value="), false);
   assert.equal(password.includes("defaultValue"), false);
   assert.equal(form.includes("onChange"), false);
+  assert.equal(form.includes("onClick"), false);
+  assert.equal(form.includes("onFocus"), false);
+  assert.equal(form.includes("onSubmit"), false);
   assert.equal(form.includes("preventDefault"), false);
   assert.equal(form.includes("readOnly"), false);
   assert.equal(form.includes("disabled"), false);
   assert.equal(form.includes("pointer-events-none"), false);
   assert.equal(form.includes("fetch("), false);
-  assert.match(form, /method="post"/);
+  assert.equal(page.includes("UserGuideOverlay"), false);
+  assert.equal(page.includes("DraftEditor"), false);
+  assert.equal(page.includes("pointer-events-none"), false);
+  assert.equal(page.includes("inset-0"), false);
+  assert.match(form, /method="POST"/);
   assert.match(form, /action="\/api\/access"/);
   assert.match(form, /type="password"/);
   assert.match(form, /name="secret"/);

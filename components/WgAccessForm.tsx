@@ -14,7 +14,7 @@ export function WgAccessForm({
   const next = safeAccessNext(from);
   const returnTo = next === "/" ? "" : next;
   return (
-    <form className="mt-6 space-y-3" method="post" action="/api/access">
+    <form className="mt-6 space-y-3" method="POST" action="/api/access">
       {returnTo ? <input type="hidden" name="from" value={returnTo} /> : null}
       <label className="block text-xs font-semibold tracking-wide text-army-gold">
         Working-group password
