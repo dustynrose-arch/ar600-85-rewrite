@@ -71,6 +71,13 @@ test("User Guide copy strips review-file internals and outdated labels", () => {
   assert.equal(copy.includes("**Process**"), false);
   assert.equal(copy.includes("Glossary, Process"), false);
   assert.equal(copy.includes("ID → rehab"), false);
+  assert.match(
+    copy,
+    /Open when you need glossary, Limited Use, overlap, Versions\/compare, Summary, Timeline, Authority, Tasks, or Upload help\./,
+  );
+  assert.match(copy, /### 13\. Glossary and Authority/);
+  assert.match(copy, /testing bases, process path/);
+  assert.equal(copy.includes("when writing ID → rehab"), false);
 });
 
 test("User Guide contents anchors match shipped headings", () => {

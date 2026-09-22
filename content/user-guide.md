@@ -80,7 +80,7 @@ Every session — find text, write, and check reminders.
 **How**
 1. **Left — Outline:** Pick a chapter, appendix, or Glossary entry. A **rust ●** means that section already differs from the original regulation.
 2. **Center:** Read **ORIGINAL REGULATION — READ ONLY** on top. Edit **Your draft** underneath. Always stacked — never side-by-side.
-3. **Right — Writing Assistant:** Open when you need glossary, Limited Use, overlap, Versions/compare, Summary, Timeline, or Upload help.
+3. **Right — Writing Assistant:** Open when you need glossary, Limited Use, overlap, Versions/compare, Summary, Timeline, Authority, Tasks, or Upload help.
 
 **What success looks like**  
 You can point to left / center / right and say: find it · write it · check it. DRAFT is still visible in the header.
