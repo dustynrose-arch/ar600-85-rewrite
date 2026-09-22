@@ -83,3 +83,105 @@ export async function wgAccessCookieValid(
 export function secretsMatch(provided: string, expected: string): boolean {
   return bytesEqual(new TextEncoder().encode(provided), new TextEncoder().encode(expected));
 }
+
+const ACCESS_ERROR_DENIED = "That working-group password is not correct.";
+const ACCESS_ERROR_UNCONFIGURED = "WG access secret is not configured.";
+
+export type AccessSubmission = {
+  secret: string;
+  from: string;
+  form: boolean;
+};
+
+export type AccessPostDecision =
+  | { kind: "json"; status: 200 }
+  | { kind: "json"; status: 400 | 401; error: string }
+  | { kind: "redirect"; path: string; setCookie: boolean };
+
+/**
+ * Same-origin path only. Rejects protocol-relative and backslash tricks that
+ * browsers treat as a different host.
+ */
+export function safeAccessNext(from: string | null | undefined): string {
+  const value = (from ?? "").trim();
+  if (!value || value.length > 2048) return "/";
+  if (!value.startsWith("/") || value.startsWith("//") || value.startsWith("/\\")) return "/";
+  if (value.includes("\\") || value.includes("://")) return "/";
+  if (/[\u0000-\u001F\u007F]/.test(value)) return "/";
+  try {
+    const url = new URL(value, "https://wg.invalid");
+    if (url.origin !== "https://wg.invalid") return "/";
+    if (url.username || url.password) return "/";
+    return `${url.pathname}${url.search}`;
+  } catch {
+    return "/";
+  }
+}
+
+export function accessErrorMessage(code: string | null | undefined): string | null {
+  if (code === "denied") return ACCESS_ERROR_DENIED;
+  if (code === "unconfigured") return ACCESS_ERROR_UNCONFIGURED;
+  return null;
+}
+
+/** Where a no-JS form POST should land. `ok` stays on the requested path. */
+export function accessRedirectPath(
+  outcome: "ok" | "denied" | "unconfigured",
+  from: string | null | undefined,
+): string {
+  const next = safeAccessNext(from);
+  if (outcome === "ok") return next;
+  const params = new URLSearchParams();
+  params.set("error", outcome);
+  if (next !== "/") params.set("from", next);
+  return `/access?${params.toString()}`;
+}
+
+export function isAccessFormContentType(contentType: string | null | undefined): boolean {
+  const type = (contentType ?? "").toLowerCase();
+  return type.includes("application/x-www-form-urlencoded") || type.includes("multipart/form-data");
+}
+
+export async function readAccessSubmission(request: Request): Promise<AccessSubmission> {
+  const url = new URL(request.url);
+  const queryFrom = url.searchParams.get("from");
+  if (isAccessFormContentType(request.headers.get("content-type"))) {
+    try {
+      const form = await request.formData();
+      const secret = form.get("secret");
+      const fromField = form.get("from");
+      const from = typeof fromField === "string" ? fromField : queryFrom;
+      return {
+        secret: typeof secret === "string" ? secret.trim() : "",
+        from: safeAccessNext(from),
+        form: true,
+      };
+    } catch {
+      return { secret: "", from: safeAccessNext(queryFrom), form: true };
+    }
+  }
+  const body = (await request.json().catch(() => ({}))) as { secret?: unknown; from?: unknown };
+  const from = typeof body.from === "string" ? body.from : queryFrom;
+  return {
+    secret: typeof body.secret === "string" ? body.secret.trim() : "",
+    from: safeAccessNext(from),
+    form: false,
+  };
+}
+
+export function decideAccessPost(submission: AccessSubmission, configuredSecret: string): AccessPostDecision {
+  if (!configuredSecret) {
+    if (submission.form) {
+      return { kind: "redirect", path: accessRedirectPath("unconfigured", submission.from), setCookie: false };
+    }
+    return { kind: "json", status: 400, error: ACCESS_ERROR_UNCONFIGURED };
+  }
+  if (!submission.secret || !secretsMatch(submission.secret, configuredSecret)) {
+    if (submission.form) {
+      return { kind: "redirect", path: accessRedirectPath("denied", submission.from), setCookie: false };
+    }
+    return { kind: "json", status: 401, error: ACCESS_ERROR_DENIED };
+  }
+  if (submission.form) return { kind: "redirect", path: accessRedirectPath("ok", submission.from), setCookie: true };
+  return { kind: "json", status: 200 };
+}

@@ -216,6 +216,32 @@ option {
   }
 }
 
+/* /access password: real input, above the header, caret visible on click.
+   Mouse focus uses :focus; :focus-visible alone draws no ring and gov Chrome
+   can hide the caret on a dark password field. */
+.wg-access-form {
+  position: relative;
+  z-index: 2;
+  pointer-events: auto;
+}
+
+.wg-access-secret {
+  display: block;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  pointer-events: auto;
+  cursor: text;
+  color: #f4efe3;
+  background-color: #161821;
+  caret-color: #f4efe3;
+}
+
+.wg-access-secret:focus {
+  outline: 2px solid #e2b84a;
+  outline-offset: 2px;
+}
+
 .training-banner {
   background: #c4452f;
 }

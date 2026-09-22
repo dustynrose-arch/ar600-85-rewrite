@@ -1,11 +1,23 @@
 import { cookies } from "next/headers";
 import { HeaderBrand, HEADER_TITLE } from "@/components/HeaderBrand";
 import { WgAccessForm } from "@/components/WgAccessForm";
+import { accessErrorMessage, safeAccessNext } from "@/lib/wg-access";
 import { parseWorkspaceMode, WORKSPACE_MODE_COOKIE } from "@/lib/workspace-mode";
 
 export const dynamic = "force-dynamic";
 
-export default async function AccessPage() {
+function firstParam(value: string | string[] | undefined): string | undefined {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+export default async function AccessPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ from?: string | string[]; error?: string | string[] }>;
+}) {
+  const params = await searchParams;
+  const from = safeAccessNext(firstParam(params.from));
+  const error = accessErrorMessage(firstParam(params.error));
   const cookieStore = await cookies();
   const training = parseWorkspaceMode(cookieStore.get(WORKSPACE_MODE_COOKIE)?.value) === "training";
   return (
@@ -24,7 +36,7 @@ export default async function AccessPage() {
           system. The G–1 and Army seals always appear with the non-strippable{" "}
           <strong className="text-army-gold">DRAFT</strong> mark — never seals alone.
         </p>
-        <WgAccessForm />
+        <WgAccessForm error={error} from={from} />
       </div>
     </main>
   );
