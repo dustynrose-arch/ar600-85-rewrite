@@ -300,7 +300,7 @@ Only when a reminder appears and the topic is actually in play.
 4. **Glossary — terms you must keep:** items may show as `Locked term: …` — that means keep the official ASAP wording (one plain meaning). Empty state: **No locked terms in this paragraph.**
 5. If sister-pub buttons appear (`STEER AR 600-8-2`, `STEER AR 635-200`, `STEER AR 135-175`, `STEER AR 135-178`), treat them as a jump to **Authority** — not a rewrite. Prefer a short See AR … cite over pasting procedures.
 6. Editors choose an action when offered: **Keep wording** · **Insert See cite** · **Open primary cite**.
-7. Other tabs as needed: Authority · Tasks · Versions · Summary · Timeline · Upload. On **Tasks**, **Print task list** opens the browser print dialog for the full list (open and complete). **Complete** marks an open task done. **Delete** removes that task from the draft immediately — it is not kept, listed, or recoverable.
+7. Other tabs as needed: Authority · Tasks · Versions · Summary · Timeline · Upload. On **Tasks**, each task has a **Suspense** date (Army due date, calendar) and an **Assigned to** name or role. Editors set both; they stay on the draft. **Print task list** includes them with the full list (open and complete). **Complete** marks an open task done. **Delete** removes that task from the draft immediately — it is not kept, listed, or recoverable.
 
 **What success looks like**  
 The right pane matches the paragraph you are on. Your draft does not change until you choose Keep wording or Insert See cite.

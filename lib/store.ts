@@ -28,7 +28,7 @@ import {
 import { ForbiddenError } from "./roles.ts";
 import { REDUNDANCY_LANES } from "./seed/redundancy-lanes.ts";
 import { storePaths } from "./store-paths.ts";
-import { hardDeleteTask } from "./task-mutate.ts";
+import { ensureTaskFields, hardDeleteTask, normalizeAssignedTo, normalizeSuspense, updateTaskFields } from "./task-mutate.ts";
 import type {
   CrossmatchRow,
   Role,
@@ -87,6 +87,8 @@ function emptyState(mode: WorkspaceMode): WorkspaceState {
         title: "Reconcile Limited Use definition across 10–12 and B–10",
         notes: "Legal: keep one official definition; commander guide should cite.",
         sectionId: "10-12",
+        suspense: null,
+        assignedTo: "",
         createdAt: now(),
         createdBy: "editor",
         completedAt: null,
@@ -176,6 +178,11 @@ function migrateLoadedState(parsed: WorkspaceState): { state: WorkspaceState; ch
     changed = true;
   } else if (dropStoredProcessIds(parsed.assistBindings)) {
     changed = true;
+  }
+  if (Array.isArray(parsed.tasks)) {
+    for (const task of parsed.tasks) {
+      if (ensureTaskFields(task)) changed = true;
+    }
   }
   return { state: parsed, changed };
 }
@@ -288,7 +295,11 @@ export async function saveSection(
   });
 }
 
-export async function createTask(input: { title: string; notes?: string; sectionId?: string | null }, role: Role, mode: WorkspaceMode): Promise<WorkspaceState> {
+export async function createTask(
+  input: { title: string; notes?: string; sectionId?: string | null; suspense?: string | null; assignedTo?: string },
+  role: Role,
+  mode: WorkspaceMode,
+): Promise<WorkspaceState> {
   return withLockedState(mode, (state) => {
     if (role !== "editor") throw new Error("Only Editors may create tasks.");
     const task: Task = {
@@ -296,6 +307,8 @@ export async function createTask(input: { title: string; notes?: string; section
       title: input.title,
       notes: input.notes ?? "",
       sectionId: input.sectionId ?? null,
+      suspense: normalizeSuspense(input.suspense),
+      assignedTo: normalizeAssignedTo(input.assignedTo),
       createdAt: now(),
       createdBy: role,
       completedAt: null,
@@ -303,6 +316,17 @@ export async function createTask(input: { title: string; notes?: string; section
     };
     state.tasks.unshift(task);
     pushEvent(state, { actor: role, kind: "task-create", summary: `Created task: ${task.title}`, sectionId: task.sectionId ?? undefined });
+  });
+}
+
+export async function updateTask(
+  taskId: string,
+  patch: { suspense?: string | null; assignedTo?: string },
+  role: Role,
+  mode: WorkspaceMode,
+): Promise<WorkspaceState> {
+  return withLockedState(mode, (state) => {
+    updateTaskFields(state, taskId, patch, role);
   });
 }
 

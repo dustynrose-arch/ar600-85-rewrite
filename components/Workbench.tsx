@@ -469,11 +469,27 @@ export function Workbench({
               wgReady={state.wgReviewReady}
               findings={findings}
               onSelect={selectStable}
-          onCreateTask={async (title, notes) => {
+          onCreateTask={async ({ title, notes, suspense, assignedTo }) => {
             const res = await fetch("/api/tasks", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ action: "create", title, notes, sectionId: resolvedEditorId, role: state.role }),
+                  body: JSON.stringify({
+                    action: "create",
+                    title,
+                    notes,
+                    sectionId: resolvedEditorId,
+                    suspense,
+                    assignedTo,
+                    role: state.role,
+                  }),
+            });
+            applyState(await res.json());
+          }}
+          onUpdateTask={async (taskId, patch) => {
+            const res = await fetch("/api/tasks", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ action: "update", taskId, ...patch, role: state.role }),
             });
             applyState(await res.json());
           }}
