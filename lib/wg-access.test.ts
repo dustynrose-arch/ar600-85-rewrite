@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { test } from "node:test";
+import { createElement } from "react";
 import { cookieSecureFromRequest } from "./cookie-options.ts";
 import {
   accessErrorMessage,
@@ -13,6 +14,10 @@ import {
   wgAccessClearCookieOptions,
   wgAccessCookieOptions,
 } from "./wg-access.ts";
+
+const { renderToStaticMarkup } = createRequire(import.meta.url)("react-dom/server") as {
+  renderToStaticMarkup: (element: ReturnType<typeof createElement>) => string;
+};
 
 const { NextResponse } = createRequire(import.meta.url)("next/server") as {
   NextResponse: {
@@ -244,8 +249,25 @@ test("access password field is an uncontrolled native form POST", () => {
   assert.match(form, /action="\/api\/access"/);
   assert.match(form, /type="password"/);
   assert.match(form, /name="secret"/);
-  assert.match(form, /autoComplete="current-password"/);
+  assert.match(form, /autocomplete: "current-password"/);
+  assert.equal(password.includes("autoComplete"), false);
+  assert.match(form, /type="submit"/);
   assert.match(form, /name="from"/);
+  const rendered = renderToStaticMarkup(
+    createElement("input", {
+      type: "password",
+      name: "secret",
+      autocomplete: "current-password",
+    }),
+  );
+  assert.match(rendered, /^<input\b/);
+  assert.match(rendered, /type="password"/);
+  assert.match(rendered, /name="secret"/);
+  assert.match(rendered, /autocomplete="current-password"/);
+  assert.equal(rendered.includes("autoComplete"), false);
+  assert.equal(rendered.includes("disabled"), false);
+  assert.equal(rendered.includes("readonly"), false);
+  assert.equal(rendered.includes("readOnly"), false);
 
   assert.match(page, /accessErrorMessage/);
   assert.match(page, /safeAccessNext/);

@@ -18,12 +18,13 @@ export function WgAccessForm({
       {returnTo ? <input type="hidden" name="from" value={returnTo} /> : null}
       <label className="block text-xs font-semibold tracking-wide text-army-gold">
         Working-group password
+        {/* Lowercase attribute: React 19 SSR does not rename this to autocomplete. */}
         <input
           type="password"
           name="secret"
-          autoComplete="current-password"
           required
           className="mt-1 w-full rounded-lg border border-army-gold bg-army-ink px-3 py-2 text-sm text-army-cream"
+          {...{ autocomplete: "current-password" }}
         />
       </label>
       {error ? (
