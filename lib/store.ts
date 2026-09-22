@@ -2,6 +2,7 @@ import { createHash, randomUUID } from "node:crypto";
 import {
   bindingFromWorking,
   dropAssistState,
+  dropStoredProcessIds,
   emptyAssistBinding,
   seedAssistBindings,
 } from "./assist-bind.ts";
@@ -172,6 +173,8 @@ function migrateLoadedState(parsed: WorkspaceState): { state: WorkspaceState; ch
   }
   if (!parsed.assistBindings || Object.keys(parsed.assistBindings).length === 0) {
     parsed.assistBindings = seedAssistBindings(parsed.workingSections);
+    changed = true;
+  } else if (dropStoredProcessIds(parsed.assistBindings)) {
     changed = true;
   }
   return { state: parsed, changed };

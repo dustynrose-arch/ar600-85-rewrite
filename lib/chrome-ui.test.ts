@@ -165,6 +165,15 @@ test("right pane chrome is Writing Assistant, not Assist", () => {
 
   assert.match(assist, /className="panel-heading">Writing Assistant</);
   assert.match(assist, /label: "Writing Assistant"/);
+  assert.match(assist, /label: "Authority"/);
+  assert.match(assist, /label: "Tasks"/);
+  assert.match(assist, /label: "Versions"/);
+  assert.match(assist, /label: "Summary"/);
+  assert.match(assist, /label: "Timeline"/);
+  assert.match(assist, /label: "Upload"/);
+  assert.equal(assist.includes('label: "Process"'), false);
+  assert.equal(assist.includes("ProcessTab"), false);
+  assert.equal(assist.includes("process-map"), false);
   assert.match(assist, /PaneToggle label="Writing Assistant"/);
   assert.match(workbench, /Show Writing Assistant/);
   assert.equal(assist.includes('panel-heading">Assist<'), false);

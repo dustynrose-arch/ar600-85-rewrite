@@ -1,4 +1,3 @@
-import { PROCESS_MAP } from "./seed/process-map.ts";
 import { GLOSSARY_TERMS } from "./seed/glossary.ts";
 import type { AssistBinding, Section, WorkingSection } from "./types.ts";
 
@@ -26,16 +25,11 @@ export function chipsFromWorkingText(title: string, body: string): Pick<AssistBi
   };
 }
 
-export function processNodeIdsForSection(sectionId: string): string[] {
-  return PROCESS_MAP.nodes.filter((node) => node.cite === sectionId).map((node) => node.id);
-}
-
 export function emptyAssistBinding(sectionId: string): AssistBinding {
   return {
     sectionId,
     glossaryTermIds: [],
     limitedUse: false,
-    processNodeIds: processNodeIdsForSection(sectionId),
   };
 }
 
@@ -45,8 +39,20 @@ export function bindingFromWorking(section: Pick<Section, "id" | "title" | "body
     sectionId: section.id,
     glossaryTermIds: chips.glossaryTermIds,
     limitedUse: chips.limitedUse,
-    processNodeIds: processNodeIdsForSection(section.id),
   };
+}
+
+/** Drop Process-map ids saved on drafts from before the Process tab was removed. */
+export function dropStoredProcessIds(bindings: Record<string, AssistBinding> | undefined): boolean {
+  if (!bindings) return false;
+  let changed = false;
+  for (const binding of Object.values(bindings)) {
+    if (binding && Object.prototype.hasOwnProperty.call(binding, "processNodeIds")) {
+      delete (binding as AssistBinding & { processNodeIds?: string[] }).processNodeIds;
+      changed = true;
+    }
+  }
+  return changed;
 }
 
 export function seedAssistBindings(sections: Record<string, WorkingSection | Section>): Record<string, AssistBinding> {
@@ -63,11 +69,6 @@ export function viewAssistChips(
     return { glossaryTermIds: binding.glossaryTermIds, limitedUse: binding.limitedUse };
   }
   return chipsFromWorkingText(section.title, section.body);
-}
-
-export function processHighlightIds(sectionId: string, liveIds: Set<string>): string[] {
-  if (!liveIds.has(sectionId)) return [];
-  return processNodeIdsForSection(sectionId);
 }
 
 export function dropAssistState<T extends {

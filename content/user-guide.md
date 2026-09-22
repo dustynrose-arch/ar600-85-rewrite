@@ -80,7 +80,7 @@ Every session — find text, write, and check reminders.
 **How**
 1. **Left — Outline:** Pick a chapter, appendix, or Glossary entry. A **rust ●** means that section already differs from the original regulation.
 2. **Center:** Read **ORIGINAL REGULATION — READ ONLY** on top. Edit **Your draft** underneath. Always stacked — never side-by-side.
-3. **Right — Writing Assistant:** Open when you need glossary, Limited Use, overlap, Process, Versions/compare, Summary, Timeline, or Upload help.
+3. **Right — Writing Assistant:** Open when you need glossary, Limited Use, overlap, Versions/compare, Summary, Timeline, or Upload help.
 
 **What success looks like**  
 You can point to left / center / right and say: find it · write it · check it. DRAFT is still visible in the header.
@@ -300,7 +300,7 @@ Only when a reminder appears and the topic is actually in play.
 4. **Glossary — terms you must keep:** items may show as `Locked term: …` — that means keep the official ASAP wording (one plain meaning). Empty state: **No locked terms in this paragraph.**
 5. If sister-pub buttons appear (`STEER AR 600-8-2`, `STEER AR 635-200`, `STEER AR 135-175`, `STEER AR 135-178`), treat them as a jump to **Authority** — not a rewrite. Prefer a short See AR … cite over pasting procedures.
 6. Editors choose an action when offered: **Keep wording** · **Insert See cite** · **Open primary cite**.
-7. Other tabs as needed: Authority · Process · Tasks · Versions · Summary · Timeline · Upload. On **Tasks**, **Complete** marks an open task done. **Delete** removes that task from the draft immediately — it is not kept, listed, or recoverable.
+7. Other tabs as needed: Authority · Tasks · Versions · Summary · Timeline · Upload. On **Tasks**, **Complete** marks an open task done. **Delete** removes that task from the draft immediately — it is not kept, listed, or recoverable.
 
 **What success looks like**  
 The right pane matches the paragraph you are on. Your draft does not change until you choose Keep wording or Insert See cite.
@@ -340,19 +340,18 @@ Reading every legal / adverse-action hint as Limited Use; or assuming Writing As
 
 ---
 
-### 13. Glossary, Process, and Authority
+### 13. Glossary and Authority
 
 **What it is**  
-Three ways the right pane keeps ASAP language consistent.
+Two ways the right pane keeps ASAP language consistent.
 
 **When to use each**
 - **Glossary — terms you must keep** — you used a defined term. Keep one official ASAP meaning. The `Locked term:` prefix means “keep this official wording.”
-- **Process** — identification → referral → screening → treatment → return-to-duty or separation (including civilian TDP and EAP). Highlight follows the paragraph’s stable id.
 - **Authority** — topic belongs in a sister publication. Cite; do not paste procedures here. `STEER AR …` buttons open Authority; they do not rewrite your draft. Prefer a short See AR … cite.
 - **Doctrine tip — overlap checks** — **Keep wording**, **Insert See cite**, or **Open primary cite**.
 
 **What success looks like**  
-One official meaning per locked term; short See cites instead of duplicated procedure text; process language that still reads as one system.
+One official meaning per locked term; short See cites instead of duplicated procedure text.
 
 **Common mistake**  
 Copying sister-pub procedures into AR 600–85 “for convenience,” or treating STEER as an auto-edit.
@@ -486,9 +485,8 @@ Thinking a lock means data loss. Lock saves first.
 2. **Open a section** — Outline or Search AR 600-85.  
 3. **Edit Your draft** — lower band only; Undo / Save / spellcheck as needed; notice gold on new wording.  
 4. **Writing Assistant when warranted** — know Limited Use can show or hide by paragraph; follow See para 10-12 / 10-13 when it shows.  
-5. **Process** — when writing ID → rehab language.  
-6. **Versions → Compare**, then export **Plain** / **Track Changes** / **Summary**.  
-7. **Know your role.**
+5. **Versions → Compare**, then export **Plain** / **Track Changes** / **Summary**.  
+6. **Know your role.**
 
 ### 21. Quick reference
 

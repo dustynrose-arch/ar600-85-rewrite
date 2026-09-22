@@ -68,6 +68,9 @@ test("User Guide copy strips review-file internals and outdated labels", () => {
   assert.equal(shipped.includes("walkthrough + video"), false);
   assert.equal(shipped.includes("Short videos coming soon"), false);
   assert.equal(shipped.includes("Tutorial videos"), false);
+  assert.equal(copy.includes("**Process**"), false);
+  assert.equal(copy.includes("Glossary, Process"), false);
+  assert.equal(copy.includes("ID → rehab"), false);
 });
 
 test("User Guide contents anchors match shipped headings", () => {
