@@ -15,7 +15,7 @@ test("User Guide copy ships sections 0–21 plus working-group access", () => {
     .filter((block) => block.type === "h1" || block.type === "h2" || block.type === "h3")
     .map((block) => ("text" in block ? block.text : ""));
 
-  assert.equal(headings[0], "AR 600–85 Rewrite — User Guide");
+  assert.equal(headings[0], "AR 600–85 Revision — User Guide");
   for (const required of [
     "0. Purpose",
     "Working-group access (password gate)",
@@ -75,6 +75,8 @@ test("User Guide copy strips review-file internals and outdated labels", () => {
     copy,
     /Open when you need glossary, Limited Use, overlap, Versions\/compare, Summary, Timeline, Authority, Tasks, or Upload help\./,
   );
+  assert.match(copy, /title \*\*AR 600-85 Revision\*\*/);
+  assert.match(copy, /does not rewrite this paragraph/);
   assert.match(copy, /### 13\. Glossary and Authority/);
   assert.match(copy, /testing bases, process path/);
   assert.equal(copy.includes("when writing ID → rehab"), false);

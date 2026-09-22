@@ -1,4 +1,4 @@
-# AR 600-85 Rewrite
+# AR 600-85 Revision
 
 Browser-only Next.js application for the internal Army Deputy Chief of Staff, G–1 rewrite working group. Editors maintain a **working copy** of AR 600–85 against a **read-only embedded baseline**. The baseline is never mutated.
 
@@ -39,7 +39,7 @@ npm start
 
 | Area | Behavior |
 | --- | --- |
-| Chrome | Outline \| editor \| Writing Assistant / authority. Official G–1 seal (`public/g1-seal.png`) on the left, title *AR 600-85 Rewrite* and the DPRR subtitle in the middle, official Department of the Army emblem (`public/army-seal.png`, unframed) on the right, and a centered header **DRAFT** mark (**TRAINING / DRAFT** in Training) — never seals alone, no hide control. Gold actions follow on the same row (Role, Training, Plain / Track Changes / Summary, User Guide, Log out). The editor pane is labeled **Your draft**. Outline and Writing Assistant collapse so the center editor can widen; the tab remembers that choice for the session. |
+| Chrome | Outline \| editor \| Writing Assistant / authority. Official G–1 seal (`public/g1-seal.png`) on the left, title *AR 600-85 Revision* and the DPRR subtitle in the middle, official Department of the Army emblem (`public/army-seal.png`, unframed) on the right, and a centered header **DRAFT** mark (**TRAINING / DRAFT** in Training) — never seals alone, no hide control. Gold actions follow on the same row (Role, Training, Plain / Track Changes / Summary, User Guide, Log out). The editor pane is labeled **Your draft**. Outline and Writing Assistant collapse so the center editor can widen; the tab remembers that choice for the session. |
 | Editing | Section edit with automatic save plus an Editor-only **Save** button (timeline: “Manual save”). The original regulation pane is read-only. Your draft has Undo (button and Ctrl+Z / ⌘Z) and browser spellcheck; the original regulation pane is not spellchecked. Hide outline / Hide Writing Assistant live on those side panes only — not in the center chrome. |
 | Structure | Editors only (Reviewer/Approver get 403). Add before/after/child, split, delete (confirm), rename title, drag-reorder including across chapters. Stable node ids stay put; display numbers renumber IAW AR 25-30 / DA Pam 25-40. Every add/delete/move/rename/split is audited. ACTIVE baseline seed is never written. Assist chips, tasks, drafts, and snapshots keep the stable id. Split leaves chips on the source; delete drops assist state for that id. |
 | Search | Queries the original regulation (read-only) only. |

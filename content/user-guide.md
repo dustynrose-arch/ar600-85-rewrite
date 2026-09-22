@@ -1,4 +1,4 @@
-# AR 600–85 Rewrite — User Guide
+# AR 600–85 Revision — User Guide
 
 **Internal G–1 rewrite working group use only.**  
 This application never changes the original regulation (read-only).
@@ -48,7 +48,7 @@ Wrong password keeps you on the login page — try again; do not paste the passw
 ### 1. Top banner & chrome
 
 **What it is**  
-The dark top bar holds the **G-1 seal** on the left, the title **AR 600-85 Rewrite** and the subtitle **Directorate of Prevention, Resilience and Readiness** in the middle, and the **Army seal** on the right. A plain gold **DRAFT** (or **TRAINING / DRAFT**) mark is centered between those seals. Training controls, Role, the three gold export buttons, **User Guide**, and **Log out** follow on the same bar. Seals are always paired with the DRAFT mark — never shown alone as if this were an authenticated publication.
+The dark top bar holds the **G-1 seal** on the left, the title **AR 600-85 Revision** and the subtitle **Directorate of Prevention, Resilience and Readiness** in the middle, and the **Army seal** on the right. A plain gold **DRAFT** (or **TRAINING / DRAFT**) mark is centered between those seals. Training controls, Role, the three gold export buttons, **User Guide**, and **Log out** follow on the same bar. Seals are always paired with the DRAFT mark — never shown alone as if this were an authenticated publication.
 
 **When to use it**  
 Any time you need to know live vs Training, change role, export, or open this Guide.

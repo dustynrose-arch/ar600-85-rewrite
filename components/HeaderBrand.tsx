@@ -7,7 +7,7 @@
  *  Justice: on-screen mark is plain text (no fill). High-contrast on the dark bar. Never a
  *  button, never an authenticated-AR look. Word export stamps stay in lib/export-stamps.ts. */
 
-export const HEADER_TITLE = "AR 600-85 Rewrite";
+export const HEADER_TITLE = "AR 600-85 Revision";
 export const HEADER_SUBTITLE = "Directorate of Prevention, Resilience and Readiness";
 
 export function headerDraftMark(training: boolean): string {

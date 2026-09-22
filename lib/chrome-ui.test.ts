@@ -55,7 +55,7 @@ test("header: G-1 then Army seal, title + DPRR, DRAFT mark, Working Copy dropped
   assert.equal(existsSync(new URL("../public/army-seal.png", import.meta.url)), true);
   assert.match(brand, /src="\/g1-seal\.png"/);
   assert.match(brand, /src="\/army-seal\.png"/);
-  assert.match(brand, /AR 600-85 Rewrite/);
+  assert.match(brand, /AR 600-85 Revision/);
   assert.match(brand, /Directorate of Prevention, Resilience and Readiness/);
   assert.match(brand, /Never seals alone/);
   assert.equal(brand.includes("— Working Copy"), false);
@@ -65,7 +65,7 @@ test("header: G-1 then Army seal, title + DPRR, DRAFT mark, Working Copy dropped
   assert.match(workbench, /<HeaderBrand/);
   assert.equal(guide.includes("<HeaderBrand"), false);
   assert.match(guide, /redirect\("\/\?guide=1"\)/);
-  assert.match(layout, /title: training \? "TRAINING — AR 600-85 Rewrite" : "AR 600-85 Rewrite"/);
+  assert.match(layout, /title: training \? "TRAINING — AR 600-85 Revision" : "AR 600-85 Revision"/);
   assert.match(layout, /Directorate of Prevention, Resilience and Readiness/);
 });
 
