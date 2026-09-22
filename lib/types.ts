@@ -53,6 +53,10 @@ export type Task = {
   title: string;
   notes: string;
   sectionId: string | null;
+  /** Army due date as YYYY-MM-DD, or null when unset. */
+  suspense: string | null;
+  /** Free-text name or role. Empty when nobody is assigned. */
+  assignedTo: string;
   createdAt: string;
   createdBy: Role;
   completedAt: string | null;

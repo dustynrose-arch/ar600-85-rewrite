@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CrossmatchRows } from "@/components/CrossmatchRows";
 import { PaneToggle } from "@/components/PaneToggle";
 import { Toast } from "@/components/Toast";
@@ -62,7 +62,8 @@ type Props = {
   summary: SummaryOfChangeResult;
   onOpenSummary: () => void;
   onSelect: (id: string) => void;
-  onCreateTask: (title: string, notes: string) => void;
+  onCreateTask: (input: { title: string; notes: string; suspense: string | null; assignedTo: string }) => void;
+  onUpdateTask: (id: string, patch: { suspense?: string | null; assignedTo?: string }) => void;
   onCompleteTask: (id: string) => void;
   onDeleteTask: (id: string) => void;
   onOpenGuide: () => void;
@@ -360,9 +361,12 @@ function AuthorityTab({
   );
 }
 
-function TasksTab({ role, tasks, onCreateTask, onCompleteTask, onDeleteTask, sections, working }: Props) {
+function TasksTab({ role, tasks, onCreateTask, onUpdateTask, onCompleteTask, onDeleteTask, sections, working }: Props) {
   const [title, setTitle] = useState("");
   const [notes, setNotes] = useState("");
+  const [suspense, setSuspense] = useState("");
+  const [assignedTo, setAssignedTo] = useState("");
+  const editor = role === "editor";
   return (
     <div>
       <div className="flex items-center justify-between gap-2">
@@ -376,14 +380,22 @@ function TasksTab({ role, tasks, onCreateTask, onCompleteTask, onDeleteTask, sec
           Print task list
         </button>
       </div>
+      <p className="mt-1 text-[11px] text-army-slate">Suspense is the Army due date. Assigned to is a name or role.</p>
       <form
         className="mt-2 space-y-2"
         onSubmit={(event) => {
           event.preventDefault();
           if (!title.trim()) return;
-          onCreateTask(title.trim(), notes);
+          onCreateTask({
+            title: title.trim(),
+            notes,
+            suspense: suspense || null,
+            assignedTo: assignedTo.trim(),
+          });
           setTitle("");
           setNotes("");
+          setSuspense("");
+          setAssignedTo("");
         }}
       >
         <input
@@ -400,6 +412,29 @@ function TasksTab({ role, tasks, onCreateTask, onCompleteTask, onDeleteTask, sec
           disabled={role !== "editor"}
           className="w-full field px-2 py-1 text-sm h-16"
         />
+        <label className="block text-[11px] text-army-slate">
+          Suspense
+          <input
+            type="date"
+            value={suspense}
+            onChange={(event) => setSuspense(event.target.value)}
+            disabled={role !== "editor"}
+            aria-label="Suspense date"
+            title="Army due date"
+            className="mt-0.5 w-full min-w-0 field px-2 py-1 text-sm"
+          />
+        </label>
+        <label className="block text-[11px] text-army-slate">
+          Assigned to
+          <input
+            value={assignedTo}
+            onChange={(event) => setAssignedTo(event.target.value)}
+            placeholder="Name or role"
+            disabled={role !== "editor"}
+            aria-label="Assigned to"
+            className="mt-0.5 w-full field px-2 py-1 text-sm"
+          />
+        </label>
         <button
           type="submit"
           disabled={role !== "editor"}
@@ -410,39 +445,127 @@ function TasksTab({ role, tasks, onCreateTask, onCompleteTask, onDeleteTask, sec
       </form>
       <ul className="mt-3 space-y-2">
         {tasks.map((task) => (
-          <li key={task.id} className="card-surface p-2">
-            <div className="font-semibold text-[12px]">{task.title}</div>
-            <p className="text-[11px] text-army-slate">{task.notes}</p>
-            <p className="text-[11px] mt-1">
-              {task.sectionId
+          <TaskCard
+            key={task.id}
+            task={task}
+            editor={editor}
+            sectionLabel={
+              task.sectionId
                 ? `${sections?.[task.sectionId]?.number ?? task.sectionId} ${sections?.[task.sectionId]?.title ?? ""}`.trim()
-                : "no section"}{" "}
-              · {task.completedAt ? "complete" : "open"}
-            </p>
-            <div className="mt-1 flex gap-3">
-              {!task.completedAt ? (
-                <button
-                  type="button"
-                  disabled={role !== "editor"}
-                  onClick={() => onCompleteTask(task.id)}
-                  className="assist-link disabled:no-underline disabled:cursor-not-allowed"
-                >
-                  Complete
-                </button>
-              ) : null}
-              <button
-                type="button"
-                disabled={role !== "editor"}
-                onClick={() => onDeleteTask(task.id)}
-                className="assist-link disabled:no-underline disabled:cursor-not-allowed"
-              >
-                Delete
-              </button>
-            </div>
-          </li>
+                : "no section"
+            }
+            onUpdateTask={onUpdateTask}
+            onCompleteTask={onCompleteTask}
+            onDeleteTask={onDeleteTask}
+          />
         ))}
       </ul>
     </div>
+  );
+}
+
+function TaskCard({
+  task,
+  editor,
+  sectionLabel,
+  onUpdateTask,
+  onCompleteTask,
+  onDeleteTask,
+}: {
+  task: Task;
+  editor: boolean;
+  sectionLabel: string;
+  onUpdateTask: Props["onUpdateTask"];
+  onCompleteTask: Props["onCompleteTask"];
+  onDeleteTask: Props["onDeleteTask"];
+}) {
+  const [assignedTo, setAssignedTo] = useState(task.assignedTo ?? "");
+  const dirty = useRef(false);
+  const onUpdateRef = useRef(onUpdateTask);
+  onUpdateRef.current = onUpdateTask;
+
+  useEffect(() => {
+    dirty.current = false;
+    setAssignedTo(task.assignedTo ?? "");
+  }, [task.id]);
+
+  useEffect(() => {
+    if (!dirty.current) setAssignedTo(task.assignedTo ?? "");
+  }, [task.assignedTo]);
+
+  useEffect(() => {
+    if (!editor) return;
+    const next = assignedTo.trim();
+    if (next === (task.assignedTo ?? "")) {
+      dirty.current = false;
+      return;
+    }
+    const handle = window.setTimeout(() => {
+      onUpdateRef.current(task.id, { assignedTo: next });
+    }, 350);
+    return () => window.clearTimeout(handle);
+  }, [assignedTo, editor, task.assignedTo, task.id]);
+
+  return (
+    <li className="card-surface p-2">
+      <div className="font-semibold text-[12px]">{task.title}</div>
+      <p className="text-[11px] text-army-slate">{task.notes}</p>
+      <label className="mt-2 block text-[11px] text-army-slate">
+        Suspense
+        <input
+          type="date"
+          value={task.suspense ?? ""}
+          disabled={!editor}
+          aria-label={`Suspense date for ${task.title}`}
+          title="Army due date"
+          onChange={(event) => onUpdateTask(task.id, { suspense: event.target.value || null })}
+          className="mt-0.5 w-full min-w-0 field px-2 py-1 text-sm disabled:cursor-not-allowed"
+        />
+      </label>
+      <label className="mt-2 block text-[11px] text-army-slate">
+        Assigned to
+        <input
+          value={assignedTo}
+          disabled={!editor}
+          placeholder="Name or role"
+          aria-label={`Assigned to for ${task.title}`}
+          onChange={(event) => {
+            dirty.current = true;
+            setAssignedTo(event.target.value);
+          }}
+          onBlur={() => {
+            const next = assignedTo.trim();
+            if (next !== assignedTo) setAssignedTo(next);
+            if (!editor || next === (task.assignedTo ?? "")) return;
+            onUpdateRef.current(task.id, { assignedTo: next });
+          }}
+          className="mt-0.5 w-full field px-2 py-1 text-sm disabled:cursor-not-allowed"
+        />
+      </label>
+      <p className="text-[11px] mt-1">
+        {sectionLabel} · {task.completedAt ? "complete" : "open"}
+      </p>
+      <div className="mt-1 flex gap-3">
+        {!task.completedAt ? (
+          <button
+            type="button"
+            disabled={!editor}
+            onClick={() => onCompleteTask(task.id)}
+            className="assist-link disabled:no-underline disabled:cursor-not-allowed"
+          >
+            Complete
+          </button>
+        ) : null}
+        <button
+          type="button"
+          disabled={!editor}
+          onClick={() => onDeleteTask(task.id)}
+          className="assist-link disabled:no-underline disabled:cursor-not-allowed"
+        >
+          Delete
+        </button>
+      </div>
+    </li>
   );
 }
 

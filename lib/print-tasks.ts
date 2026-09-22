@@ -1,3 +1,5 @@
+import { isSuspenseDate } from "./task-mutate.ts";
+
 /** Build a clean printable HTML document for the full Tasks list (open + complete). */
 
 export type PrintableTask = {
@@ -5,6 +7,8 @@ export type PrintableTask = {
   title: string;
   notes: string;
   sectionId: string | null;
+  suspense: string | null;
+  assignedTo: string;
   completedAt: string | null;
 };
 
@@ -35,6 +39,21 @@ export function taskStatusLabel(task: PrintableTask): string {
   return task.completedAt ? "complete" : "open";
 }
 
+const SUSPENSE_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/** Army-style calendar date for print, or an em dash when unset. */
+export function formatSuspenseForPrint(value: string | null | undefined): string {
+  if (!isSuspenseDate(value)) return "—";
+  const month = SUSPENSE_MONTHS[Number(value.slice(5, 7)) - 1];
+  const day = Number(value.slice(8, 10));
+  return `${day} ${month} ${value.slice(0, 4)}`;
+}
+
+export function formatAssignedForPrint(value: string | null | undefined): string {
+  const text = (value ?? "").trim();
+  return text || "—";
+}
+
 /** Readable print document matching the Tasks tab fields the user already sees. */
 export function buildTasksPrintHtml(
   tasks: PrintableTask[],
@@ -43,16 +62,20 @@ export function buildTasksPrintHtml(
 ): string {
   const rows =
     tasks.length === 0
-      ? `<tr><td colspan="4">No tasks.</td></tr>`
+      ? `<tr><td colspan="6">No tasks.</td></tr>`
       : tasks
           .map((task) => {
             const title = escapeHtml(task.title || "(untitled)");
             const notes = escapeHtml(task.notes || "");
+            const suspense = escapeHtml(formatSuspenseForPrint(task.suspense));
+            const assigned = escapeHtml(formatAssignedForPrint(task.assignedTo));
             const section = escapeHtml(taskSectionLabel(task, sections));
             const status = escapeHtml(taskStatusLabel(task));
             return `<tr>
   <td>${title}</td>
   <td>${notes}</td>
+  <td>${suspense}</td>
+  <td>${assigned}</td>
   <td>${section}</td>
   <td>${status}</td>
 </tr>`;
@@ -80,7 +103,7 @@ export function buildTasksPrintHtml(
   <p class="meta">Printed ${escapeHtml(printedAt)} · ${tasks.length} task${tasks.length === 1 ? "" : "s"} (open and complete)</p>
   <table>
     <thead>
-      <tr><th>Title</th><th>Notes</th><th>Section</th><th>Status</th></tr>
+      <tr><th>Title</th><th>Notes</th><th>Suspense</th><th>Assigned to</th><th>Section</th><th>Status</th></tr>
     </thead>
     <tbody>
 ${rows}

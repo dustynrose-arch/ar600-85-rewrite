@@ -170,6 +170,10 @@ option {
     @apply border border-army-gold/30 bg-army-ink text-army-cream rounded-lg placeholder:text-army-slate;
   }
 
+  input[type="date"].field {
+    color-scheme: dark;
+  }
+
   .menu-surface {
     @apply border border-army-gold/30 bg-army-raised text-army-cream shadow-lg;
   }

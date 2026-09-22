@@ -45,7 +45,7 @@ npm start
 | Search | Queries the original regulation (read-only) only. |
 | Versions | Named snapshots. Compare original regulation (above) vs your draft (below), or vs a checkpoint. **List the changes** builds bullets from those diffs. |
 | Summary of Change | Outline front-matter plus Writing Assistant **Summary** tab. Auto-built Revises / Adds / Rescinds / Moves rows from original regulation (read-only) versus your draft, with APD cites (`para 1–1`, `para 1–4a(1)`). Structure and title changes are flagged; body keystrokes still produce wording rows only. Dedicated Word export stays marked DRAFT. |
-| Tasks | Editors create and complete tasks. **Delete** hard-removes a task from the draft store (no trash, no deletion log). |
+| Tasks | Editors create, edit, and complete tasks. Every task has a **Suspense** date (Army due date) and an **Assigned to** name or role; both are stored on the draft and included in **Print task list**. **Delete** hard-removes a task from the draft store (no trash, no deletion log). |
 | Roles | Editor (edit / tasks / snapshots). Reviewer (read-only). Approver (WG-review marks; can unlock). |
 | Idle | Warn at 14 minutes. At 15 minutes: save current section and lock. |
 | Export | Word `.docx` always DRAFT-stamped (header, footer, title-page disclaimer citing AR 25-30 / DA Pam 25-40). Training exports also stamp **TRAINING / DRAFT** in the footer (header and title already say TRAINING). Full working-copy export includes the Summary of Change table. Dedicated Summary export uses the title *Summary of Change (DRAFT — working copy; not authenticated under AR 25-30 / DA Pam 25-40)* with columns Action \| Location \| Original (ACTIVE) \| Revised (your draft). |
