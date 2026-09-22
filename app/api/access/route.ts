@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { serverEnv } from "@/lib/server-env";
 import {
-  secretsMatch,
+  decideAccessPost,
+  readAccessSubmission,
   wgAccessClearCookieOptions,
   wgAccessCookieOptions,
   wgAccessCookieValid,
@@ -36,13 +37,17 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   const secret = accessSecret();
-  if (!secret) {
-    return NextResponse.json({ error: "WG access secret is not configured." }, { status: 400 });
+  const submission = await readAccessSubmission(request);
+  const decision = decideAccessPost(submission, secret);
+  if (decision.kind === "redirect") {
+    const response = NextResponse.redirect(new URL(decision.path, request.url), 303);
+    if (decision.setCookie) {
+      response.cookies.set(WG_ACCESS_COOKIE, await wgAccessCookieValue(secret), wgAccessCookieOptions(request));
+    }
+    return response;
   }
-  const body = (await request.json().catch(() => ({}))) as { secret?: string };
-  const provided = body.secret?.trim() ?? "";
-  if (!provided || !secretsMatch(provided, secret)) {
-    return NextResponse.json({ error: "That working-group password is not correct." }, { status: 401 });
+  if (decision.status !== 200) {
+    return NextResponse.json({ error: decision.error }, { status: decision.status });
   }
   const response = NextResponse.json({ ok: true });
   response.cookies.set(WG_ACCESS_COOKIE, await wgAccessCookieValue(secret), wgAccessCookieOptions(request));
