@@ -18,6 +18,7 @@ import { CITE_HOT_LIST, SISTER_PUBS } from "@/lib/seed/sister-pubs";
 import { GLOSSARY_TERMS } from "@/lib/seed/glossary";
 import { actionLabel, SUMMARY_EXPORT_TITLE, type SummaryOfChangeResult } from "@/lib/summary-of-change";
 import { rejectUploadReason, UPLOAD_ACCEPT } from "@/lib/upload-guard";
+import { printTaskList } from "@/lib/print-tasks";
 import type {
   AssistBinding,
   DiffHunk,
@@ -364,7 +365,17 @@ function TasksTab({ role, tasks, onCreateTask, onCompleteTask, onDeleteTask, sec
   const [notes, setNotes] = useState("");
   return (
     <div>
-      <h3 className="section-heading">Editor tasks</h3>
+      <div className="flex items-center justify-between gap-2">
+        <h3 className="section-heading">Editor tasks</h3>
+        <button
+          type="button"
+          className="btn-secondary"
+          onClick={() => printTaskList(tasks, sections)}
+          aria-label="Print entire task list"
+        >
+          Print task list
+        </button>
+      </div>
       <form
         className="mt-2 space-y-2"
         onSubmit={(event) => {
