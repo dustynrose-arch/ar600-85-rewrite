@@ -54,7 +54,7 @@ option {
     @apply btn-header;
   }
 
-  /* One horizontal row: seals + title + DRAFT, then gold actions.
+  /* One horizontal row: G-1, centered title + DRAFT, Army, then gold actions.
      Tight even gaps. Wrap actions only if the row cannot shrink further.
      Brand (seals + DRAFT mark) stays on the first row — never overflow-x scroll. */
   .header-bar {
@@ -62,7 +62,7 @@ option {
   }
 
   .header-brand {
-    @apply flex flex-nowrap items-center gap-1.5 shrink-0;
+    @apply flex flex-nowrap items-center gap-1.5 shrink-0 grow;
   }
 
   .header-seal {
@@ -77,8 +77,12 @@ option {
     @apply rounded-none;
   }
 
+  .header-brand-middle {
+    @apply flex flex-1 flex-col items-center justify-center text-center;
+  }
+
   .header-brand-titles {
-    @apply flex items-baseline gap-1.5 whitespace-nowrap;
+    @apply flex items-baseline justify-center gap-1.5 whitespace-nowrap;
   }
 
   .header-title {
@@ -189,7 +193,7 @@ option {
      and Training TRAINING / DRAFT stay high-contrast on #101218, never look like
      action buttons or an authenticated AR, and never leave the dual seals unpaired. */
   .header-draft-mark {
-    @apply shrink-0 text-army-gold text-[10px] font-bold tracking-[0.16em] leading-none whitespace-nowrap;
+    @apply block w-full shrink-0 text-center text-army-gold text-[10px] font-bold tracking-[0.16em] leading-none whitespace-nowrap;
     background: none;
     border: 0;
     box-shadow: none;
@@ -231,6 +235,14 @@ option {
   background-repeat: repeat-x;
   background-position: left bottom;
   background-size: 6px 3px;
+}
+
+.search-hit-mark {
+  background-color: #f4d56a;
+  color: #101218;
+  border-radius: 2px;
+  padding: 0 0.12em;
+  font-weight: 700;
 }
 
 .draft-delta {

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { test } from "node:test";
 import { GUIDE_ANCHORS } from "./guide.ts";
 import { parseGuideMarkdown, slugifyHeading } from "./guide-markdown.ts";
@@ -15,7 +15,7 @@ test("User Guide copy ships sections 0–21 plus working-group access", () => {
     .filter((block) => block.type === "h1" || block.type === "h2" || block.type === "h3")
     .map((block) => ("text" in block ? block.text : ""));
 
-  assert.equal(headings[0], "AR 600–85 Rewrite — User Guide");
+  assert.equal(headings[0], "AR 600–85 Revision — User Guide");
   for (const required of [
     "0. Purpose",
     "Working-group access (password gate)",
@@ -48,7 +48,8 @@ test("User Guide copy strips review-file internals and outdated labels", () => {
   const copy = readGuideCopy();
   const userGuide = readFileSync(new URL("../components/UserGuide.tsx", import.meta.url), "utf8");
   const walkthrough = readFileSync(new URL("../components/GuideWalkthrough.tsx", import.meta.url), "utf8");
-  const shipped = `${copy}\n${userGuide}\n${walkthrough}`;
+  const overlay = readFileSync(new URL("../components/UserGuideOverlay.tsx", import.meta.url), "utf8");
+  const shipped = `${copy}\n${userGuide}\n${walkthrough}\n${overlay}`;
 
   assert.equal(/##\s*22\b/.test(copy), false);
   assert.equal(copy.includes("Related review files"), false);
@@ -62,6 +63,23 @@ test("User Guide copy strips review-file internals and outdated labels", () => {
   assert.match(copy, /not a gold dot/);
   assert.equal(walkthrough.includes("gold dot"), false);
   assert.equal(walkthrough.includes("Word export"), false);
+  assert.equal(shipped.toLowerCase().includes("tutorial"), false);
+  assert.equal(shipped.includes(".mp4"), false);
+  assert.equal(shipped.includes("walkthrough + video"), false);
+  assert.equal(shipped.includes("Short videos coming soon"), false);
+  assert.equal(shipped.includes("Tutorial videos"), false);
+  assert.equal(copy.includes("**Process**"), false);
+  assert.equal(copy.includes("Glossary, Process"), false);
+  assert.equal(copy.includes("ID → rehab"), false);
+  assert.match(
+    copy,
+    /Open when you need glossary, Limited Use, overlap, Versions\/compare, Summary, Timeline, Authority, Tasks, or Upload help\./,
+  );
+  assert.match(copy, /title \*\*AR 600-85 Revision\*\*/);
+  assert.match(copy, /does not rewrite this paragraph/);
+  assert.match(copy, /### 13\. Glossary and Authority/);
+  assert.match(copy, /testing bases, process path/);
+  assert.equal(copy.includes("when writing ID → rehab"), false);
 });
 
 test("User Guide contents anchors match shipped headings", () => {
@@ -77,12 +95,29 @@ test("User Guide contents anchors match shipped headings", () => {
   assert.equal(slugifyHeading("16–17. Export: Plain · Track Changes · Summary"), "16-17-export-plain-track-changes-summary");
 });
 
-test("User Guide page still mounts video, contents, and markdown renderer", () => {
+test("User Guide mounts the text guide and First-session walkthrough, not a video player", () => {
   const userGuide = readFileSync(new URL("../components/UserGuide.tsx", import.meta.url), "utf8");
-  assert.match(userGuide, /<GuideVideo \/>/);
+  const assist = readFileSync(new URL("../components/AssistPane.tsx", import.meta.url), "utf8");
+  const overlay = readFileSync(new URL("../components/UserGuideOverlay.tsx", import.meta.url), "utf8");
+  const workbench = readFileSync(new URL("../components/Workbench.tsx", import.meta.url), "utf8");
+  const guidePage = readFileSync(new URL("../app/guide/page.tsx", import.meta.url), "utf8");
   assert.match(userGuide, /<GuideWalkthrough \/>/);
   assert.match(userGuide, /<GuideMarkdown source=\{USER_GUIDE_MARKDOWN\} \/>/);
   assert.match(userGuide, /text-army-cream/);
+  assert.equal(userGuide.includes("GuideVideo"), false);
+  assert.equal(userGuide.includes("<video"), false);
+  assert.match(assist, />\s*Open User Guide\s*</);
+  assert.equal(assist.includes("walkthrough + video"), false);
+  assert.equal(assist.includes("GuideVideo"), false);
+  assert.match(overlay, /role="dialog"/);
+  assert.match(overlay, /Escape/);
+  assert.match(overlay, />\s*Close\s*</);
+  assert.match(workbench, /<UserGuideOverlay/);
+  assert.equal(workbench.includes('href="/guide"'), false);
+  assert.match(guidePage, /redirect\("\/\?guide=1"\)/);
+  assert.equal(existsSync(new URL("../components/GuideVideo.tsx", import.meta.url)), false);
+  assert.equal(existsSync(new URL("../components/GuideWalkthrough.tsx", import.meta.url)), true);
+  assert.equal(existsSync(new URL("../public/guide/tutorial.mp4", import.meta.url)), false);
 });
 
 test("export How list keeps live vs Training stamp bullets nested", () => {

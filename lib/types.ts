@@ -122,7 +122,6 @@ export type AssistBinding = {
   sectionId: string;
   glossaryTermIds: string[];
   limitedUse: boolean;
-  processNodeIds: string[];
 };
 
 export type WorkspaceState = {

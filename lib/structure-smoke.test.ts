@@ -11,12 +11,7 @@ import {
   parentIndexFromOutline,
   seedWorkingOutline,
 } from "./outline.ts";
-import {
-  dropAssistState,
-  emptyAssistBinding,
-  processHighlightIds,
-  seedAssistBindings,
-} from "./assist-bind.ts";
+import { dropAssistState, emptyAssistBinding, seedAssistBindings } from "./assist-bind.ts";
 import { buildSummaryOfChange } from "./summary-of-change.ts";
 import type { AssistBinding, BaselineDocument, Section, WorkingSection } from "./types.ts";
 
@@ -113,7 +108,7 @@ test("structure smoke: split keeps source assist; delete drops it; never keys of
   const bindings: Record<string, AssistBinding> = seedAssistBindings(draft);
   const sourceId = "7-3";
   const sourceBinding = structuredClone(bindings[sourceId]);
-  assert.ok(sourceBinding.processNodeIds.includes("id-self"));
+  assert.equal("processNodeIds" in sourceBinding, false);
 
   const splitOutline = insertSectionId(outline, "wc-split", sourceId, "after");
   draft["wc-split"] = asWorking({
@@ -131,9 +126,7 @@ test("structure smoke: split keeps source assist; delete drops it; never keys of
   assert.deepEqual(bindings[sourceId], sourceBinding);
   assert.deepEqual(bindings["wc-split"].glossaryTermIds, []);
   assert.equal(bindings["wc-split"].limitedUse, false);
-  assert.deepEqual(bindings["wc-split"].processNodeIds, []);
-  assert.deepEqual(processHighlightIds(sourceId, new Set(Object.keys(draft))), sourceBinding.processNodeIds);
-  assert.deepEqual(processHighlightIds("wc-split", new Set(Object.keys(draft))), []);
+  assert.equal("processNodeIds" in bindings["wc-split"], false);
 
   const afterDelete = deleteSectionId(splitOutline, sourceId);
   delete draft[sourceId];
@@ -142,5 +135,4 @@ test("structure smoke: split keeps source assist; delete drops it; never keys of
 
   assert.equal(bindings[sourceId], undefined);
   assert.ok(bindings["wc-split"]);
-  assert.deepEqual(processHighlightIds(sourceId, new Set(Object.keys(draft))), []);
 });

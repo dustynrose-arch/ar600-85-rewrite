@@ -1,8 +1,8 @@
-# AR 600-85 Rewrite
+# AR 600-85 Revision
 
 Browser-only Next.js application for the internal Army Deputy Chief of Staff, G–1 rewrite working group. Editors maintain a **working copy** of AR 600–85 against a **read-only embedded baseline**. The baseline is never mutated.
 
-This is the WP1–WP9 build: three-pane chrome with collapsible outline and Writing Assistant panes, automatic save, roles and gates, Assist reminders (glossary, Limited Use Policy (self-referral) vs legal / adverse-action hints, overlap checks), process map, cite-don’t-copy authority, checkpoints, stacked compare (original regulation above your draft), Word export, audited uploads, Editor-only working-copy structure edits, an in-app User Guide with a First session walkthrough plus video placeholder, a Training sandbox (separate saved data, Reset to original), and a private shared-host path (Vercel Blob + optional KV, Secure cookies, WG access).
+This is the WP1–WP9 build: three-pane chrome with collapsible outline and Writing Assistant panes, automatic save, roles and gates, Assist reminders (glossary, Limited Use Policy (self-referral) vs legal / adverse-action hints, overlap checks), cite-don’t-copy authority, checkpoints, stacked compare (original regulation above your draft), Word export, audited uploads, Editor-only working-copy structure edits, an in-app User Guide (text plus First-session walkthrough) that opens over the draft, a Training sandbox (separate saved data, Reset to original), and a private shared-host path (Vercel Blob + optional KV, Secure cookies, WG access).
 
 **Not an official publication.** The header always shows a **DRAFT** mark (or **TRAINING / DRAFT** in Training), paired with the G–1 and Army seals — never seals alone. Word header/footer and title page stay stamped **DRAFT / WORKING COPY** (Training: **TRAINING / DRAFT / WORKING COPY**).
 
@@ -10,7 +10,7 @@ This is the WP1–WP9 build: three-pane chrome with collapsible outline and Writ
 
 ACTIVE AR 600-85 (4 Oct 2024, admin revs 27 Feb 2025 / 19 Feb 2026)
 
-Seeded structure: Chapters 1–18 and Appendices A–G at paragraph level (about 298 sections), plus glossary terms and the identification-to-rehabilitation process map. Official paragraph numbers and titles are preserved. Body text is official-style structured working-copy language for search and rewrite—not a substitute for the authenticated PDF on Army Publishing Directorate.
+Seeded structure: Chapters 1–18 and Appendices A–G at paragraph level (about 298 sections), plus glossary terms. Official paragraph numbers and titles are preserved. Body text is official-style structured working-copy language for search and rewrite—not a substitute for the authenticated PDF on Army Publishing Directorate.
 
 ## Requirements
 
@@ -39,21 +39,20 @@ npm start
 
 | Area | Behavior |
 | --- | --- |
-| Chrome | Outline \| editor \| Writing Assistant / authority. Official G–1 seal (`public/g1-seal.png`) then official Department of the Army emblem (`public/army-seal.png`, unframed) on the left, then title *AR 600-85 Rewrite*, DPRR subtitle, and a persistent header **DRAFT** mark (**TRAINING / DRAFT** in Training) — never seals alone, no hide control. Gold actions follow on the same row (Role, Training, Plain / Track Changes / Summary, User Guide, Log out). The editor pane is labeled **Your draft**. Outline and Writing Assistant collapse so the center editor can widen; the tab remembers that choice for the session. |
+| Chrome | Outline \| editor \| Writing Assistant / authority. Official G–1 seal (`public/g1-seal.png`) on the left, title *AR 600-85 Revision* and the DPRR subtitle in the middle, official Department of the Army emblem (`public/army-seal.png`, unframed) on the right, and a centered header **DRAFT** mark (**TRAINING / DRAFT** in Training) — never seals alone, no hide control. Gold actions follow on the same row (Role, Training, Plain / Track Changes / Summary, User Guide, Log out). The editor pane is labeled **Your draft**. Outline and Writing Assistant collapse so the center editor can widen; the tab remembers that choice for the session. |
 | Editing | Section edit with automatic save plus an Editor-only **Save** button (timeline: “Manual save”). The original regulation pane is read-only. Your draft has Undo (button and Ctrl+Z / ⌘Z) and browser spellcheck; the original regulation pane is not spellchecked. Hide outline / Hide Writing Assistant live on those side panes only — not in the center chrome. |
-| Structure | Editors only (Reviewer/Approver get 403). Add before/after/child, split, delete (confirm), rename title, drag-reorder including across chapters. Stable node ids stay put; display numbers renumber IAW AR 25-30 / DA Pam 25-40. Every add/delete/move/rename/split is audited. ACTIVE baseline seed is never written. Assist chips, Process highlight, tasks, drafts, and snapshots keep the stable id. Split leaves chips on the source; delete drops assist state for that id. |
+| Structure | Editors only (Reviewer/Approver get 403). Add before/after/child, split, delete (confirm), rename title, drag-reorder including across chapters. Stable node ids stay put; display numbers renumber IAW AR 25-30 / DA Pam 25-40. Every add/delete/move/rename/split is audited. ACTIVE baseline seed is never written. Assist chips, tasks, drafts, and snapshots keep the stable id. Split leaves chips on the source; delete drops assist state for that id. |
 | Search | Queries the original regulation (read-only) only. |
 | Versions | Named snapshots. Compare original regulation (above) vs your draft (below), or vs a checkpoint. **List the changes** builds bullets from those diffs. |
 | Summary of Change | Outline front-matter plus Writing Assistant **Summary** tab. Auto-built Revises / Adds / Rescinds / Moves rows from original regulation (read-only) versus your draft, with APD cites (`para 1–1`, `para 1–4a(1)`). Structure and title changes are flagged; body keystrokes still produce wording rows only. Dedicated Word export stays marked DRAFT. |
-| Tasks | Editors create and complete tasks. |
+| Tasks | Editors create and complete tasks. **Delete** hard-removes a task from the draft store (no trash, no deletion log). |
 | Roles | Editor (edit / tasks / snapshots). Reviewer (read-only). Approver (WG-review marks; can unlock). |
 | Idle | Warn at 14 minutes. At 15 minutes: save current section and lock. |
 | Export | Word `.docx` always DRAFT-stamped (header, footer, title-page disclaimer citing AR 25-30 / DA Pam 25-40). Training exports also stamp **TRAINING / DRAFT** in the footer (header and title already say TRAINING). Full working-copy export includes the Summary of Change table. Dedicated Summary export uses the title *Summary of Change (DRAFT — working copy; not authenticated under AR 25-30 / DA Pam 25-40)* with columns Action \| Location \| Original (ACTIVE) \| Revised (your draft). |
 | Upload / compare | Editors and Approvers upload `.docx`, `.pdf`, or `.pptx` (25 MB). Old `.doc` / `.ppt` are rejected with a toast. Activity log stores who, when, filename, size, and SHA-256. Compare lists suggestion-only Match / Miss / Unclear rows against your draft (source + page/slide → location → draft excerpt → document excerpt → verdict). Nothing is auto-written into your draft or the original regulation. |
-| Assist | Glossary locked-term reminders; legal chips split as **Limited Use Policy (self-referral)** vs **Legal / adverse-action hint** (testing bases, process path, rights / Art. 31, civilian path) + AR 600-8-2 / 635-200 / 135-175 / 135-178 cites; 22 overlap checks (Keep wording \| Insert See cite). Chips and Process-step highlight bind to the working-copy stable id only — never display numbers and never the ACTIVE baseline. |
-| Process | ID → rehab map with branch labels. |
+| Assist | Glossary locked-term reminders; legal chips split as **Limited Use Policy (self-referral)** vs **Legal / adverse-action hint** (testing bases, process path, rights / Art. 31, civilian path) + AR 600-8-2 / 635-200 / 135-175 / 135-178 cites; 22 overlap checks (Keep wording \| Insert See cite). Chips bind to the working-copy stable id only — never display numbers and never the ACTIVE baseline. |
 | Authority | Cite-don’t-copy hot list and sister publications. |
-| Guide | In-app User Guide at `/guide`: First session walkthrough (anchors: outline, working-copy, assist, process, diff-export, roles), Assist help written for G–1 editors, and a video slot (`public/guide/tutorial.mp4` when present; otherwise “Tutorial video coming soon”). |
+| Guide | Header **User Guide** opens a panel over the draft workbench (Close or Escape). The Guide is text + First-session walkthrough only. `/guide` only returns you to that same panel. Assist help is written for G–1 editors. |
 | Training | **Enter Training** / **Leave Training** in the top bar. Training is a practice copy of the same app. A TRAINING stamp stays on the banner, title, and top bar until you leave. Word export from Training is marked TRAINING and DRAFT in the header, title, and footer. **Reset to original** (Editor or Approver; confirm first) wipes the training copy back to the seed. |
 
 Working-copy state lives in `data/runtime/` locally (created at first run, not committed). Uploads go to `data/uploads/`. Training uses parallel paths: `data/runtime-training/` and `data/uploads-training/`. On Vercel those paths are ephemeral — see **WP9 Shared host**. The tab remembers Training vs live in the `ar60085-workspace` cookie (`training` or `live`; `Secure; SameSite=Lax` on HTTPS, no Secure on `http://localhost`).
@@ -135,6 +134,6 @@ Local: `npm run dev` stays on disk; cookies are not Secure on `http://localhost`
 app/            App Router pages and API routes
 components/     Three-pane chrome and Assist tabs
 lib/            Store, diff, export, roles, seed data
-public/         Official G-1 seal and Army emblem (never shown without the DRAFT banner); optional guide video at public/guide/
+public/         Official G-1 seal and Army emblem (never shown without the DRAFT banner)
 scripts/        Baseline seed generator
 ```

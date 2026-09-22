@@ -1,11 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState } from "react";
 import { CrossmatchRows } from "@/components/CrossmatchRows";
 import { PaneToggle } from "@/components/PaneToggle";
 import { Toast } from "@/components/Toast";
-import { processHighlightIds, sectionByStableId, viewAssistChips } from "@/lib/assist-bind";
+import { sectionByStableId, viewAssistChips } from "@/lib/assist-bind";
 import {
   ADVERSE_ACTION_CATEGORY,
   LEGAL_CHIP_BODY,
@@ -17,7 +16,6 @@ import {
 } from "@/lib/legal-chips";
 import { CITE_HOT_LIST, SISTER_PUBS } from "@/lib/seed/sister-pubs";
 import { GLOSSARY_TERMS } from "@/lib/seed/glossary";
-import { PROCESS_MAP } from "@/lib/seed/process-map";
 import { actionLabel, SUMMARY_EXPORT_TITLE, type SummaryOfChangeResult } from "@/lib/summary-of-change";
 import { rejectUploadReason, UPLOAD_ACCEPT } from "@/lib/upload-guard";
 import type {
@@ -33,7 +31,7 @@ import type {
   WorkingSection,
 } from "@/lib/types";
 
-type Tab = "assist" | "authority" | "process" | "tasks" | "versions" | "timeline" | "upload" | "summary";
+type Tab = "assist" | "authority" | "tasks" | "versions" | "timeline" | "upload" | "summary";
 
 type SergeantFinding = {
   laneId: string;
@@ -65,6 +63,8 @@ type Props = {
   onSelect: (id: string) => void;
   onCreateTask: (title: string, notes: string) => void;
   onCompleteTask: (id: string) => void;
+  onDeleteTask: (id: string) => void;
+  onOpenGuide: () => void;
   onSnapshot: (label: string) => void;
   onDiff: (against: string) => Promise<DiffHunk[]>;
   onSummarize: (against: string) => Promise<string[]>;
@@ -78,7 +78,6 @@ type Props = {
 const TABS: { id: Tab; label: string }[] = [
   { id: "assist", label: "Writing Assistant" },
   { id: "authority", label: "Authority" },
-  { id: "process", label: "Process" },
   { id: "tasks", label: "Tasks" },
   { id: "versions", label: "Versions" },
   { id: "summary", label: "Summary" },
@@ -119,17 +118,6 @@ export function AssistPane(props: Props) {
             }}
           />
         ) : null}
-        {tab === "process" ? (
-          <ProcessTab
-            sectionId={props.sectionId}
-            sections={props.sections}
-            binding={props.assistBindings?.[props.sectionId]}
-            onSelect={(id) => {
-              const live = sectionByStableId(props.sections ?? {}, id);
-              if (live) props.onSelect(live.id);
-            }}
-          />
-        ) : null}
         {tab === "tasks" ? <TasksTab {...props} /> : null}
         {tab === "versions" ? <VersionsTab {...props} /> : null}
         {tab === "summary" ? <SummaryTab {...props} /> : null}
@@ -153,6 +141,7 @@ function AssistTab({
   draftBody,
   sections,
   onOpenAuthority,
+  onOpenGuide,
 }: Props & { onOpenAuthority: () => void }) {
   const chips = useMemo(
     () => viewAssistChips(working, assistBindings?.[working.id], draftBody),
@@ -310,9 +299,9 @@ function AssistTab({
           ))}
         </ul>
       </section>
-      <Link href="/guide" className="assist-link text-xs">
-        Open User Guide (walkthrough + video)
-      </Link>
+      <button type="button" className="assist-link text-xs" onClick={onOpenGuide}>
+        Open User Guide
+      </button>
     </div>
   );
 }
@@ -370,70 +359,7 @@ function AuthorityTab({
   );
 }
 
-function ProcessTab({
-  sectionId,
-  sections,
-  binding,
-  onSelect,
-}: {
-  sectionId: string;
-  sections?: Record<string, WorkingSection>;
-  binding?: AssistBinding;
-  onSelect: (id: string) => void;
-}) {
-  const liveIds = new Set(Object.keys(sections ?? {}));
-  const stored =
-    binding && binding.sectionId === sectionId && liveIds.has(sectionId)
-      ? binding.processNodeIds
-      : processHighlightIds(sectionId, liveIds);
-  const highlighted = new Set(stored);
-  return (
-    <div>
-      <h3 className="section-heading">ID → rehab process map</h3>
-      <p className="text-xs text-army-slate mt-1">{PROCESS_MAP.summary}</p>
-      <p className="text-[11px] text-army-slate mt-1">
-        Highlight follows the open paragraph’s stable id, not the display number. Empty split siblings do not
-        take this step.
-      </p>
-      <ol className="mt-3 space-y-2">
-        {PROCESS_MAP.nodes.map((node) => {
-          const bound = sectionByStableId(sections ?? {}, node.cite);
-          const active = highlighted.has(node.id);
-          return (
-            <li
-              key={node.id}
-              className={`p-2 ${active ? "bg-army-gold/25 border border-army-gold" : "card-surface"}`}
-            >
-              <div className="flex items-center justify-between gap-2">
-                <span className="font-semibold text-[12px]">{node.label}</span>
-                <span className="text-[10px] uppercase tracking-wide text-army-goldDark">{node.kind}</span>
-              </div>
-              <p className="text-[11px] mt-1">{node.detail}</p>
-              {bound ? (
-                <button type="button" className="assist-link mt-1" onClick={() => onSelect(bound.id)}>
-                  Open {bound.number} {bound.title}
-                </button>
-              ) : (
-                <p className="text-[11px] text-army-slate mt-1">Bound paragraph is not in the working copy.</p>
-              )}
-            </li>
-          );
-        })}
-      </ol>
-      <p className="text-[11px] mt-3 font-semibold">Branches</p>
-      <ul className="text-[11px] space-y-1 mt-1">
-        {PROCESS_MAP.edges.map((edge) => (
-          <li key={`${edge.from}-${edge.to}-${edge.label ?? ""}`}>
-            {edge.from} → {edge.to}
-            {edge.label ? ` (${edge.label})` : ""}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-function TasksTab({ role, tasks, sectionId, onCreateTask, onCompleteTask, sections, working }: Props) {
+function TasksTab({ role, tasks, onCreateTask, onCompleteTask, onDeleteTask, sections, working }: Props) {
   const [title, setTitle] = useState("");
   const [notes, setNotes] = useState("");
   return (
@@ -482,16 +408,26 @@ function TasksTab({ role, tasks, sectionId, onCreateTask, onCompleteTask, sectio
                 : "no section"}{" "}
               · {task.completedAt ? "complete" : "open"}
             </p>
-            {!task.completedAt ? (
+            <div className="mt-1 flex gap-3">
+              {!task.completedAt ? (
+                <button
+                  type="button"
+                  disabled={role !== "editor"}
+                  onClick={() => onCompleteTask(task.id)}
+                  className="assist-link disabled:no-underline disabled:cursor-not-allowed"
+                >
+                  Complete
+                </button>
+              ) : null}
               <button
                 type="button"
                 disabled={role !== "editor"}
-                onClick={() => onCompleteTask(task.id)}
-                className="assist-link mt-1 disabled:no-underline disabled:cursor-not-allowed"
+                onClick={() => onDeleteTask(task.id)}
+                className="assist-link disabled:no-underline disabled:cursor-not-allowed"
               >
-                Complete
+                Delete
               </button>
-            ) : null}
+            </div>
           </li>
         ))}
       </ul>

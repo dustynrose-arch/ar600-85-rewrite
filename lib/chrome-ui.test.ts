@@ -31,10 +31,10 @@ test("header DRAFT mark is always on; gold DRAFT / WORKING COPY bar is gone; exp
   assert.match(css, /\.header-draft-mark \{/);
 
   assert.match(workbench, /<HeaderBrand title=\{HEADER_TITLE\} training=\{state\.mode === "training"\} \/>/);
-  assert.match(guide, /training=\{mode === "training"\}/);
+  assert.match(guide, /redirect\("\/\?guide=1"\)/);
+  assert.equal(guide.includes("<TrainingBanner"), false);
   assert.match(workbench, /<TrainingBanner \/>/);
   assert.match(workbench, /state\.mode === "training" \? <TrainingBanner/);
-  assert.match(guide, /<TrainingBanner \/>/);
   assert.match(training, />TRAINING</);
   assert.match(training, /training-banner/);
 
@@ -55,7 +55,7 @@ test("header: G-1 then Army seal, title + DPRR, DRAFT mark, Working Copy dropped
   assert.equal(existsSync(new URL("../public/army-seal.png", import.meta.url)), true);
   assert.match(brand, /src="\/g1-seal\.png"/);
   assert.match(brand, /src="\/army-seal\.png"/);
-  assert.match(brand, /AR 600-85 Rewrite/);
+  assert.match(brand, /AR 600-85 Revision/);
   assert.match(brand, /Directorate of Prevention, Resilience and Readiness/);
   assert.match(brand, /Never seals alone/);
   assert.equal(brand.includes("— Working Copy"), false);
@@ -63,8 +63,9 @@ test("header: G-1 then Army seal, title + DPRR, DRAFT mark, Working Copy dropped
   assert.equal(workbench.includes("Original regulation (read-only):"), false);
   assert.equal(guide.includes("Internal G-1 rewrite working group use only"), false);
   assert.match(workbench, /<HeaderBrand/);
-  assert.match(guide, /<HeaderBrand/);
-  assert.match(layout, /title: training \? "TRAINING — AR 600-85 Rewrite" : "AR 600-85 Rewrite"/);
+  assert.equal(guide.includes("<HeaderBrand"), false);
+  assert.match(guide, /redirect\("\/\?guide=1"\)/);
+  assert.match(layout, /title: training \? "TRAINING — AR 600-85 Revision" : "AR 600-85 Revision"/);
   assert.match(layout, /Directorate of Prevention, Resilience and Readiness/);
 });
 
@@ -87,12 +88,18 @@ test("editable-draft chrome says Your draft; on-screen mark is the header DRAFT 
   assert.equal(brand.includes("WORKING COPY"), false);
   assert.match(guideCopy, /\*\*DRAFT\*\* mark/);
   assert.match(guideCopy, /TRAINING \/ DRAFT/);
+  assert.match(guideCopy, /in the header/);
+  assert.match(guideCopy, /centered between those seals/);
   assert.equal(userGuide.includes("gold-and-black"), false);
   assert.equal(guideCopy.includes("gold-and-black"), false);
+  assert.equal(guideCopy.includes("gold banner"), false);
+  assert.equal(guideCopy.includes("DRAFT / WORKING COPY banner"), false);
   assert.match(walkthrough, /DRAFT<\/strong> mark/);
   assert.match(walkthrough, /in the header/);
   assert.equal(walkthrough.includes("gold banner"), false);
   assert.equal(walkthrough.includes("DRAFT / WORKING COPY banner"), false);
+  assert.equal(walkthrough.includes("walkthrough + video"), false);
+  assert.equal(walkthrough.toLowerCase().includes("tutorial"), false);
 });
 
 test("Your draft editor uses a modest extra share of the center pane", () => {
@@ -158,6 +165,15 @@ test("right pane chrome is Writing Assistant, not Assist", () => {
 
   assert.match(assist, /className="panel-heading">Writing Assistant</);
   assert.match(assist, /label: "Writing Assistant"/);
+  assert.match(assist, /label: "Authority"/);
+  assert.match(assist, /label: "Tasks"/);
+  assert.match(assist, /label: "Versions"/);
+  assert.match(assist, /label: "Summary"/);
+  assert.match(assist, /label: "Timeline"/);
+  assert.match(assist, /label: "Upload"/);
+  assert.equal(assist.includes('label: "Process"'), false);
+  assert.equal(assist.includes("ProcessTab"), false);
+  assert.equal(assist.includes("process-map"), false);
   assert.match(assist, /PaneToggle label="Writing Assistant"/);
   assert.match(workbench, /Show Writing Assistant/);
   assert.equal(assist.includes('panel-heading">Assist<'), false);
@@ -314,14 +330,12 @@ test("top-bar chrome: one row G-1 Army title DPRR DRAFT then gold actions; wrap 
   assert.equal(goldButtons.length, 4, "exports + User Guide all use the gold btn-header scheme");
   assert.match(header, /className="header-role"/);
 
-  const guideHeaderStart = guide.indexOf("<header");
-  const guideHeader = guide.slice(guideHeaderStart, guide.indexOf("</header>"));
-  assert.match(guideHeader, /header-bar/);
-  assert.match(guideHeader, /header-actions/);
-  assert.match(guideHeader, /<LogOutButton/);
-  assert.equal(guideHeader.includes("overflow-x-auto"), false);
-  assert.match(guide, /className="btn-header"/);
+  assert.match(guide, /redirect\("\/\?guide=1"\)/);
+  assert.equal(guide.includes("<header"), false);
+  assert.equal(guide.includes("overflow-x-auto"), false);
   assert.equal(guide.includes("btn-header-ghost"), false);
+  assert.match(workbench, /<UserGuideOverlay/);
+  assert.equal(header.includes('href="/guide"'), false);
 
   const logout = readRepoFile("components/LogOutButton.tsx");
   assert.match(logout, /className="btn-header"/);
@@ -357,13 +371,20 @@ test("top-bar chrome: one row G-1 Army title DPRR DRAFT then gold actions; wrap 
   const g1Tag = brand.slice(g1Idx, brand.indexOf("/>", g1Idx) + 2);
   assert.equal(g1Tag.includes("ring-"), false);
   assert.equal(g1Tag.includes("bg-army-cream"), false);
+  const middleIdx = brand.indexOf("header-brand-middle");
   const titlesIdx = brand.indexOf("header-brand-titles");
   const markIdx = brand.indexOf("header-draft-mark");
-  assert.ok(g1Idx >= 0 && armyIdx > g1Idx && titlesIdx > armyIdx && markIdx > titlesIdx, "G-1, Army, title/DPRR, then DRAFT — never seals alone");
+  assert.ok(
+    g1Idx >= 0 && middleIdx > g1Idx && titlesIdx > middleIdx && markIdx > titlesIdx && armyIdx > markIdx,
+    "G-1, title/DPRR, centered DRAFT, Army — never seals alone",
+  );
   assert.match(brand, /className="header-draft-mark"/);
   assert.equal(brand.includes("btn-header"), false);
   assert.match(brand, /header-brand-titles/);
+  assert.match(brand, /header-brand-middle/);
   assert.match(css, /\.header-brand-titles \{[\s\S]*whitespace-nowrap/);
+  assert.match(css, /\.header-brand-middle \{[\s\S]*items-center[\s\S]*text-center/);
+  assert.match(css, /\.header-draft-mark \{[\s\S]*text-center/);
   assert.equal(brand.includes("flex-1"), false);
   assert.match(brand, /src="\/g1-seal\.png"/);
   assert.match(brand, /src="\/army-seal\.png"/);
@@ -469,7 +490,7 @@ test("Justice: DRAFT / TRAINING / DRAFT is plain high-contrast text with dual se
   const g1Idx = brand.indexOf('src="/g1-seal.png"');
   const armyIdx = brand.indexOf('src="/army-seal.png"');
   const markIdx = brand.indexOf("header-draft-mark");
-  assert.ok(g1Idx >= 0 && armyIdx > g1Idx && markIdx > armyIdx, "G-1, Army, then DRAFT mark — never seals alone");
+  assert.ok(g1Idx >= 0 && markIdx > g1Idx && armyIdx > markIdx, "G-1, centered DRAFT, Army — never seals alone");
   assert.equal(brand.includes("Hide"), false);
   assert.equal(brand.includes("<button"), false);
   assert.equal(brand.includes("<a "), false);
@@ -493,7 +514,7 @@ test("Justice: DRAFT / TRAINING / DRAFT is plain high-contrast text with dual se
   assert.equal(/\.header-draft-mark \{[^}]*hover:/.test(css), false);
 
   assert.match(workbench, /<HeaderBrand title=\{HEADER_TITLE\} training=\{state\.mode === "training"\} \/>/);
-  assert.match(guide, /<HeaderBrand/);
+  assert.match(guide, /redirect\("\/\?guide=1"\)/);
   assert.match(access, /<HeaderBrand/);
 
   assert.equal(

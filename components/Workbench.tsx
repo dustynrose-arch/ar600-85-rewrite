@@ -11,6 +11,7 @@ import { TrainingBanner } from "@/components/TrainingBanner";
 import { TrainingSwitch } from "@/components/TrainingSwitch";
 import { HEADER_TITLE, HeaderBrand } from "@/components/HeaderBrand";
 import { LogOutButton } from "@/components/LogOutButton";
+import { UserGuideOverlay } from "@/components/UserGuideOverlay";
 import { DEFAULT_PANE_STATE, readPaneSession, writePaneSession } from "@/lib/panes";
 import {
   buildSummaryOfChange,
@@ -96,6 +97,7 @@ export function Workbench({
   const [leftCollapsed, setLeftCollapsed] = useState(DEFAULT_PANE_STATE.leftCollapsed);
   const [rightCollapsed, setRightCollapsed] = useState(DEFAULT_PANE_STATE.rightCollapsed);
   const [panesReady, setPanesReady] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
   const [summaryFilter, setSummaryFilter] = useState<ChangeAction | "all">("all");
   const [lastSectionId, setLastSectionId] = useState(
     initialState.workingOutline?.[0]?.sectionIds[0] ?? baseline.chapters[0]?.sections[0]?.id ?? "1-1",
@@ -122,6 +124,16 @@ export function Workbench({
     setLeftCollapsed(stored.leftCollapsed);
     setRightCollapsed(stored.rightCollapsed);
     setPanesReady(true);
+  }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("guide") !== "1") return;
+    setGuideOpen(true);
+    params.delete("guide");
+    const query = params.toString();
+    const next = `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`;
+    window.history.replaceState(null, "", next);
   }, []);
 
   useEffect(() => {
@@ -341,9 +353,15 @@ export function Workbench({
               Summary
             </a>
           </div>
-          <a href="/guide" className="btn-header">
+          <button
+            type="button"
+            className="btn-header"
+            aria-expanded={guideOpen}
+            aria-controls="user-guide-overlay"
+            onClick={() => setGuideOpen((open) => !open)}
+          >
             User Guide
-          </a>
+          </button>
           <LogOutButton />
         </div>
       </header>
@@ -363,7 +381,7 @@ export function Workbench({
           Approver marked this working copy ready for working-group review.
         </div>
       ) : null}
-      <div className="flex-1 min-h-0 flex">
+      <div className="relative flex-1 min-h-0 flex">
         {leftCollapsed ? (
           <CollapsedRail side="left" label="Show outline" onExpand={() => setLeftCollapsed(false)} />
         ) : (
@@ -467,6 +485,15 @@ export function Workbench({
             });
             applyState(await res.json());
           }}
+          onDeleteTask={async (taskId) => {
+            const res = await fetch("/api/tasks", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ action: "delete", taskId, role: state.role }),
+            });
+            applyState(await res.json());
+          }}
+          onOpenGuide={() => setGuideOpen(true)}
           onSnapshot={async (label) => {
             const res = await fetch("/api/snapshots", {
               method: "POST",
@@ -564,6 +591,7 @@ export function Workbench({
             />
           </div>
         )}
+        {guideOpen ? <UserGuideOverlay onClose={() => setGuideOpen(false)} /> : null}
       </div>
     </div>
   );

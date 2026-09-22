@@ -2,6 +2,7 @@ import { createHash, randomUUID } from "node:crypto";
 import {
   bindingFromWorking,
   dropAssistState,
+  dropStoredProcessIds,
   emptyAssistBinding,
   seedAssistBindings,
 } from "./assist-bind.ts";
@@ -27,6 +28,7 @@ import {
 import { ForbiddenError } from "./roles.ts";
 import { REDUNDANCY_LANES } from "./seed/redundancy-lanes.ts";
 import { storePaths } from "./store-paths.ts";
+import { hardDeleteTask } from "./task-mutate.ts";
 import type {
   CrossmatchRow,
   Role,
@@ -172,6 +174,8 @@ function migrateLoadedState(parsed: WorkspaceState): { state: WorkspaceState; ch
   if (!parsed.assistBindings || Object.keys(parsed.assistBindings).length === 0) {
     parsed.assistBindings = seedAssistBindings(parsed.workingSections);
     changed = true;
+  } else if (dropStoredProcessIds(parsed.assistBindings)) {
+    changed = true;
   }
   return { state: parsed, changed };
 }
@@ -310,6 +314,13 @@ export async function completeTask(taskId: string, role: Role, mode: WorkspaceMo
     task.completedAt = now();
     task.completedBy = role;
     pushEvent(state, { actor: role, kind: "task-complete", summary: `Completed task: ${task.title}`, sectionId: task.sectionId ?? undefined });
+  });
+}
+
+/** Hard-delete. The task is removed from the draft store. No tombstone, trash, or delete event. */
+export async function deleteTask(taskId: string, role: Role, mode: WorkspaceMode): Promise<WorkspaceState> {
+  return withLockedState(mode, (state) => {
+    hardDeleteTask(state, taskId, role);
   });
 }
 

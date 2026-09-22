@@ -4,9 +4,8 @@ import {
   bindingFromWorking,
   chipsFromWorkingText,
   dropAssistState,
+  dropStoredProcessIds,
   emptyAssistBinding,
-  processHighlightIds,
-  processNodeIdsForSection,
   sectionByStableId,
   seedAssistBindings,
   viewAssistChips,
@@ -17,7 +16,7 @@ function section(id: string, number: string, title: string, body: string): Secti
   return { id, number, title, body };
 }
 
-test("chips and process highlight key off stable id, never display number", () => {
+test("chips key off stable id, never display number", () => {
   const limited = section(
     "10-12",
     "18-99",
@@ -31,9 +30,6 @@ test("chips and process highlight key off stable id, never display number", () =
   assert.equal(sectionByStableId(sections, "10-12")?.id, "10-12");
   assert.equal(sectionByStableId(sections, "10-12")?.number, "2-1");
   assert.notEqual(sectionByStableId(Object.values(sections), "10-12")?.id, "wc-other");
-  assert.deepEqual(processNodeIdsForSection("10-11"), ["legal-screen"]);
-  assert.deepEqual(processHighlightIds("10-11", new Set(["10-11"])), ["legal-screen"]);
-  assert.deepEqual(processHighlightIds("10-11", new Set(["wc-other"])), []);
   assert.ok(chipsFromWorkingText(moved.title, moved.body).limitedUse);
   assert.ok(chipsFromWorkingText(moved.title, moved.body).glossaryTermIds.includes("limited-use") || chipsFromWorkingText(moved.title, moved.body).limitedUse);
   assert.equal(chipsFromWorkingText(byNumber.title, byNumber.body).limitedUse, false);
@@ -49,10 +45,7 @@ test("add/reorder/rename keep source binding; empty sibling gets no invented chi
   assert.deepEqual(afterRename["7-3"], kept);
   assert.deepEqual(sibling.glossaryTermIds, []);
   assert.equal(sibling.limitedUse, false);
-  assert.deepEqual(sibling.processNodeIds, []);
-  assert.ok(processNodeIdsForSection("7-3").includes("id-self"));
-  assert.deepEqual(processHighlightIds("7-3", new Set(["7-3", "wc-split"])), processNodeIdsForSection("7-3"));
-  assert.deepEqual(processHighlightIds("wc-split", new Set(["7-3", "wc-split"])), []);
+  assert.equal("processNodeIds" in sibling, false);
 });
 
 test("split leaves chips on the source until the editor moves text", () => {
@@ -96,6 +89,18 @@ test("delete drops assist state for that stable id", () => {
   );
   assert.equal(state.sergeant[0].citeTo, undefined);
   assert.equal(state.sergeant[1].citeTo, "7-1");
+});
+
+test("saved drafts drop leftover Process node ids", () => {
+  const bindings = {
+    "7-3": {
+      ...emptyAssistBinding("7-3"),
+      processNodeIds: ["id-self"],
+    },
+  } as Record<string, AssistBinding>;
+  assert.equal(dropStoredProcessIds(bindings), true);
+  assert.equal("processNodeIds" in bindings["7-3"], false);
+  assert.equal(dropStoredProcessIds(bindings), false);
 });
 
 test("never rebinds chips from ACTIVE baseline text", () => {
