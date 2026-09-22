@@ -233,6 +233,12 @@ test("access password field is an uncontrolled native form POST", () => {
   const form = readFileSync(new URL("../components/WgAccessForm.tsx", import.meta.url), "utf8");
   const page = readFileSync(new URL("../app/access/page.tsx", import.meta.url), "utf8");
   const route = readFileSync(new URL("../app/api/access/route.ts", import.meta.url), "utf8");
+  const logout = readFileSync(new URL("../components/LogOutButton.tsx", import.meta.url), "utf8");
+  const accessLib = readFileSync(new URL("./wg-access.ts", import.meta.url), "utf8");
+  for (const source of [form, page, route, logout, accessLib]) {
+    assert.equal(source.includes("localStorage"), false);
+    assert.equal(source.includes("sessionStorage"), false);
+  }
 
   const password = form.slice(form.indexOf('type="password"'), form.indexOf("/>", form.indexOf('type="password"')));
   assert.equal(form.includes("use client"), false);
