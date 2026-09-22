@@ -27,6 +27,7 @@ import {
 import { ForbiddenError } from "./roles.ts";
 import { REDUNDANCY_LANES } from "./seed/redundancy-lanes.ts";
 import { storePaths } from "./store-paths.ts";
+import { hardDeleteTask } from "./task-mutate.ts";
 import type {
   CrossmatchRow,
   Role,
@@ -310,6 +311,13 @@ export async function completeTask(taskId: string, role: Role, mode: WorkspaceMo
     task.completedAt = now();
     task.completedBy = role;
     pushEvent(state, { actor: role, kind: "task-complete", summary: `Completed task: ${task.title}`, sectionId: task.sectionId ?? undefined });
+  });
+}
+
+/** Hard-delete. The task is removed from the draft store. No tombstone, trash, or delete event. */
+export async function deleteTask(taskId: string, role: Role, mode: WorkspaceMode): Promise<WorkspaceState> {
+  return withLockedState(mode, (state) => {
+    hardDeleteTask(state, taskId, role);
   });
 }
 

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { completeTask, createTask, publicState } from "@/lib/store";
+import { completeTask, createTask, deleteTask, publicState } from "@/lib/store";
 import type { Role } from "@/lib/types";
 import { modeFromRequest } from "@/lib/workspace-mode";
 
@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   const mode = modeFromRequest(request);
   try {
     const body = (await request.json()) as {
-      action: "create" | "complete";
+      action: "create" | "complete" | "delete";
       title?: string;
       notes?: string;
       sectionId?: string | null;
@@ -21,6 +21,8 @@ export async function POST(request: Request) {
       await createTask({ title: body.title.trim(), notes: body.notes, sectionId: body.sectionId }, body.role, mode);
     } else if (body.action === "complete" && body.taskId) {
       await completeTask(body.taskId, body.role, mode);
+    } else if (body.action === "delete" && body.taskId) {
+      await deleteTask(body.taskId, body.role, mode);
     }
     return NextResponse.json(await publicState(mode));
   } catch (error) {

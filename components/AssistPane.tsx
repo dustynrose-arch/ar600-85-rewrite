@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState } from "react";
 import { CrossmatchRows } from "@/components/CrossmatchRows";
 import { PaneToggle } from "@/components/PaneToggle";
@@ -65,6 +64,8 @@ type Props = {
   onSelect: (id: string) => void;
   onCreateTask: (title: string, notes: string) => void;
   onCompleteTask: (id: string) => void;
+  onDeleteTask: (id: string) => void;
+  onOpenGuide: () => void;
   onSnapshot: (label: string) => void;
   onDiff: (against: string) => Promise<DiffHunk[]>;
   onSummarize: (against: string) => Promise<string[]>;
@@ -153,6 +154,7 @@ function AssistTab({
   draftBody,
   sections,
   onOpenAuthority,
+  onOpenGuide,
 }: Props & { onOpenAuthority: () => void }) {
   const chips = useMemo(
     () => viewAssistChips(working, assistBindings?.[working.id], draftBody),
@@ -310,9 +312,9 @@ function AssistTab({
           ))}
         </ul>
       </section>
-      <Link href="/guide" className="assist-link text-xs">
-        Open User Guide (walkthrough + video)
-      </Link>
+      <button type="button" className="assist-link text-xs" onClick={onOpenGuide}>
+        Open User Guide
+      </button>
     </div>
   );
 }
@@ -433,7 +435,7 @@ function ProcessTab({
   );
 }
 
-function TasksTab({ role, tasks, sectionId, onCreateTask, onCompleteTask, sections, working }: Props) {
+function TasksTab({ role, tasks, onCreateTask, onCompleteTask, onDeleteTask, sections, working }: Props) {
   const [title, setTitle] = useState("");
   const [notes, setNotes] = useState("");
   return (
@@ -482,16 +484,26 @@ function TasksTab({ role, tasks, sectionId, onCreateTask, onCompleteTask, sectio
                 : "no section"}{" "}
               · {task.completedAt ? "complete" : "open"}
             </p>
-            {!task.completedAt ? (
+            <div className="mt-1 flex gap-3">
+              {!task.completedAt ? (
+                <button
+                  type="button"
+                  disabled={role !== "editor"}
+                  onClick={() => onCompleteTask(task.id)}
+                  className="assist-link disabled:no-underline disabled:cursor-not-allowed"
+                >
+                  Complete
+                </button>
+              ) : null}
               <button
                 type="button"
                 disabled={role !== "editor"}
-                onClick={() => onCompleteTask(task.id)}
-                className="assist-link mt-1 disabled:no-underline disabled:cursor-not-allowed"
+                onClick={() => onDeleteTask(task.id)}
+                className="assist-link disabled:no-underline disabled:cursor-not-allowed"
               >
-                Complete
+                Delete
               </button>
-            ) : null}
+            </div>
           </li>
         ))}
       </ul>
