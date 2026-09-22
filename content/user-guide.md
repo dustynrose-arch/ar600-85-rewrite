@@ -48,13 +48,13 @@ Wrong password keeps you on the login page — try again; do not paste the passw
 ### 1. Top banner & chrome
 
 **What it is**  
-The dark top bar holds the **G-1 seal** on the left, the title **AR 600-85 Revision** and the subtitle **Directorate of Prevention, Resilience and Readiness** in the middle, and the **Army seal** on the right. A plain gold **DRAFT** (or **TRAINING / DRAFT**) mark is centered between those seals. Training controls, Role, the three gold export buttons, **User Guide**, and **Log out** follow on the same bar. Seals are always paired with the DRAFT mark — never shown alone as if this were an authenticated publication.
+The dark top bar holds the **G-1 seal** on the left, then the left-aligned title **AR 600-85 Revision** and subtitle **Directorate of Prevention, Resilience and Readiness**, then the **Army seal** (seals flanking that text). A plain gold **DRAFT** (or **TRAINING / DRAFT**) mark is centered on the full banner. Training controls, Role, the three gold export buttons, **User Guide**, and **Log out** follow on the same bar. Seals are always paired with the DRAFT mark — never shown alone as if this were an authenticated publication.
 
 **When to use it**  
 Any time you need to know live vs Training, change role, export, or open this Guide.
 
 **How**
-1. Confirm the G-1 seal is on the left, the title and subtitle are in the middle, the Army seal is on the right, and the plain gold DRAFT mark is centered between the seals (never seals alone).
+1. Confirm the G-1 seal, left-aligned title and subtitle, and Army seal form a left sandwich, and the plain gold DRAFT mark is centered on the full banner (never seals alone).
 2. Read live (`DRAFT`) vs Training (`TRAINING / DRAFT`). Header plain **DRAFT** is not the same string as Word’s **DRAFT / WORKING COPY** stamp — both are intentional.
 3. **Training controls** (separate from export): **Enter Training** / **Leave Training** (cream-on-dark) / **Reset to original**.
 4. **Gold export buttons:** **Plain** · **Track Changes** · **Summary**, plus **User Guide** (opens over this draft; the draft beside it stays on screen) and **Log out**.

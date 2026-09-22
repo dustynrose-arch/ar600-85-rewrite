@@ -45,7 +45,7 @@ test("header DRAFT mark is always on; gold DRAFT / WORKING COPY bar is gone; exp
   assert.match(exportDocx, /draftRun\(wordFooterMark\(training\)/);
 });
 
-test("header: G-1 then Army seal, title + DPRR, DRAFT mark, Working Copy dropped from title", () => {
+test("header: G-1 · title/DPRR · Army sandwich, DRAFT mark, Working Copy dropped from title", () => {
   const brand = readRepoFile("components/HeaderBrand.tsx");
   const workbench = readRepoFile("components/Workbench.tsx");
   const guide = readRepoFile("app/guide/page.tsx");
@@ -89,7 +89,8 @@ test("editable-draft chrome says Your draft; on-screen mark is the header DRAFT 
   assert.match(guideCopy, /\*\*DRAFT\*\* mark/);
   assert.match(guideCopy, /TRAINING \/ DRAFT/);
   assert.match(guideCopy, /in the header/);
-  assert.match(guideCopy, /centered between those seals/);
+  assert.match(guideCopy, /centered on the full banner/);
+  assert.equal(guideCopy.includes("centered between those seals"), false);
   assert.equal(userGuide.includes("gold-and-black"), false);
   assert.equal(guideCopy.includes("gold-and-black"), false);
   assert.equal(guideCopy.includes("gold banner"), false);
@@ -276,7 +277,7 @@ test("darker-but-fun chrome: dark scheme, plain gold DRAFT mark, no leftover lig
   assert.match(exportDocx, /draftRun\(wordFooterMark\(training\)/);
 });
 
-test("top-bar chrome: one row G-1 Army title DPRR DRAFT then gold actions; wrap instead of scroll", () => {
+test("top-bar chrome: one row G-1 title DPRR Army sandwich, DRAFT centered on bar, gold actions; wrap instead of scroll", () => {
   const css = readRepoFile("app/globals.css");
   const workbench = readRepoFile("components/Workbench.tsx");
   const guide = readRepoFile("app/guide/page.tsx");
@@ -371,24 +372,29 @@ test("top-bar chrome: one row G-1 Army title DPRR DRAFT then gold actions; wrap 
   const g1Tag = brand.slice(g1Idx, brand.indexOf("/>", g1Idx) + 2);
   assert.equal(g1Tag.includes("ring-"), false);
   assert.equal(g1Tag.includes("bg-army-cream"), false);
-  const middleIdx = brand.indexOf("header-brand-middle");
   const titlesIdx = brand.indexOf("header-brand-titles");
   const markIdx = brand.indexOf("header-draft-mark");
   assert.ok(
-    g1Idx >= 0 && middleIdx > g1Idx && titlesIdx > middleIdx && markIdx > titlesIdx && armyIdx > markIdx,
-    "G-1, title/DPRR, centered DRAFT, Army — never seals alone",
+    g1Idx >= 0 && titlesIdx > g1Idx && armyIdx > titlesIdx && markIdx > armyIdx,
+    "G-1, left title/DPRR, Army sandwich, then DRAFT mark — never seals alone",
   );
   assert.match(brand, /className="header-draft-mark"/);
   assert.equal(brand.includes("btn-header"), false);
   assert.match(brand, /header-brand-titles/);
-  assert.match(brand, /header-brand-middle/);
-  assert.match(css, /\.header-brand-titles \{[\s\S]*whitespace-nowrap/);
-  assert.match(css, /\.header-brand-middle \{[\s\S]*items-center[\s\S]*text-center/);
-  assert.match(css, /\.header-draft-mark \{[\s\S]*text-center/);
+  assert.equal(brand.includes("header-brand-middle"), false, "do not center title+DRAFT as one middle block");
+  assert.match(css, /\.header-brand-titles \{[\s\S]*whitespace-nowrap[\s\S]*text-left/);
+  assert.equal(css.includes("header-brand-middle"), false);
+  assert.equal(/\.header-brand-titles \{[^}]*justify-center/.test(css), false);
+  assert.match(css, /\.header-bar \{[\s\S]*relative/);
+  assert.match(css, /\.header-draft-mark \{[\s\S]*absolute[\s\S]*left-1\/2[\s\S]*-translate-x-1\/2/);
+  assert.equal(/\.header-draft-mark \{[^}]*text-center/.test(css), false);
+  assert.equal(/\.header-draft-mark \{[^}]*w-full/.test(css), false);
+  assert.equal(/\.header-brand \{[^}]*\bgrow\b/.test(css), false);
   assert.equal(brand.includes("flex-1"), false);
   assert.match(brand, /src="\/g1-seal\.png"/);
   assert.match(brand, /src="\/army-seal\.png"/);
   assert.match(brand, /never overflow-x scroll/);
+  assert.match(brand, /true center/);
   assert.match(brand, /return training \? "TRAINING \/ DRAFT" : "DRAFT"/);
   assert.equal(brand.includes("TRAINING·DRAFT"), false, "on-screen mark is TRAINING / DRAFT; Word stamps stay slash");
 
@@ -489,8 +495,13 @@ test("Justice: DRAFT / TRAINING / DRAFT is plain high-contrast text with dual se
   assert.match(brand, /src="\/army-seal\.png"/);
   const g1Idx = brand.indexOf('src="/g1-seal.png"');
   const armyIdx = brand.indexOf('src="/army-seal.png"');
+  const titlesIdx = brand.indexOf("header-brand-titles");
   const markIdx = brand.indexOf("header-draft-mark");
-  assert.ok(g1Idx >= 0 && markIdx > g1Idx && armyIdx > markIdx, "G-1, centered DRAFT, Army — never seals alone");
+  assert.ok(
+    g1Idx >= 0 && titlesIdx > g1Idx && armyIdx > titlesIdx && markIdx > armyIdx,
+    "G-1, title/DPRR, Army sandwich, then DRAFT mark — never seals alone",
+  );
+  assert.equal(brand.includes("header-brand-middle"), false);
   assert.equal(brand.includes("Hide"), false);
   assert.equal(brand.includes("<button"), false);
   assert.equal(brand.includes("<a "), false);

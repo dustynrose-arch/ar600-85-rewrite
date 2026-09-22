@@ -54,15 +54,16 @@ option {
     @apply btn-header;
   }
 
-  /* One horizontal row: G-1, centered title + DRAFT, Army, then gold actions.
+  /* One horizontal row: G-1 · left title/DPRR · Army sandwich on the left;
+     only .header-draft-mark is true-centered on the full bar; gold actions right.
      Tight even gaps. Wrap actions only if the row cannot shrink further.
      Brand (seals + DRAFT mark) stays on the first row — never overflow-x scroll. */
   .header-bar {
-    @apply shrink-0 bg-army-black text-army-cream px-2 py-1 flex flex-wrap items-center gap-1.5;
+    @apply relative shrink-0 bg-army-black text-army-cream px-2 py-1 flex flex-wrap items-center gap-1.5;
   }
 
   .header-brand {
-    @apply flex flex-nowrap items-center gap-1.5 shrink-0 grow;
+    @apply flex flex-nowrap items-center gap-1.5 shrink-0;
   }
 
   .header-seal {
@@ -77,12 +78,8 @@ option {
     @apply rounded-none;
   }
 
-  .header-brand-middle {
-    @apply flex flex-1 flex-col items-center justify-center text-center;
-  }
-
   .header-brand-titles {
-    @apply flex items-baseline justify-center gap-1.5 whitespace-nowrap;
+    @apply flex items-baseline gap-1.5 whitespace-nowrap text-left;
   }
 
   .header-title {
@@ -189,11 +186,12 @@ option {
   }
 
   /* Persistent header legal mark — always on, never with a hide control.
+     True center of .header-bar (not centered inside the seal sandwich).
      Justice: plain gold text only (no fill, no chip/button chrome) so Live DRAFT
      and Training TRAINING / DRAFT stay high-contrast on #101218, never look like
      action buttons or an authenticated AR, and never leave the dual seals unpaired. */
   .header-draft-mark {
-    @apply block w-full shrink-0 text-center text-army-gold text-[10px] font-bold tracking-[0.16em] leading-none whitespace-nowrap;
+    @apply absolute left-1/2 -translate-x-1/2 shrink-0 text-army-gold text-[10px] font-bold tracking-[0.16em] leading-none whitespace-nowrap;
     background: none;
     border: 0;
     box-shadow: none;
